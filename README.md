@@ -10,5 +10,5 @@
 | Ashmita Mittal    | a47mitta    | ashmitamittal
 | Reem Fakhouri     | r3fakhou    |
 | Sara Zufishan     | szufisha    |
-| Sharmistha Ghosh  | s46ghosh    |
+| Sharmistha Ghosh  | s46ghosh    | s46ghosh
 | Uma Goli          | ugoli       |
