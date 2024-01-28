@@ -2,9 +2,8 @@
 
 ## Group 10
 
-### Project: _Yelp Me!_
-Your Personal Media & Books Diary
-
+### Project: _CritiCove_
+Your Cove of Media Critiques and Reflections
 
 ### Collaborators 
 
