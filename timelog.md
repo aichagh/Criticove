@@ -7,3 +7,4 @@
 | 2024/01/26 |       | 1.5     |1.5     | 1.5      | 1.5        | 1.5  | Deliverable 1 Discussion |
 | 2024/01/27 |       | 1       |2       | 1        | 1          | 2.5  | Worked on Deliverable 1  |
 | 2024/01/28 |       | 2       |1.5     | 2.5      | 2.5        | 1    | D1 Presentation editing, UI design, app theme and logo |
+| 2024/02/02 |       |         |        |          | 1.5        |      | Finalize D1 document for submission |
