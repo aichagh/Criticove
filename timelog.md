@@ -8,4 +8,4 @@
 | 2024/01/27 | 4     | 1       |2       | 1        | 1          | 2.5  | Worked on Deliverable 1  |
 | 2024/01/28 | 1     | 2       |1.5     | 2.5      | 2.5        | 1    | D1 Presentation editing, UI design, app theme and logo |
 | 2024/02/02 | 0.5   | 2.5     |3.5     |          | 2.5        |      | Finalize D1 document for submission |
-| 2024/02/10 |       | 2       |2       |          | 2          |      | UI design, plan of action for D2 |
+| 2024/02/10 |       | 2       |2       |2         | 2          |      | UI design, plan of action for D2 |
