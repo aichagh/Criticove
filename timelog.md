@@ -9,5 +9,5 @@
 | 2024/01/28 | 1     | 2       |1.5     | 2.5      | 2.5        | 1    | D1 Presentation editing, UI design, app theme and logo |
 | 2024/02/02 | 0.5   | 2.5     |3.5     |          | 2.5        |      | Finalize D1 document for submission |
 | 2024/02/10 | 2     | 2       |2       |2         | 2          |      | UI design, plan of action for D2 |
-| 2024/02/13 | 0.5   |         |        |          |            |      | Drafting response for D2 |
-| 2024/02/14 | 1     |         |        |          |            |      | Finalizing D2 document |  
+| 2024/02/13 | 0.5   |         |        |          | 0.5        |      | Drafting response for D2 |
+| 2024/02/14 | 1     |         |        |          | 1.5        |      | Finalizing D2 document |  
