@@ -2,20 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/off_white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
         android:id="@+id/headerNewReview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:background="@color/blue"
-        android:padding="16dp"
+        android:padding="10dp"
         android:gravity="center_horizontal"
         android:text="New Review"
+        android:fontFamily="@font/alegreya_sans_regular"
         android:textColor="@color/white"
         android:textSize="30sp" />
 
-    <LinearLayout
+    <RadioGroup
+        android:id="@+id/radioButtons"
         android:orientation="horizontal"
         android:padding="10dp"
         android:layout_width="match_parent"
@@ -28,7 +35,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Book" />
+            android:text="Book"
+            android:checked="true"/>
 
         <RadioButton
             android:id="@+id/tvRadio"
@@ -43,6 +51,145 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Movie" />
+    </RadioGroup>
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"/>
+<!--
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:singleLine="true"
+            android:textSize="30sp"
+            android:fontFamily="@font/alegreya_sans_regular"
+            android:textColor="@color/blue"
+            android:textColorHint="@color/blue"
+            android:hint="Title" />
+
+        <EditText
+            android:id="@+id/Author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:singleLine="true"
+            android:textSize="30sp"
+            android:fontFamily="@font/alegreya_sans_regular"
+            android:textColor="@color/blue"
+            android:textColorHint="@color/blue"
+            android:hint="Author" />
+
+        <EditText
+            android:id="@+id/Date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:singleLine="true"
+            android:textSize="30sp"
+            android:fontFamily="@font/alegreya_sans_regular"
+            android:textColor="@color/blue"
+            android:textColorHint="@color/blue"
+            android:hint="Date" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:padding="10dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rating"
+                android:fontFamily="@font/alegreya_sans_regular"
+                android:textColor="@color/blue"
+                android:textSize="30sp"
+                android:layout_marginTop="16dp" />
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+                android:stepSize="0.5"
+                android:rating="0"
+                android:layout_marginTop="5dp" />
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/paragraphReview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:singleLine="true"
+            android:textSize="30sp"
+            android:fontFamily="@font/alegreya_sans_regular"
+            android:textColor="@color/blue"
+            android:textColorHint="@color/blue"
+            android:inputType="textMultiLine"
+            android:hint="Write Your Review Here..." />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:padding="10dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add picture "
+            android:fontFamily="@font/alegreya_sans_regular"
+            android:textColor="@color/blue"
+            android:textSize="30sp"
+            android:layout_marginTop="16dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:padding="10dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                >
+
+                <Button
+                    android:id="@+id/ImportPicture"
+                    android:background="@drawable/teal_card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:fontFamily="@font/alegreya_sans_regular"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:text="Import"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/TakeNewPicture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/teal_card"
+                    android:fontFamily="@font/alegreya_sans_regular"
+                    android:text="Take New"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
     </LinearLayout>
+    -->
 
 </LinearLayout>
