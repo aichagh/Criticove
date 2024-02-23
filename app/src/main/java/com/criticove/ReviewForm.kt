@@ -20,12 +20,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
 
+val filled = mutableMapOf(
+    "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Date Published" to "", "Genre" to "", "Book Type" to ""),
+    "TV Show" to mutableMapOf("TV Show Title" to "", "Director" to "", "Date Released" to "", "Genre" to "", "Streaming Service" to ""),
+    "Movie" to mutableMapOf("Movie Title" to "", "Director" to "" , "Date Released" to "", "Genre" to "", "Publication Company" to ""))
 class ReviewForm : ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +42,7 @@ class ReviewForm : ComponentActivity(){
                 Column() {
                     ReviewHeader()
                     Selection()
+                    println("this is filled $filled")
                 }
             }
         }
@@ -46,7 +50,6 @@ class ReviewForm : ComponentActivity(){
 }
 
 @Composable
-
 fun ReviewHeader() {
     Box(
         modifier = Modifier
@@ -73,413 +76,93 @@ fun Selection() {
                 .padding(horizontal = 10.dp)
                 .background(colorResource(id = R.color.off_white)),
         ) {
+            val mediaType = listOf("Book", "TV Show", "Movie")
+            mediaType.forEach{ el ->
                 RadioButton(
-                    selected = selectedType == "Book",
-                    onClick = { selectedType = "Book" }
+                    selected = selectedType == el,
+                    onClick = { selectedType = el }
                 )
                 Text(
-                    text = "Book",
+                    text = el,
                     modifier = Modifier.padding(start = 4.dp)
                 )
-            RadioButton(
-                selected = selectedType == "TV Show",
-                onClick = { selectedType = "TV Show" }
-
-            )
-            Text(
-                text = "TV Show"
-            )
-
-            RadioButton(
-                selected = selectedType == "Movie",
-                onClick = { selectedType = "Movie" }
-
-            )
-            Text(
-                text = "Movie"
-
-            )
+            }
         }
-    Form(selectedType)
+    CreateForm(selectedType)
+}
+@Composable
+fun CreateForm(type:String) {
+    var elements =  mutableListOf<String>()
+    when (type) {
+        "Book" -> elements = listOf("Book Title","Author", "Date Published", "Genre", "Book Type" ).toMutableList()
+        "TV Show" -> elements = listOf("TV Show Title", "Director", "Date Released", "Genre", "Streaming Service" ).toMutableList()
+        "Movie" -> elements = listOf("Movie Title", "Director", "Date Released", "Genre", "Publication Company" ).toMutableList()
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(colorResource(id = R.color.off_white))
+            .padding(10.dp)
+    ) {
+        Column() {
+            elements.forEach { label ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Column() {
+                            var bookData by remember {mutableStateOf("")}
+                            var movieData by remember {mutableStateOf("")}
+                            var tvData by remember {mutableStateOf("")}
+                            //Text(
+                                //text = label
+                           // )
+                           // println("this is the value: $filled[type]?.get(label)")
+                            when(type) {
+                                "Book" -> {OutlinedTextField(value=bookData,onValueChange={bookData=it},
+                                    label = {Text( text = label, color = colorResource(id = R.color.blue)) },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                )
+                                    filled["Book"]?.set(label, bookData).toString()}
+                                "TV Show" -> {OutlinedTextField(value=tvData,onValueChange={tvData=it},
+                                    label = {Text( text = label, color = colorResource(id = R.color.blue)) },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                )
+                                    filled["TV Show"]?.set(label, tvData).toString()}
+                                "Movie" -> {OutlinedTextField(value=movieData,onValueChange={movieData=it},
+                                    label = {Text( text = label, color = colorResource(id = R.color.blue)) },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                )
+                                    filled["Movie"]?.set(label, movieData).toString()}
+                            }
+                        }
+                    }
+            }
+        }
+    }
+    println("this is filled $filled")
 }
 
 @Composable
-fun Form(type: String) {
-    if (type == "Book") {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(colorResource(id = R.color.off_white))
-                .padding(10.dp)
-        ) {
-            Column() {
-                var text by remember { mutableStateOf(TextFieldValue()) }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column() {
-                        Text(
-                            text = "Book Title"
-                        )
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            label = {
-                                Text(
-                                    "Book Title",
-                                    color = colorResource(id = R.color.blue)
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column() {
-                        Text(
-                            text = "Author"
-                        )
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            label = {
-                                Text(
-                                    "Author",
-                                    color = colorResource(id = R.color.blue)
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column() {
-                        Text(
-                            text = "Date Published"
-                        )
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            label = {
-                                Text(
-                                    "Date Published",
-                                    color = colorResource(id = R.color.blue)
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column() {
-                        Text(
-                            text = "Genre"
-                        )
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            label = {
-                                Text(
-                                    "Genre",
-                                    color = colorResource(id = R.color.blue)
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column() {
-                        Text(
-                            text = "Book Type"
-                        )
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            label = {
-                                Text(
-                                    "Book Type",
-                                    color = colorResource(id = R.color.blue)
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                }
-            }
+fun Submission() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(colorResource(id = R.color.off_white))
+    ) {
+        Row() {
 
         }
-
-    } else if (type == "TV Show") {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(colorResource(id = R.color.off_white))
-                .padding(10.dp)
-        ) {
-            Column() {
-                var text by remember { mutableStateOf(TextFieldValue()) }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column() {
-                        Text(
-                            text = "TV Show Title"
-                        )
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            label = {
-                                Text(
-                                    "TV show Title",
-                                    color = colorResource(id = R.color.blue)
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column() {
-                        Text(
-                            text = "Publication Company"
-                        )
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            label = {
-                                Text(
-                                    "Publication Company",
-                                    color = colorResource(id = R.color.blue)
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column() {
-                        Text(
-                            text = "Date Released"
-                        )
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            label = {
-                                Text(
-                                    "Date Released",
-                                    color = colorResource(id = R.color.blue)
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column() {
-                        Text(
-                            text = "Genre"
-                        )
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            label = {
-                                Text(
-                                    "Genre",
-                                    color = colorResource(id = R.color.blue)
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column() {
-                        Text(
-                            text = "Book Type"
-                        )
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            label = {
-                                Text(
-                                    "Book Type",
-                                    color = colorResource(id = R.color.blue)
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                }
-            }
-
-        }
-
-    } else if (type == "Movie") {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(colorResource(id = R.color.off_white))
-                .padding(10.dp)
-        ) {
-            Column() {
-                var text by remember { mutableStateOf(TextFieldValue()) }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column() {
-                        Text(
-                            text = "Movie Title"
-                        )
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            label = {
-                                Text(
-                                    "Movie Title",
-                                    color = colorResource(id = R.color.blue)
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column() {
-                        Text(
-                            text = "Publication Company"
-                        )
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            label = {
-                                Text(
-                                    "Publication Company",
-                                    color = colorResource(id = R.color.blue)
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column() {
-                        Text(
-                            text = "Year Released"
-                        )
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            label = {
-                                Text(
-                                    "Year Released",
-                                    color = colorResource(id = R.color.blue)
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column() {
-                        Text(
-                            text = "Genre"
-                        )
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            label = {
-                                Text(
-                                    "Genre",
-                                    color = colorResource(id = R.color.blue)
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column() {
-                        Text(
-                            text = "Book Type"
-                        )
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            label = {
-                                Text(
-                                    "Book Type",
-                                    color = colorResource(id = R.color.blue)
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                }
-            }
-
-        }
-
     }
 }
 
+
 @Preview
 @Composable
-fun PreviewRadio() {
+fun PreviewCreateReview() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
