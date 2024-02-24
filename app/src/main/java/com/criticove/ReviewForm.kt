@@ -74,25 +74,25 @@ fun ReviewHeader() {
 @Composable
 fun Selection() {
     var selectedType by remember { mutableStateOf("Book") }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(30.dp)
-                .padding(horizontal = 10.dp)
-                .background(colorResource(id = R.color.off_white)),
-        ) {
-            val mediaType = listOf("Book", "TV Show", "Movie")
-            mediaType.forEach{ el ->
-                RadioButton(
-                    selected = selectedType == el,
-                    onClick = { selectedType = el }
-                )
-                Text(
-                    text = el,
-                    modifier = Modifier.padding(start = 4.dp)
-                )
-            }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(30.dp)
+            .padding(horizontal = 10.dp)
+            .background(colorResource(id = R.color.off_white)),
+    ) {
+        val mediaType = listOf("Book", "TV Show", "Movie")
+        mediaType.forEach{ el ->
+            RadioButton(
+                selected = selectedType == el,
+                onClick = { selectedType = el }
+            )
+            Text(
+                text = el,
+                modifier = Modifier.padding(start = 4.dp)
+            )
         }
+    }
     CreateForm(selectedType)
 }
 @Composable
@@ -111,40 +111,40 @@ fun CreateForm(type:String) {
     ) {
         Column() {
             elements.forEach { label ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Column() {
-                            var bookData by remember {mutableStateOf("")}
-                            var movieData by remember {mutableStateOf("")}
-                            var tvData by remember {mutableStateOf("")}
-                            //Text(
-                                //text = label
-                           // )
-                           // println("this is the value: $filled[type]?.get(label)")
-                            when(type) {
-                                "Book" -> {OutlinedTextField(value=bookData,onValueChange={bookData=it},
-                                    label = {Text( text = label, color = colorResource(id = R.color.blue)) },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                )
-                                    filled["Book"]?.set(label, bookData).toString()}
-                                "TV Show" -> {OutlinedTextField(value=tvData,onValueChange={tvData=it},
-                                    label = {Text( text = label, color = colorResource(id = R.color.blue)) },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                )
-                                    filled["TV Show"]?.set(label, tvData).toString()}
-                                "Movie" -> {OutlinedTextField(value=movieData,onValueChange={movieData=it},
-                                    label = {Text( text = label, color = colorResource(id = R.color.blue)) },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                )
-                                    filled["Movie"]?.set(label, movieData).toString()}
-                            }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Column() {
+                        var bookData by remember {mutableStateOf("")}
+                        var movieData by remember {mutableStateOf("")}
+                        var tvData by remember {mutableStateOf("")}
+                        //Text(
+                        //text = label
+                        // )
+                        // println("this is the value: $filled[type]?.get(label)")
+                        when(type) {
+                            "Book" -> {OutlinedTextField(value=bookData,onValueChange={bookData=it},
+                                label = {Text( text = label, color = colorResource(id = R.color.blue)) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+                                filled["Book"]?.set(label, bookData).toString()}
+                            "TV Show" -> {OutlinedTextField(value=tvData,onValueChange={tvData=it},
+                                label = {Text( text = label, color = colorResource(id = R.color.blue)) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+                                filled["TV Show"]?.set(label, tvData).toString()}
+                            "Movie" -> {OutlinedTextField(value=movieData,onValueChange={movieData=it},
+                                label = {Text( text = label, color = colorResource(id = R.color.blue)) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+                                filled["Movie"]?.set(label, movieData).toString()}
                         }
                     }
+                }
             }
         }
     }
