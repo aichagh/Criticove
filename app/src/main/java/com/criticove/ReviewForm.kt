@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -29,6 +30,10 @@ val filled = mutableMapOf(
     "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Date Published" to "", "Genre" to "", "Book Type" to ""),
     "TV Show" to mutableMapOf("TV Show Title" to "", "Director" to "", "Date Released" to "", "Genre" to "", "Streaming Service" to ""),
     "Movie" to mutableMapOf("Movie Title" to "", "Director" to "" , "Date Released" to "", "Genre" to "", "Publication Company" to ""))
+
+var submittedReview: MutableMap<String, String>? = null
+
+
 class ReviewForm : ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -144,17 +149,26 @@ fun CreateForm(type:String) {
         }
     }
     println("this is filled $filled")
+    Submission(type)
 }
 
 @Composable
-fun Submission() {
+fun Submission(type: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .background(colorResource(id = R.color.off_white))
     ) {
-        Row() {
+        Column() {
+            Button(onClick = {
+                when (type) {
+                    "Book" -> submittedReview = filled["Book"]
+                    "TV Show" -> submittedReview = filled["TV Show"]
+                    "Movie" -> submittedReview = filled["Movie"]
+                }
+            }) {
 
+            }
         }
     }
 }
