@@ -17,3 +17,4 @@
 | 2024/02/20 |       | 3.5     |        |          |            |      | Jetpack compose research and Integrating M3 |
 | 2024/02/20 |       |         |4       |          |            |      | Create Review Form UI |
 | 2024/02/21 |       | 3       |        |          |            |      | Created icons and buttons using M3 |
+| 2024/02/25 |       |         |        |1         |            |      | Splash Screen UI using Compose |
