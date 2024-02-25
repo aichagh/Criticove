@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    
+    <style name="splash_screen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/blue</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen_logo</item>
+        <item name="windowSplashScreenAnimationDuration">2000</item>
+        <item name="postSplashScreenTheme">@style/Theme.CritiCove</item>
+    </style>
+
 
     <style name="Theme.CritiCove" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>

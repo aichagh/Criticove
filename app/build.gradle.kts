@@ -89,6 +89,9 @@ dependencies {
     implementation("androidx.compose.material3:material3-adaptive:1.0.0-alpha06")
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.0.0-alpha03")
 
+    // Splash Screen
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
 
 
 }

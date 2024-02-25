@@ -4,12 +4,14 @@ import android.app.Activity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
 class Signup : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         val auth: FirebaseAuth = Firebase.auth
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
