@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
+import com.criticove.m3.ButtonStyles.PrimaryButton
 
 val filled = mutableMapOf(
     "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Date Published" to "", "Genre" to "", "Book Type" to ""),
@@ -160,20 +161,24 @@ fun Submission(type: String) {
             .background(colorResource(id = R.color.off_white))
     ) {
         Column() {
-            Button(onClick = {
-                when (type) {
-                    "Book" -> submittedReview = filled["Book"]
-                    "TV Show" -> submittedReview = filled["TV Show"]
-                    "Movie" -> submittedReview = filled["Movie"]
-                }
-            }) {
-
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            )
+            {
+                PrimaryButton(
+                    onClick = {
+                        when (type) {
+                            "Book" -> submittedReview = filled["Book"]
+                            "TV Show" -> submittedReview = filled["TV Show"]
+                            "Movie" -> submittedReview = filled["Movie"]
+                        }
+                    }, "Share")
             }
         }
     }
 }
-
-
 @Preview
 @Composable
 fun PreviewCreateReview() {
@@ -189,4 +194,3 @@ fun PreviewCreateReview() {
         }
     }
 }
-
