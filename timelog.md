@@ -22,3 +22,4 @@
 | 2024/02/20 |       |         |5       |          |            |      | Create Review Form UI using Compose |
 | 2024/02/28 |       |         |        |          |            | 4.5  | Create Review Details UI |
 | 2024/02/28 |       |         |        |          |            | 1    | Create Review List UI |
+| 2024/02/29 |       |         |        |          | 2          |      | Added username to Firebase, Login UI + Backend, Navigation support |
