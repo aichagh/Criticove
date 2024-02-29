@@ -1,5 +1,8 @@
 package com.criticove
 
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,12 +29,31 @@ import androidx.compose.ui.unit.sp
 
 // get this data from database, or passed from review select page, currently sample data
 var reviewType = "Book"
-var reviewData = mutableMapOf("Title" to "The Night Circus", "Author" to "Erin",
+var reviewData = mutableMapOf("Title" to "The Night Circus", "Author" to "Erin Morgenstern",
     "Date Published" to "01/01/2024", "Genre" to "Fantasy", "Book Type" to "eBook",
     "Started" to "01/01/2024", "Finished" to "20/01/2024", "Rating" to "4",
     "Review" to "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
 
 var updatedReview: MutableMap<String, String>? = null
+
+class ReviewDetails: ComponentActivity(){
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .background(colorResource(id = R.color.off_white))
+            ) {
+                Column() {
+                    ReviewDetailsHeader()
+                    ReviewDetailsTable(reviewType)
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun ReviewDetailsHeader() {
