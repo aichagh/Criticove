@@ -1,43 +1,169 @@
 package com.criticove
 
-import android.app.Activity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.ui.Modifier
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 
-class Signup : Activity() {
+import com.criticove.backend.FirebaseManager
+
+class Signup : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
-        val auth: FirebaseAuth = Firebase.auth
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_signup)
-
-        val btn = findViewById<Button>(R.id.signup)
-        btn.setOnClickListener{
-            val email = findViewById<EditText>(R.id.email).text.toString()
-            val password = findViewById<EditText>(R.id.password).text.toString()
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-//                        Log.d(TAG, "createUserWithEmail:success")
-                        val user = auth.currentUser
-//                        updateUI(user)
-                    } else {
-                        // If sign in fails, display a message to the user.
-//                        Log.w(TAG, "createUserWithEmail:failure", task.exception)
-//                        Toast.makeText(
-//                            baseContext,
-//                            "Authentication failed.",
-//                            Toast.LENGTH_SHORT,
-//                        ).show()
-//                        updateUI(null)
-                    }
-                }
+        setTheme(R.style.Theme_CritiCove)
+        setContent {
+            MainContent()
         }
     }
+}
+
+@Composable
+fun MainContent() {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var signupResult by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colorResource(id = R.color.blue))
+            .padding(bottom = 50.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(bottom = 50.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(150.dp)
+                    .padding(bottom = 10.dp)
+            )
+
+            Text(
+                text = stringResource(id = R.string.app_name),
+                fontFamily = FontFamily(Font(R.font.righteous_regular)),
+                color = colorResource(id = R.color.yellow),
+                fontSize = 40.sp
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .width(300.dp)
+                .background(colorResource(id = R.color.green), shape = RoundedCornerShape(10.dp)),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            OutlinedTextField("Email") { email = it }
+
+            OutlinedTextField("Password", true) { password = it }
+
+            Button(
+                onClick = {
+                    FirebaseManager.signup(email, password) { success ->
+                        signupResult = success
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(id = R.color.teal),
+                    contentColor = colorResource(id = R.color.yellow)
+                ),
+                modifier = Modifier
+                    .width(150.dp)
+                    .padding(top = 20.dp, bottom = 20.dp),
+            ) {
+                Text(
+                    text = "Sign Up",
+                    fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
+                    color = colorResource(id = R.color.off_white),
+                    fontSize = 20.sp
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun OutlinedTextField(
+    placeholder: String,
+    isPassword: Boolean = false,
+    onValueChanged: (String) -> Unit
+) {
+    var text by remember { mutableStateOf("") }
+    val paddingValues = if (isPassword) {
+        PaddingValues(10.dp)
+    } else {
+        PaddingValues(top = 30.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
+    }
+
+    OutlinedTextField(
+        value = text,
+        onValueChange = {
+            text = it
+            onValueChanged(it)
+        },
+        modifier = Modifier
+            .width(280.dp)
+            .padding(paddingValues)
+            .background(colorResource(id = R.color.green), shape = RoundedCornerShape(10.dp)),
+        singleLine = true,
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            containerColor = colorResource(id = R.color.off_white),
+            focusedBorderColor = colorResource(id = R.color.blue),
+            unfocusedBorderColor = colorResource(id = R.color.teal)
+        ),
+        textStyle = TextStyle(fontSize = 20.sp, fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))),
+        placeholder = {
+            Text(
+                text = placeholder,
+                style = TextStyle(
+                    fontSize = 20.sp,
+                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+                )
+            )
+        },
+        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+        keyboardOptions = if (isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions.Default,
+    )
 }

@@ -18,3 +18,5 @@
 | 2024/02/20 |       |         |4       |          |            |      | Create Review Form UI |
 | 2024/02/21 |       | 3       |        |          |            |      | Created icons and buttons using M3 |
 | 2024/02/25 |       |         |        |1         |            |      | Splash Screen UI using Compose |
+| 2024/02/28 |       |         |        |          | 4          |      | Signup UI + Backend using Compose |
+| 2024/02/20 |       |         |5       |          |            |      | Create Review Form UI using Compose |
