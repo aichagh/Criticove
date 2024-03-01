@@ -30,6 +30,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.criticove.backend.SubmittedReview
 import com.criticove.m3.ButtonStyles.PrimaryButton
 
 val filled = mutableMapOf(
@@ -46,18 +49,23 @@ class ReviewForm : ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .background(colorResource(id = R.color.off_white))
-            ) {
-                Column {
-                    ReviewHeader()
-                    Selection()
-                    println("this is filled $filled")
-                }
-            }
+            ReviewFormMainContent(rememberNavController())
+        }
+    }
+}
+
+@Composable
+fun ReviewFormMainContent(navController: NavController) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(colorResource(id = R.color.off_white))
+    ) {
+        Column {
+            ReviewHeader()
+            Selection()
+            println("this is filled $filled")
         }
     }
 }
@@ -185,6 +193,7 @@ fun Submission(type: String) {
                             "TV Show" -> submittedReview = filled["TV Show"]
                             "Movie" -> submittedReview = filled["Movie"]
                         }
+                        submittedReview?.let { SubmittedReview(type, reviewScore,  it) }
                     }, "Share")
             }
         }
