@@ -2,7 +2,19 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="SmallTopAppBarExample">
+      <entry key="DashboardHeader">
+        <State />
+      </entry>
+      <entry key="DashboardMainContent">
+        <State />
+      </entry>
+      <entry key="Navbar">
+        <State />
+      </entry>
+      <entry key="PreviewCreateReview">
+        <State />
+      </entry>
+      <entry key="TopGenres">
         <State />
       </entry>
       <entry key="app">
