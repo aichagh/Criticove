@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,6 +62,9 @@ class Signup : ComponentActivity() {
                 composable("Login") {
                     LoginMainContent(navController)
                 }
+                composable("Dashboard") {
+                    DashboardMainContent(navController)
+                }
             }
         }
     }
@@ -71,7 +75,13 @@ fun SignupMainContent(navController: NavController) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
     var signupResult by remember { mutableStateOf(false) }
+    LaunchedEffect(key1 = signupResult) {
+        if (signupResult) {
+            navController.navigate("Dashboard")
+        }
+    }
 
     Column(
         modifier = Modifier

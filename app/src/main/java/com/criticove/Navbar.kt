@@ -1,14 +1,10 @@
 package com.criticove
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -38,6 +34,13 @@ fun Navbar() {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.list),
                 contentDescription = "all reviews", tint = colorResource(id = R.color.off_white)
+            )
+        }
+
+        TextButton(onClick = { TODO() }) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.homepage),
+                contentDescription = "homepage", tint = colorResource(id = R.color.off_white)
             )
         }
 
