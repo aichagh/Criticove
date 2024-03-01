@@ -32,7 +32,7 @@ import com.criticove.backend.delSelectedReview
 import com.criticove.backend.getSelectedReview
 
 // get this data from database, or passed from review select page, currently sample data
-var reviewID = "testReviewID"
+var reviewID = "testReviewID"   // replace with other id
 var reviewData = getSelectedReview(reviewID)
 var reviewType = reviewData["type"]!!
 
