@@ -27,8 +27,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.criticove.backend.SubmittedReview
+import com.criticove.backend.delSelectedReview
 
 // get this data from database, or passed from review select page, currently sample data
+var reviewID = "testReviewID"
 var reviewType = "Book"
 var reviewData = mutableMapOf("Title" to "The Night Circus", "Author" to "Erin Morgenstern",
     "Date Published" to "01/01/2024", "Genre" to "Fantasy", "Book Type" to "eBook",
@@ -117,11 +120,11 @@ fun ReviewDetailsTable(type: String) {
             }
         }
     }
-    SubmitUpdatedReview()
+    SubmitUpdatedReview(type)
 }
 
 @Composable
-fun SubmitUpdatedReview() {
+fun SubmitUpdatedReview(type: String) {
     var saveToDB by remember { mutableStateOf(false) }
 
     Box(
@@ -137,7 +140,8 @@ fun SubmitUpdatedReview() {
             Button(
                 onClick = {
                     updatedReview = reviewData
-                    saveToDB = true
+                    delSelectedReview(reviewID)
+                    updatedReview?.let { SubmittedReview(type, reviewData["Rating"]!!.toInt(), it) }
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.teal),
@@ -146,12 +150,6 @@ fun SubmitUpdatedReview() {
                 modifier = Modifier.weight(1F)
             ) {
                 Text("Submit")
-            }
-
-            if (saveToDB) {
-                TODO()
-
-                saveToDB = false
             }
         }
     }
