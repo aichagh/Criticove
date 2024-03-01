@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,8 +48,9 @@ class ReviewDetails: ComponentActivity(){
                     .background(colorResource(id = R.color.off_white))
             ) {
                 Column() {
-                    ReviewDetailsHeader()
+                    reviewData["Title"]?.let { Topbar(it) }
                     ReviewDetailsTable(reviewType)
+                    Navbar()
                 }
             }
         }
@@ -136,13 +138,18 @@ fun SubmitUpdatedReview() {
                 onClick = {
                     updatedReview = reviewData
                     saveToDB = true
-                }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(id = R.color.teal),
+                    contentColor = colorResource(id = R.color.off_white)
+                ),
+                modifier = Modifier.weight(1F)
             ) {
                 Text("Submit")
             }
 
             if (saveToDB) {
-                // update review details on database
+                TODO()
 
                 saveToDB = false
             }
@@ -159,9 +166,10 @@ fun PreviewReviewDetails() {
             .fillMaxHeight()
             .background(colorResource(id = R.color.off_white))
     ) {
-        Column() {
-            ReviewDetailsHeader()
+        Column {
+            reviewData["Title"]?.let { Topbar(it) }
             ReviewDetailsTable(reviewType)
+            Navbar()
         }
     }
 }

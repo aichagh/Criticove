@@ -1,11 +1,17 @@
 package com.criticove.backend
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import com.google.firebase.Firebase
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import kotlin.reflect.typeOf
 
 open class Review(val type: String, val title: String, val date: String, val genre: String, val rating: Int, val paragraph: String) {
 }
@@ -55,4 +61,35 @@ fun SubmittedReview(type: String, rating: Int, review: MutableMap<String, String
                 Log.e("", "Post Failed", task.exception)
             }
         }
+}
+
+fun getSelectedReview(reviewID: String): MutableMap<String, String> {
+    val user = Firebase.auth.currentUser
+    lateinit var userID : String
+    if (user != null) {
+        userID = user.uid
+        println("the user id is $userID, and reviewId is $reviewID")
+    }
+
+    var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/$userID/Reviews")
+
+    reviewsRef.child(reviewID).get().addOnSuccessListener {
+        if (it.exists()) {
+            println("Here")
+
+            println(it.child("title").value)
+            println(it.child("type").value)
+        } else {
+            println("Don't exist")
+        }
+        println("It is in")
+
+    }.addOnFailureListener {
+        println("Unsuccessful")
+    }
+
+    var message = ""
+
+    var reviewData = mutableMapOf("Title" to message)
+    return reviewData
 }
