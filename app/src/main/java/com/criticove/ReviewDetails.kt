@@ -29,14 +29,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.criticove.backend.SubmittedReview
 import com.criticove.backend.delSelectedReview
+import com.criticove.backend.getSelectedReview
 
 // get this data from database, or passed from review select page, currently sample data
 var reviewID = "testReviewID"
-var reviewType = "Book"
-var reviewData = mutableMapOf("Title" to "The Night Circus", "Author" to "Erin Morgenstern",
-    "Date Published" to "01/01/2024", "Genre" to "Fantasy", "Book Type" to "eBook",
-    "Started" to "01/01/2024", "Finished" to "20/01/2024", "Rating" to "4",
-    "Review" to "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+var reviewData = getSelectedReview(reviewID)
+var reviewType = reviewData["type"]!!
+
+// var reviewData = mutableMapOf("Title" to "The Night Circus", "Author" to "Erin Morgenstern",
+//    "Date Published" to "01/01/2024", "Genre" to "Fantasy", "Book Type" to "eBook",
+//    "Started" to "01/01/2024", "Finished" to "20/01/2024", "Rating" to "4",
+//    "Review" to "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
 
 var updatedReview: MutableMap<String, String>? = null
 
