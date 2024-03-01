@@ -43,42 +43,28 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 import com.criticove.backend.FirebaseManager
 
-class Signup : ComponentActivity() {
+class Login : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.Theme_CritiCove)
         setContent {
-            val navController = rememberNavController()
-            NavHost(navController, startDestination = "Signup") {
-                composable("Signup") {
-                    SignupMainContent(navController)
-                }
-                composable("Login") {
-                    LoginMainContent(navController)
-                }
-                composable("Dashboard") {
-                    DashboardMainContent(navController)
-                }
-            }
+            LoginMainContent(rememberNavController())
         }
     }
 }
 
 @Composable
-fun SignupMainContent(navController: NavController) {
-    var username by remember { mutableStateOf("") }
+fun LoginMainContent(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    var signupResult by remember { mutableStateOf(false) }
-    LaunchedEffect(key1 = signupResult) {
-        if (signupResult) {
+    var loginResult by remember { mutableStateOf(false) }
+    LaunchedEffect(key1 = loginResult) {
+        if (loginResult) {
             navController.navigate("Dashboard")
         }
     }
@@ -86,7 +72,8 @@ fun SignupMainContent(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.blue)),
+            .background(colorResource(id = R.color.blue))
+            .padding(bottom = 50.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -119,16 +106,14 @@ fun SignupMainContent(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            OutlinedTextFieldSignup("Username", true) { username = it }
+            OutlinedTextFieldLogin("Email") { email = it }
 
-            OutlinedTextFieldSignup("Email") { email = it }
-
-            OutlinedTextFieldSignup("Password", false, true) { password = it }
+            OutlinedTextFieldLogin("Password", true) { password = it }
 
             Button(
                 onClick = {
-                    FirebaseManager.signup(username, email, password) { success ->
-                        signupResult = success
+                    FirebaseManager.login(email, password) { success ->
+                        loginResult = success
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
@@ -140,7 +125,7 @@ fun SignupMainContent(navController: NavController) {
                     .padding(top = 20.dp, bottom = 20.dp),
             ) {
                 Text(
-                    text = stringResource(id = R.string.signup),
+                    text = "Login",
                     fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
                     color = colorResource(id = R.color.off_white),
                     fontSize = 20.sp
@@ -154,14 +139,14 @@ fun SignupMainContent(navController: NavController) {
             Text(
                 modifier = Modifier
                     .padding(end = 5.dp),
-                text = stringResource(id = R.string.already_have_account),
+                text = stringResource(id = R.string.dont_have_account),
                 fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
                 color = colorResource(id = R.color.yellow),
                 fontSize = 20.sp
             )
             Text(
-                modifier = Modifier.clickable { navController.navigate("Login") },
-                text = stringResource(id = R.string.login),
+                modifier = Modifier.clickable { navController.navigate("Signup") },
+                text = stringResource(id = R.string.signup),
                 style = TextStyle(textDecoration = TextDecoration.Underline),
                 fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
                 color = colorResource(id = R.color.yellow),
@@ -173,17 +158,16 @@ fun SignupMainContent(navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OutlinedTextFieldSignup(
+fun OutlinedTextFieldLogin(
     placeholder: String,
-    isUsername: Boolean = false,
     isPassword: Boolean = false,
     onValueChanged: (String) -> Unit
 ) {
     var text by remember { mutableStateOf("") }
-    val paddingValues = if (isUsername) {
-        PaddingValues(top = 30.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
-    } else {
+    val paddingValues = if (isPassword) {
         PaddingValues(10.dp)
+    } else {
+        PaddingValues(top = 30.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
     }
 
     OutlinedTextField(

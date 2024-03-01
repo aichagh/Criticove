@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
@@ -12,7 +14,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,7 +30,12 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.criticove.backend.SubmittedReview
 import com.criticove.m3.ButtonStyles.PrimaryButton
 
 val filled = mutableMapOf(
@@ -32,25 +43,32 @@ val filled = mutableMapOf(
     "TV Show" to mutableMapOf("TV Show Title" to "", "Director" to "", "Date Released" to "", "Genre" to "", "Streaming Service" to ""),
     "Movie" to mutableMapOf("Movie Title" to "", "Director" to "" , "Date Released" to "", "Genre" to "", "Publication Company" to ""))
 
+var reviewScore = 1
 var submittedReview: MutableMap<String, String>? = null
+
 
 
 class ReviewForm : ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .background(colorResource(id = R.color.off_white))
-            ) {
-                Column() {
-                    ReviewHeader()
-                    Selection()
-                    println("this is filled $filled")
-                }
-            }
+            ReviewFormMainContent(rememberNavController())
+        }
+    }
+}
+
+@Composable
+fun ReviewFormMainContent(navController: NavController) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(colorResource(id = R.color.off_white))
+    ) {
+        Column {
+            ReviewHeader()
+            Selection()
+            println("this is filled $filled")
         }
     }
 }
@@ -88,10 +106,13 @@ fun Selection() {
                 selected = selectedType == el,
                 onClick = { selectedType = el }
             )
-            Text(
-                text = el,
-                modifier = Modifier.padding(start = 4.dp)
-            )
+            var id = R.drawable.movie_black
+            when(el) {
+                "Book" -> id = R.drawable.book_black
+                "TV Show" -> id = R.drawable.tv_black
+            }
+            Icon(imageVector = ImageVector.vectorResource(id = id),
+                contentDescription = el )
         }
     }
     CreateForm(selectedType)
@@ -100,9 +121,9 @@ fun Selection() {
 fun CreateForm(type:String) {
     var elements =  mutableListOf<String>()
     when (type) {
-        "Book" -> elements = listOf("Book Title","Author", "Date Published", "Genre", "Book Type" ).toMutableList()
-        "TV Show" -> elements = listOf("TV Show Title", "Director", "Date Released", "Genre", "Streaming Service" ).toMutableList()
-        "Movie" -> elements = listOf("Movie Title", "Director", "Date Released", "Genre", "Publication Company" ).toMutableList()
+        "Book" -> elements = listOf("Book Title","Author", "Date Published", "Genre", "Book Type", "Review").toMutableList()
+        "TV Show" -> elements = listOf("TV Show Title", "Director", "Date Released", "Genre", "Streaming Service", "Review" ).toMutableList()
+        "Movie" -> elements = listOf("Movie Title", "Director", "Date Released", "Genre", "Publication Company", "Review" ).toMutableList()
     }
     Box(
         modifier = Modifier
@@ -125,8 +146,8 @@ fun CreateForm(type:String) {
                         // )
                         // println("this is the value: $filled[type]?.get(label)")
                         when(type) {
-                            "Book" -> {OutlinedTextField(value=bookData,onValueChange={bookData=it},
-                                label = {Text( text = label, color = colorResource(id = R.color.blue)) },
+                            "Book" -> {OutlinedTextField(value=bookData, onValueChange={bookData=it},
+                                label = {Text( text = label, color = colorResource(id = R.color.blue),) },
                                 modifier = Modifier
                                     .fillMaxWidth()
                             )
@@ -150,6 +171,7 @@ fun CreateForm(type:String) {
         }
     }
     println("this is filled $filled")
+    StarRating(type)
     Submission(type)
 }
 
@@ -164,17 +186,112 @@ fun Submission(type: String) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp)
+                    .padding(10.dp),
             )
             {
-                PrimaryButton(
-                    onClick = {
-                        when (type) {
-                            "Book" -> submittedReview = filled["Book"]
-                            "TV Show" -> submittedReview = filled["TV Show"]
-                            "Movie" -> submittedReview = filled["Movie"]
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(15.dp)
+                ) {
+                        Button(
+                        onClick = {
+                            when (type) {
+                                "Book" -> submittedReview = filled["Book"]
+                                "TV Show" -> submittedReview = filled["TV Show"]
+                                "Movie" -> submittedReview = filled["Movie"]
+                            }
+                            submittedReview?.let { SubmittedReview(type, reviewScore, it) }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.teal),
+                            contentColor = colorResource(id = R.color.off_white)),
+                            modifier = Modifier.weight(1F)
+                    ) { Text("Share") }
+                    Button(
+                        onClick = {},
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.teal),
+                            contentColor = colorResource(id = R.color.off_white)
+                        ),
+                        modifier = Modifier.weight(1F)
+                    ) { Text("Cancel") }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun StarRating(type: String) {
+    var bookScore by remember { mutableIntStateOf(1) }
+    var tvScore by remember { mutableIntStateOf(1) }
+    var movieScore by remember { mutableIntStateOf(1) }
+    var id = R.drawable.star_empty
+    Box( modifier = Modifier.padding(10.dp).fillMaxWidth()) {
+        Column () {
+            Text(text = "Rating", modifier= Modifier.fillMaxWidth())
+            Row() {
+                for (i in 1..5) {
+                    when (type) {
+                        "Book" -> {
+                            if (i <= bookScore) {
+                                id = R.drawable.star_full
+                            } else {
+                                id = R.drawable.star_empty
+                            }
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = id),
+                                contentDescription = "Star $i",
+                                modifier = Modifier
+                                    .padding(3.dp)
+                                    .clickable(onClick = {
+                                        bookScore = i
+                                        reviewScore = bookScore
+                                    })
+                                    .size(32.dp)
+                            )
                         }
-                    }, "Share")
+
+                        "TV Show" -> {
+                            if (i <= tvScore) {
+                                id = R.drawable.star_full
+                            } else {
+                                id = R.drawable.star_empty
+                            }
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = id),
+                                contentDescription = "Star $i",
+                                modifier = Modifier
+                                    .padding(3.dp)
+                                    .clickable(onClick = {
+                                        tvScore = i
+                                        reviewScore = tvScore
+                                    })
+                                    .size(32.dp)
+                            )
+                        }
+
+                        "Movie" -> {
+                            if (i <= movieScore) {
+                                id = R.drawable.star_full
+                            } else {
+                                id = R.drawable.star_empty
+                            }
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = id),
+                                contentDescription = "Star $i",
+                                modifier = Modifier
+                                    .padding(3.dp)
+                                    .clickable(onClick = {
+                                        movieScore = i
+                                        reviewScore = movieScore
+                                    })
+                                    .size(32.dp)
+                            )
+                        }
+
+                    }
+                }
             }
         }
     }
@@ -188,9 +305,11 @@ fun PreviewCreateReview() {
             .fillMaxHeight()
             .background(colorResource(id = R.color.off_white))
     ) {
-        Column() {
+        Column {
             ReviewHeader()
             Selection()
         }
     }
 }
+
+
