@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
@@ -30,6 +33,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.criticove.backend.SubmittedReview
 import com.criticove.m3.ButtonStyles.PrimaryButton
 
 val filled = mutableMapOf(
@@ -46,18 +52,23 @@ class ReviewForm : ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .background(colorResource(id = R.color.off_white))
-            ) {
-                Column {
-                    ReviewHeader()
-                    Selection()
-                    println("this is filled $filled")
-                }
-            }
+            ReviewFormMainContent(rememberNavController())
+        }
+    }
+}
+
+@Composable
+fun ReviewFormMainContent(navController: NavController) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(colorResource(id = R.color.off_white))
+    ) {
+        Column {
+            ReviewHeader()
+            Selection()
+            println("this is filled $filled")
         }
     }
 }
@@ -175,17 +186,36 @@ fun Submission(type: String) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp)
+                    .padding(10.dp),
             )
             {
-                PrimaryButton(
-                    onClick = {
-                        when (type) {
-                            "Book" -> submittedReview = filled["Book"]
-                            "TV Show" -> submittedReview = filled["TV Show"]
-                            "Movie" -> submittedReview = filled["Movie"]
-                        }
-                    }, "Share")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(15.dp)
+                ) {
+                        Button(
+                        onClick = {
+                            when (type) {
+                                "Book" -> submittedReview = filled["Book"]
+                                "TV Show" -> submittedReview = filled["TV Show"]
+                                "Movie" -> submittedReview = filled["Movie"]
+                            }
+                            submittedReview?.let { SubmittedReview(type, reviewScore, it) }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.teal),
+                            contentColor = colorResource(id = R.color.off_white)),
+                            modifier = Modifier.weight(1F)
+                    ) { Text("Share") }
+                    Button(
+                        onClick = {},
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.teal),
+                            contentColor = colorResource(id = R.color.off_white)
+                        ),
+                        modifier = Modifier.weight(1F)
+                    ) { Text("Cancel") }
+                }
             }
         }
     }
