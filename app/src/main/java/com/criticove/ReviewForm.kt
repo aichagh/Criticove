@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.criticove.backend.SubmittedReview
+import com.criticove.backend.getUserReviews
 import com.criticove.m3.ButtonStyles.PrimaryButton
 
 val filled = mutableMapOf(
@@ -208,7 +209,9 @@ fun Submission(type: String) {
                             modifier = Modifier.weight(1F)
                     ) { Text("Share") }
                     Button(
-                        onClick = {},
+                        onClick = {
+
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colorResource(id = R.color.teal),
                             contentColor = colorResource(id = R.color.off_white)
