@@ -92,18 +92,17 @@ fun getSelectedReview(reviewID: String): MutableMap<String, String> {
 
             var type = it.child("type").value.toString()
             var title = it.child("title").value.toString()
-            var author = it.child("director").value.toString()
             var date = it.child("date").value.toString()
             var genre = it.child("genre").value.toString()
-            var typeType = it.child("book type").value.toString()
-            //var started = it.child("title").value.toString()
-            //var finished = it.child("title").value.toString()
+            //var started = it.child("started").value.toString()
+            //var finished = it.child("finished").value.toString()
             var rating = it.child("rating").value.toString()
             var review = it.child("paragraph").value.toString()
 
             when (type) {
                 "Book" -> {
-                    author = it.child("author").value.toString()
+                    var author = it.child("author").value.toString()
+                    var typeType = it.child("book type").value.toString()
 
                     reviewData = mutableMapOf("Title" to title, "Author" to author,
                         "Date Published" to date, "Genre" to genre, "Book Type" to typeType,
@@ -111,7 +110,8 @@ fun getSelectedReview(reviewID: String): MutableMap<String, String> {
                         "Review" to review, "type" to type)
                 }
                 "TV Show" -> {
-                    typeType = it.child("streamingService").value.toString()
+                    var author = it.child("director").value.toString()
+                    var typeType = it.child("streamingService").value.toString()
 
                     reviewData = mutableMapOf("Title" to title, "Director" to author,
                         "Date Published" to date, "Genre" to genre, "Streaming Service" to typeType,
@@ -119,7 +119,8 @@ fun getSelectedReview(reviewID: String): MutableMap<String, String> {
                         "Review" to review, "type" to type)
                 }
                 "Movie" -> {
-                    typeType = it.child("publicationCompany").value.toString()
+                    var author = it.child("director").value.toString()
+                    var typeType = it.child("publicationCompany").value.toString()
 
                     reviewData = mutableMapOf("Title" to title, "Director" to author,
                         "Date Published" to date, "Genre" to genre, "Publication Company" to typeType,
