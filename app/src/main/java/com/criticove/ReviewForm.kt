@@ -135,10 +135,12 @@ fun Selection() {
 @Composable
 fun CreateForm(type:String) {
     var elements =  mutableListOf<String>()
+    var text by remember { mutableStateOf("") }
+
     when (type) {
-        "Book" -> elements = listOf("Book Title","Author", "Date Published", "Genre", "Book Type", "Review").toMutableList()
-        "TV Show" -> elements = listOf("TV Show Title", "Director", "Date Released", "Genre", "Streaming Service", "Review" ).toMutableList()
-        "Movie" -> elements = listOf("Movie Title", "Director", "Date Released", "Genre", "Publication Company", "Review" ).toMutableList()
+        "Book" -> elements = listOf("Book Title","Author", "Date Published", "Genre", "Book Type").toMutableList()
+        "TV Show" -> elements = listOf("TV Show Title", "Director", "Date Released", "Genre", "Streaming Service").toMutableList()
+        "Movie" -> elements = listOf("Movie Title", "Director", "Date Released", "Genre", "Publication Company").toMutableList()
     }
         Column(
             modifier = Modifier
@@ -156,6 +158,7 @@ fun CreateForm(type:String) {
                     "Book" -> { OutlinedTextField(
                         value = bookData,
                         onValueChange = { bookData = it },
+                        singleLine = true,
                         label = { Text( text = label, color = colorResource(id = R.color.coolGrey),) },
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -170,6 +173,7 @@ fun CreateForm(type:String) {
                     "TV Show" -> { OutlinedTextField(
                         value = tvData,
                         onValueChange = { tvData = it },
+                        singleLine = true,
                         label = { Text( text = label, color = colorResource(id = R.color.coolGrey),) },
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -184,6 +188,7 @@ fun CreateForm(type:String) {
                     "Movie" -> {OutlinedTextField(
                         value = movieData,
                         onValueChange = { movieData = it },
+                        singleLine = true,
                         label = { Text( text = label, color = colorResource(id = R.color.coolGrey),) },
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -196,6 +201,18 @@ fun CreateForm(type:String) {
                         filled["Movie"]?.set(label, movieData).toString()}
                 }
             }
+            OutlinedTextField(
+                value = text,
+                onValueChange = { text = it },
+                label = { Text( text = "Review", color = colorResource(id = R.color.coolGrey),) },
+                modifier = Modifier
+                    .fillMaxWidth(),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = colorResource(id = R.color.blue),
+                    unfocusedBorderColor = colorResource(id = R.color.teal)
+                ),
+                shape = RoundedCornerShape(10.dp)
+            )
         }
     println("this is filled $filled")
     StarRating(type)
