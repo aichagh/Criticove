@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
@@ -27,12 +29,14 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.criticove.backend.SubmittedReview
 import com.criticove.backend.delSelectedReview
 import com.criticove.backend.getSelectedReview
 
 // get this data from database, or passed from review select page, currently sample data
-var reviewID = "testReviewID"   // replace with other id
+var reviewID = "-Nrs05XRRjjFX33aDvSd"   // replace with other id
 var reviewData = getSelectedReview(reviewID)
 var reviewType = reviewData["type"]!!
 
@@ -47,18 +51,23 @@ class ReviewDetails: ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .background(colorResource(id = R.color.off_white))
-            ) {
-                Column() {
-                    reviewData["Title"]?.let { Topbar(it) }
-                    ReviewDetailsTable(reviewType)
-                    Navbar()
-                }
-            }
+            ReviewDetailsMainContent(rememberNavController())
+        }
+    }
+}
+
+@Composable
+fun ReviewDetailsMainContent(navController: NavController) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .verticalScroll(rememberScrollState())
+            .background(colorResource(id = R.color.off_white))
+    ) {
+        Column() {
+            reviewData["Title"]?.let { Topbar(it) }
+            ReviewDetailsTable(reviewType)
         }
     }
 }
@@ -170,7 +179,6 @@ fun PreviewReviewDetails() {
         Column {
             reviewData["Title"]?.let { Topbar(it) }
             ReviewDetailsTable(reviewType)
-            Navbar()
         }
     }
 }
