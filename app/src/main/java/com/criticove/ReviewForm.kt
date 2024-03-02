@@ -23,6 +23,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonColors
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -60,17 +62,15 @@ class ReviewForm : ComponentActivity(){
 
 @Composable
 fun ReviewFormMainContent(navController: NavController) {
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
             .background(colorResource(id = R.color.off_white))
     ) {
-        Column {
-            ReviewHeader()
-            Selection()
-            println("this is filled $filled")
-        }
+        ReviewHeader()
+        Selection()
+        println("this is filled $filled")
     }
 }
 
@@ -97,23 +97,31 @@ fun Selection() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(30.dp)
-            .padding(horizontal = 10.dp)
-            .background(colorResource(id = R.color.off_white)),
+            .height(30.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         val mediaType = listOf("Book", "TV Show", "Movie")
         mediaType.forEach{ el ->
-            RadioButton(
-                selected = selectedType == el,
-                onClick = { selectedType = el }
-            )
-            var id = R.drawable.movie_black
-            when(el) {
-                "Book" -> id = R.drawable.book_black
-                "TV Show" -> id = R.drawable.tv_black
+            Row(
+                modifier = Modifier
+                    .fillMaxHeight()
+            ) {
+                RadioButton(
+                    selected = selectedType == el,
+                    onClick = { selectedType = el},
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = colorResource(id = R.color.blue),
+                        unselectedColor = colorResource(id = R.color.blue),
+                    )
+                )
+                var id = R.drawable.movie_black
+                when(el) {
+                    "Book" -> id = R.drawable.book_black
+                    "TV Show" -> id = R.drawable.tv_black
+                }
+                Icon(imageVector = ImageVector.vectorResource(id = id),
+                    contentDescription = el )
             }
-            Icon(imageVector = ImageVector.vectorResource(id = id),
-                contentDescription = el )
         }
     }
     CreateForm(selectedType)
@@ -126,51 +134,39 @@ fun CreateForm(type:String) {
         "TV Show" -> elements = listOf("TV Show Title", "Director", "Date Released", "Genre", "Streaming Service", "Review" ).toMutableList()
         "Movie" -> elements = listOf("Movie Title", "Director", "Date Released", "Genre", "Publication Company", "Review" ).toMutableList()
     }
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(colorResource(id = R.color.off_white))
-            .padding(10.dp)
-    ) {
-        Column() {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(colorResource(id = R.color.off_white))
+        )
+        {
             elements.forEach { label ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column() {
-                        var bookData by remember {mutableStateOf("")}
-                        var movieData by remember {mutableStateOf("")}
-                        var tvData by remember {mutableStateOf("")}
-                        //Text(
-                        //text = label
-                        // )
-                        // println("this is the value: $filled[type]?.get(label)")
-                        when(type) {
-                            "Book" -> {OutlinedTextField(value=bookData, onValueChange={bookData=it},
-                                label = {Text( text = label, color = colorResource(id = R.color.blue),) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            )
-                                filled["Book"]?.set(label, bookData).toString()}
-                            "TV Show" -> {OutlinedTextField(value=tvData,onValueChange={tvData=it},
-                                label = {Text( text = label, color = colorResource(id = R.color.blue)) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            )
-                                filled["TV Show"]?.set(label, tvData).toString()}
-                            "Movie" -> {OutlinedTextField(value=movieData,onValueChange={movieData=it},
-                                label = {Text( text = label, color = colorResource(id = R.color.blue)) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            )
-                                filled["Movie"]?.set(label, movieData).toString()}
-                        }
-                    }
+                var bookData by remember {mutableStateOf("")}
+                var movieData by remember {mutableStateOf("")}
+                var tvData by remember {mutableStateOf("")}
+
+                when(type) {
+                    "Book" -> {OutlinedTextField(value=bookData, onValueChange={bookData=it},
+                        label = {Text( text = label, color = colorResource(id = R.color.blue),) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                        filled["Book"]?.set(label, bookData).toString()}
+                    "TV Show" -> {OutlinedTextField(value=tvData,onValueChange={tvData=it},
+                        label = {Text( text = label, color = colorResource(id = R.color.blue)) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                        filled["TV Show"]?.set(label, tvData).toString()}
+                    "Movie" -> {OutlinedTextField(value=movieData,onValueChange={movieData=it},
+                        label = {Text( text = label, color = colorResource(id = R.color.blue)) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                        filled["Movie"]?.set(label, movieData).toString()}
                 }
             }
         }
-    }
     println("this is filled $filled")
     StarRating(type)
     Submission(type)
@@ -178,49 +174,34 @@ fun CreateForm(type:String) {
 
 @Composable
 fun Submission(type: String) {
-    Box(
+    Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .background(colorResource(id = R.color.off_white))
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(15.dp)
     ) {
-        Column() {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-            )
-            {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(15.dp)
-                ) {
-                        Button(
-                        onClick = {
-                            when (type) {
-                                "Book" -> submittedReview = filled["Book"]
-                                "TV Show" -> submittedReview = filled["TV Show"]
-                                "Movie" -> submittedReview = filled["Movie"]
-                            }
-                            submittedReview?.let { SubmittedReview(type, reviewScore, it) }
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.teal),
-                            contentColor = colorResource(id = R.color.off_white)),
-                            modifier = Modifier.weight(1F)
-                    ) { Text("Share") }
-                    Button(
-                        onClick = {
-
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.teal),
-                            contentColor = colorResource(id = R.color.off_white)
-                        ),
-                        modifier = Modifier.weight(1F)
-                    ) { Text("Cancel") }
+        Button(
+            onClick = {
+                when (type) {
+                    "Book" -> submittedReview = filled["Book"]
+                    "TV Show" -> submittedReview = filled["TV Show"]
+                    "Movie" -> submittedReview = filled["Movie"]
                 }
-            }
-        }
+                submittedReview?.let { SubmittedReview(type, reviewScore, it) }
+                      },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.teal),
+                contentColor = colorResource(id = R.color.off_white)),
+            modifier = Modifier.weight(1F)
+        ) { Text("Share") }
+
+        Button(
+            onClick = {},
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.teal),
+                contentColor = colorResource(id = R.color.off_white)
+            ),
+            modifier = Modifier.weight(1F)
+        ) { Text("Cancel") }
     }
 }
 
@@ -230,8 +211,7 @@ fun StarRating(type: String) {
     var tvScore by remember { mutableIntStateOf(1) }
     var movieScore by remember { mutableIntStateOf(1) }
     var id = R.drawable.star_empty
-    Box( modifier = Modifier.padding(10.dp).fillMaxWidth()) {
-        Column () {
+        Column ( modifier = Modifier.padding(10.dp).fillMaxWidth()) {
             Text(text = "Rating", modifier= Modifier.fillMaxWidth())
             Row() {
                 for (i in 1..5) {
@@ -298,18 +278,21 @@ fun StarRating(type: String) {
             }
         }
     }
-}
 @Preview
 @Composable
 fun PreviewCreateReview() {
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .background(colorResource(id = R.color.off_white))
+            .background(colorResource(id = R.color.off_white)),
     ) {
-        Column {
-            ReviewHeader()
+        ReviewHeader()
+        Column(
+            modifier = Modifier
+                .padding(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             Selection()
         }
     }
