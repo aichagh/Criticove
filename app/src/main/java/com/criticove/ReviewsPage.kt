@@ -43,7 +43,7 @@ class ReviewsPage: ComponentActivity() {
 
                 }
 
-                Navbar()
+                NavBarPreview()
             }
         }
     }
@@ -132,6 +132,6 @@ fun ReviewsPagePreview() {
             }
         }
 
-        Navbar()
+        NavBarPreview()
     }
 }
