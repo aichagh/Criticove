@@ -142,7 +142,7 @@ fun FriendsMainContent(navController: NavController) {
             }
         }
 
-        Navbar()
+        Navbar(navController)
     }
 }
 

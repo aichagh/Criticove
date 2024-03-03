@@ -28,7 +28,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -88,7 +87,7 @@ fun ReviewPageMainContent(navController: NavController) {
             displayReviews(userModel.reviewList)
         }
 
-        Navbar()
+        Navbar(navController)
     }
 
 }
@@ -177,8 +176,7 @@ fun displayReviews(reviewList: StateFlow<MutableList<Review>>) {
     }
 }
 @Composable
-@Preview
-fun ReviewsPagePreview() {
+fun ReviewsPagePreview(navController: NavController) {
     val userModel = userModel()
     Column (
         modifier = Modifier
@@ -201,6 +199,6 @@ fun ReviewsPagePreview() {
             }
         }
 
-        Navbar()
+        Navbar(navController)
     }
 }
