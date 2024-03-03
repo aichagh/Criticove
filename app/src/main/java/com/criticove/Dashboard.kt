@@ -72,7 +72,7 @@ fun DashboardMainContent(navController: NavController) {
             ProgressTracker(navController)
         }
 
-        Navbar()
+        Navbar(navController)
     }
 }
 

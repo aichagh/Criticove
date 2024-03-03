@@ -41,10 +41,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.criticove.backend.SubmittedReview
-import com.criticove.backend.getUserReviews
+
 import com.criticove.m3.ButtonStyles.PrimaryButton
+import android.content.Context
+import android.content.Intent
 
 val filled = mutableMapOf(
     "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Date Published" to "", "Genre" to "", "Book Type" to ""),
@@ -56,11 +61,19 @@ var submittedReview: MutableMap<String, String>? = null
 
 
 
-class ReviewForm : ComponentActivity(){
+class ReviewForm : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ReviewFormMainContent(rememberNavController())
+            val navController = rememberNavController()
+            NavHost(navController, startDestination = "ReviewForm") {
+                composable("ReviewForm") {
+                    ReviewFormMainContent(navController)
+                }
+                composable("ReviewPage") {
+                    ReviewPageMainContent(navController)
+                }
+            }
         }
     }
 }
@@ -97,7 +110,7 @@ fun ReviewHeader() {
     }
 }
 @Composable
-fun Selection() {
+fun Selection(navController: NavController) {
     var selectedType by remember { mutableStateOf("Book") }
     Row(
         modifier = Modifier
@@ -129,11 +142,11 @@ fun Selection() {
             }
         }
     }
-    CreateForm(selectedType)
+    CreateForm(selectedType, navController)
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateForm(type:String) {
+fun CreateForm(type:String, navController: NavController) {
     var elements =  mutableListOf<String>()
     var text by remember { mutableStateOf("") }
 
@@ -217,7 +230,7 @@ fun CreateForm(type:String) {
         }
     println("this is filled $filled")
     StarRating(type)
-    Submission(type)
+    Submission(type, navController)
 }
 
 @Composable
