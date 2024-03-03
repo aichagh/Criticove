@@ -107,7 +107,7 @@ fun Stars() {
 @Composable
 fun Review(title: String = "Title",
            author: String = "Author",
-           year: Number = 0,
+           year: String = "1999",
            rating: Number = 1) {
     Box(
         modifier = Modifier
@@ -162,15 +162,15 @@ fun displayReviews(reviewList: StateFlow<MutableList<Review>>) {
                 val bookReview: BookReview = review
                 println("here book review")
                 println("this is the review $review")
-                Review(bookReview.title, bookReview.author, 1999, 9)
+                Review(bookReview.title, bookReview.author, bookReview.date, bookReview.rating)
             }
             is TVShowReview -> {
                 val tvShowReview: TVShowReview = review
-                Review(tvShowReview.title, tvShowReview.director, 1999, 9)
+                Review(tvShowReview.title, tvShowReview.director,tvShowReview.date, tvShowReview.rating)
             }
             is MovieReview -> {
-                val tvShowReview: MovieReview = review
-                Review(tvShowReview.title, tvShowReview.director, 1999, 9)
+                val movieReview: MovieReview = review
+                Review(movieReview.title, movieReview.director, movieReview.date, movieReview.rating)
             }
         }
     }

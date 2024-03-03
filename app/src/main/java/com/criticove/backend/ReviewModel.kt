@@ -21,14 +21,14 @@ import kotlin.coroutines.suspendCoroutine
 
 
 class userModel: ViewModel {
-    private val _userID: MutableStateFlow<String> = MutableStateFlow("ZFZrCVjIR0P76TqT5lxX0W3dUI93")
-    val userID: StateFlow<String> = _userID
+    //private val _userID: MutableStateFlow<String> = MutableStateFlow("ZFZrCVjIR0P76TqT5lxX0W3dUI93")
+    var userID: String = "ZFZrCVjIR0P76TqT5lxX0W3dUI93"
     private val _reviewList: MutableStateFlow<MutableList<Review>> = MutableStateFlow(mutableListOf())
     val reviewList: StateFlow<MutableList<Review>> = _reviewList
 
     fun getReviews() {
-        println("this is the user id : ${_userID.value}")
-            var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/${_userID.value}/Reviews")
+        println("this is the user id : ${userID}")
+            var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Reviews")
             println("the users ${this.userID} reviews keys and their corresponding values: ,")
             reviewsRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -37,11 +37,15 @@ class userModel: ViewModel {
                         val reviewKey = reviewSnapshot.key
                         val review = reviewSnapshot.value as Map<String, Any>
                         lateinit var reviewPost: Review
+                        //var rLong = 3
+                        //rLong = review["rating"] as Int
+                        val r = 3
+
                         when (review["type"]) {
                             "Book" -> {
                                 reviewPost = BookReview(
                                     "Book", review["title"].toString(), review["date"].toString(),
-                                    review["genre"].toString(), 3, review["paragraph"].toString(),
+                                    review["genre"].toString(), r , review["paragraph"].toString(),
                                     review["author"].toString(), review["booktype"].toString()
                                 )
                             }
@@ -52,7 +56,7 @@ class userModel: ViewModel {
                                     review["title"].toString(),
                                     review["date"].toString(),
                                     review["genre"].toString(),
-                                    3,
+                                    r,
                                     review["paragraph"].toString(),
                                     review["director"].toString(),
                                     review["publicationcompany"].toString()
@@ -62,7 +66,7 @@ class userModel: ViewModel {
                             "TV Show" -> {
                                 reviewPost = TVShowReview(
                                     "Book", review["title"].toString(), review["date"].toString(),
-                                    review["genre"].toString(), 3, review["paragraph"].toString(),
+                                    review["genre"].toString(), r, review["paragraph"].toString(),
                                     review["director"].toString(), review["streamingservice"].toString()
                                 )
                             }
@@ -85,14 +89,12 @@ class userModel: ViewModel {
 
         }
     //var friends: List<String>
-    //UNCOMMENT THIS TO USE LOGGED IN USER RATHER THAN DEFAULT TEST
     constructor() {
         val user = Firebase.auth.currentUser
-//        if (user != null) {
-//            this.userID = user.uid
-//            println("the user id is $userID")
-//        }
-
+        if (user != null) {
+          this.userID = user.uid
+          println("in the constructor user id is $userID")
+       }
     }
 }
 open class Review(val type: String, val title: String, val date: String, val genre: String, val rating: Int, val paragraph: String) {
@@ -116,7 +118,7 @@ fun SubmittedReview(type: String, rating: Int, review: MutableMap<String, String
         userID = user.uid
         println("the user id is $userID")
     }
-    userID = "ZFZrCVjIR0P76TqT5lxX0W3dUI93"
+    //userID = "ZFZrCVjIR0P76TqT5lxX0W3dUI93"
     var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/$userID/Reviews")
     lateinit var reviewPost: Review
     when (type) {
