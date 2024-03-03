@@ -34,10 +34,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.criticove.backend.SubmittedReview
-import com.criticove.backend.getUserReviews
+
 import com.criticove.m3.ButtonStyles.PrimaryButton
+import android.content.Context
+import android.content.Intent
 
 val filled = mutableMapOf(
     "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Date Published" to "", "Genre" to "", "Book Type" to ""),
@@ -49,11 +54,19 @@ var submittedReview: MutableMap<String, String>? = null
 
 
 
-class ReviewForm : ComponentActivity(){
+class ReviewForm : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ReviewFormMainContent(rememberNavController())
+            val navController = rememberNavController()
+            NavHost(navController, startDestination = "ReviewForm") {
+                composable("ReviewForm") {
+                    ReviewFormMainContent(navController)
+                }
+                composable("ReviewPage") {
+                    ReviewPageMainContent(navController)
+                }
+            }
         }
     }
 }
@@ -68,7 +81,7 @@ fun ReviewFormMainContent(navController: NavController) {
     ) {
         Column {
             ReviewHeader()
-            Selection()
+            Selection(navController)
             println("this is filled $filled")
         }
     }
@@ -92,7 +105,7 @@ fun ReviewHeader() {
     }
 }
 @Composable
-fun Selection() {
+fun Selection(navController: NavController) {
     var selectedType by remember { mutableStateOf("Book") }
     Row(
         modifier = Modifier
@@ -116,10 +129,10 @@ fun Selection() {
                 contentDescription = el )
         }
     }
-    CreateForm(selectedType)
+    CreateForm(selectedType, navController)
 }
 @Composable
-fun CreateForm(type:String) {
+fun CreateForm(type:String, navController: NavController) {
     var elements =  mutableListOf<String>()
     when (type) {
         "Book" -> elements = listOf("Book Title","Author", "Date Published", "Genre", "Book Type", "Review").toMutableList()
@@ -173,11 +186,11 @@ fun CreateForm(type:String) {
     }
     println("this is filled $filled")
     StarRating(type)
-    Submission(type)
+    Submission(type, navController)
 }
 
 @Composable
-fun Submission(type: String) {
+fun Submission(type: String, navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -202,6 +215,7 @@ fun Submission(type: String) {
                                 "Movie" -> submittedReview = filled["Movie"]
                             }
                             submittedReview?.let { SubmittedReview(type, reviewScore, it) }
+                            navController.navigate("ReviewPage")
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colorResource(id = R.color.teal),
@@ -230,7 +244,9 @@ fun StarRating(type: String) {
     var tvScore by remember { mutableIntStateOf(1) }
     var movieScore by remember { mutableIntStateOf(1) }
     var id = R.drawable.star_empty
-    Box( modifier = Modifier.padding(10.dp).fillMaxWidth()) {
+    Box( modifier = Modifier
+        .padding(10.dp)
+        .fillMaxWidth()) {
         Column () {
             Text(text = "Rating", modifier= Modifier.fillMaxWidth())
             Row() {
@@ -310,7 +326,7 @@ fun PreviewCreateReview() {
     ) {
         Column {
             ReviewHeader()
-            Selection()
+            //Selection(navController)
         }
     }
 }
