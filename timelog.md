@@ -24,7 +24,7 @@
 | 2024/02/28 |       |         |        |          |            | 1    | Create Review List UI |
 | 2024/02/29 |       |         |        |          | 2          |      | Added username to Firebase, Login UI + Backend, Navigation support |
 | 2024/02/29 |       |         |        |          | 9.5        |      | Dashboard UI, Navigation after successful Signup & Login |
-| 2024/03/01 |       |         |        |5         |            |      | Friends UI and Functionality |
+| 2024/03/01 |       |         |        |6         |            |      | Friends UI and Functionality |
 | 2024/03/01 |       |         |15      |1.5       |            |      | ViewModel and Review Backend from Firebase |
 | 2024/03/01 |       | 3       |        |          |            |      | movies/TV info API search and menu work |
 | 2024/03/02 |       | 4       |        |          |            |      | navbar navigation setup |
