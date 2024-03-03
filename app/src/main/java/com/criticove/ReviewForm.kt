@@ -204,6 +204,7 @@ fun CreateForm(type:String) {
             OutlinedTextField(
                 value = text,
                 onValueChange = { text = it },
+                minLines = 7,
                 label = { Text( text = "Review", color = colorResource(id = R.color.coolGrey),) },
                 modifier = Modifier
                     .fillMaxWidth(),
