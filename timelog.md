@@ -22,10 +22,13 @@
 | 2024/02/20 |       |         |5       |          |            |      | Create Review Form UI using Compose |
 | 2024/02/28 |       |         |        |          |            | 4.5  | Create Review Details UI |
 | 2024/02/28 |       |         |        |          |            | 1    | Create Review List UI |
+| 2024/02/28 | 4     |         |        |          |            |      | Recreate Navbar / Topbar in Compose |
 | 2024/02/29 |       |         |        |          | 2          |      | Added username to Firebase, Login UI + Backend, Navigation support |
 | 2024/02/29 |       |         |        |          | 9.5        |      | Dashboard UI, Navigation after successful Signup & Login |
+| 2024/02/29 | 3.5   |         |        |          |            |      | Created review cards + updated navbar / topbar |
 | 2024/03/01 |       |         |        |6         |            |      | Friends UI and Functionality |
 | 2024/03/01 |       |         |15      |1.5       |            |      | ViewModel and Review Backend from Firebase |
 | 2024/03/01 |       | 3       |        |          |            |      | movies/TV info API search and menu work |
+| 2024/03/01 | 3     |         |        |          |            |      | Updating the create review UI |
 | 2024/03/02 |       | 4       |        |          |            |      | navbar navigation setup |
 | 2024/03/03 |       |         |        |          | 0.5        |      | Navbar navigation complete |
