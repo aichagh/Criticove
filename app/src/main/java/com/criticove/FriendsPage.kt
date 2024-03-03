@@ -1,12 +1,18 @@
 package com.criticove
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -14,12 +20,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,9 +43,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
@@ -99,7 +117,12 @@ fun FriendsMainContent(navController: NavController) {
                     focusedBorderColor = colorResource(id = R.color.blue),
                     unfocusedBorderColor = colorResource(id = R.color.teal)
                 ),
-                label = { Text("Search friends ...") },
+                label = { Text(
+                    text = "Search friends ...",
+                    style = TextStyle(
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+                    )) },
                 leadingIcon = {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.search),
@@ -156,7 +179,13 @@ fun Friends(friend: Friend) {
                     .align(Alignment.CenterVertically),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text("${friend.firstName} ${friend.lastName}")
+                Text(text = "${friend.firstName} ${friend.lastName}",
+                    style = TextStyle(
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+                    )
+                )
+
             }
 
             TextButton(
