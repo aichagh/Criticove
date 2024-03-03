@@ -70,7 +70,7 @@ class ReviewForm : ComponentActivity() {
                 composable("ReviewForm") {
                     ReviewFormMainContent(navController)
                 }
-                composable("ReviewPage") {
+                composable("Reviews") {
                     ReviewPageMainContent(navController)
                 }
             }
@@ -87,7 +87,7 @@ fun ReviewFormMainContent(navController: NavController) {
             .background(colorResource(id = R.color.off_white))
     ) {
         ReviewHeader()
-        Selection()
+        Selection(navController)
         println("this is filled $filled")
     }
 }
@@ -234,7 +234,7 @@ fun CreateForm(type:String, navController: NavController) {
 }
 
 @Composable
-fun Submission(type: String) {
+fun Submission(type: String, navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -247,7 +247,9 @@ fun Submission(type: String) {
                     "TV Show" -> submittedReview = filled["TV Show"]
                     "Movie" -> submittedReview = filled["Movie"]
                 }
-                submittedReview?.let { SubmittedReview(type, reviewScore, it) }
+                submittedReview?.let { SubmittedReview(type, reviewScore, it)
+                    navController.navigate("Reviews")
+                }
                       },
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.teal),
@@ -256,7 +258,11 @@ fun Submission(type: String) {
         ) { Text("Share") }
 
         Button(
-            onClick = {},
+            onClick = {
+                //TODO : CLEAR UP THE MAP VALUES/ALL FORM VALUES
+                navController.navigate("Reviews")
+
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.teal),
                 contentColor = colorResource(id = R.color.off_white)
@@ -354,7 +360,7 @@ fun PreviewCreateReview() {
                 .padding(10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Selection()
+            //Selection()
         }
     }
 }
