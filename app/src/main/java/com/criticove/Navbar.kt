@@ -12,12 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @Composable
-@Preview
-fun Navbar() {
+fun Navbar(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -25,26 +24,26 @@ fun Navbar() {
             .background(colorResource(id = R.color.blue)),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        TextButton(onClick = { TODO() }) {
+        TextButton(onClick = { navController.navigate("ReviewForm") }) {
             Icon(imageVector = ImageVector.vectorResource(id = R.drawable.write),
                 contentDescription = "new review", tint = colorResource(id = R.color.off_white) )
         }
 
-        TextButton(onClick = { TODO() }) {
+        TextButton(onClick = { navController.navigate("Reviews") }) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.list),
                 contentDescription = "all reviews", tint = colorResource(id = R.color.off_white)
             )
         }
 
-        TextButton(onClick = { TODO() }) {
+        TextButton(onClick = { navController.navigate("Dashboard") }) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.homepage),
                 contentDescription = "homepage", tint = colorResource(id = R.color.off_white)
             )
         }
 
-        TextButton(onClick = { TODO() }) {
+        TextButton(onClick = { navController.navigate("Friends") }) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.people_white),
                 contentDescription = "friends", tint = colorResource(id = R.color.off_white)
