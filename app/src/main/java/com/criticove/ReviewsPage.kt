@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -111,27 +112,39 @@ fun Review(title: String = "Title",
 @Composable
 @Preview
 fun ReviewsPagePreview() {
-    Column (
-        modifier = Modifier
-            .background(colorResource(id = R.color.off_white))
-            .fillMaxHeight()
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.SpaceBetween
-    ){
+    var showDrawer by remember { mutableStateOf(false) }
 
-        Topbar()
-
+    if (showDrawer) {
+        // Drawer content
+        DrawerContent(onMenuItemClicked = { menuItem ->
+            // Handle menu item click
+            showDrawer = false
+        })
+    } else {
         Column(
-            verticalArrangement = Arrangement.Top,
             modifier = Modifier
-                .weight(1F)
-        ){
-            repeat(3) {
-                Review()
-            }
-        }
+                .background(colorResource(id = R.color.off_white))
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
 
-        Navbar()
+            Topbar(onMenuClicked = {
+                showDrawer = true
+            })
+
+            Column(
+                verticalArrangement = Arrangement.Top,
+                modifier = Modifier
+                    .weight(1F)
+            ) {
+                repeat(3) {
+                    Review()
+                }
+            }
+
+            Navbar()
+        }
     }
 }
