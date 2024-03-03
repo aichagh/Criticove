@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
@@ -116,7 +117,12 @@ fun FriendsMainContent(navController: NavController) {
                     focusedBorderColor = colorResource(id = R.color.blue),
                     unfocusedBorderColor = colorResource(id = R.color.teal)
                 ),
-                label = { Text("Search friends ...") },
+                label = { Text(
+                    text = "Search friends ...",
+                    style = TextStyle(
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+                    )) },
                 leadingIcon = {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.search),
@@ -173,7 +179,13 @@ fun Friends(friend: Friend) {
                     .align(Alignment.CenterVertically),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text("${friend.firstName} ${friend.lastName}")
+                Text(text = "${friend.firstName} ${friend.lastName}",
+                    style = TextStyle(
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+                    )
+                )
+
             }
 
             TextButton(
