@@ -28,4 +28,4 @@
 | 2024/03/01 |       |         |15      |1.5       |            |      | ViewModel and Review Backend from Firebase |
 | 2024/03/01 |       | 3       |        |          |            |      | movies/TV info API search and menu work |
 | 2024/03/02 |       | 4       |        |          |            |      | navbar navigation setup |
-
+| 2024/03/03 |       |         |        |          | 0.5        |      | Navbar navigation complete |
