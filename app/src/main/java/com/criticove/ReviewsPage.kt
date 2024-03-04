@@ -84,7 +84,7 @@ fun ReviewPageMainContent(navController: NavController) {
                 .weight(1F)
         ) {
             print("after calling ${userModel.reviewList}")
-            displayReviews(userModel.reviewList)
+            displayReviews(navController, userModel.reviewList)
         }
 
         Navbar(navController)
@@ -112,7 +112,8 @@ fun Stars(rating: Int) {
 fun Review(title: String = "Title",
            author: String = "Author",
            year: String = "1999",
-           rating: Int = 1) {
+           rating: Int = 1,
+           navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -144,7 +145,7 @@ fun Review(title: String = "Title",
             TextButton(
                 modifier = Modifier
                     .width(50.dp),
-                onClick = { }
+                onClick = { navController.navigate("ViewReview") }
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.bookmark_empty),
@@ -156,7 +157,7 @@ fun Review(title: String = "Title",
 }
 
 @Composable
-fun displayReviews(reviewList: StateFlow<MutableList<Review>>) {
+fun displayReviews(navController: NavController, reviewList: StateFlow<MutableList<Review>>) {
     val reviewsList by reviewList.collectAsState()
     println("the review list in reviewspage is $reviewsList")
     println(reviewList)
@@ -166,15 +167,15 @@ fun displayReviews(reviewList: StateFlow<MutableList<Review>>) {
                 val bookReview: BookReview = review
                 println("here book review")
                 println("this is the review $review")
-                Review(bookReview.title, bookReview.author, bookReview.date, bookReview.rating)
+                Review(bookReview.title, bookReview.author, bookReview.date, bookReview.rating, navController)
             }
             is TVShowReview -> {
                 val tvShowReview: TVShowReview = review
-                Review(tvShowReview.title, tvShowReview.director,tvShowReview.date, tvShowReview.rating)
+                Review(tvShowReview.title, tvShowReview.director,tvShowReview.date, tvShowReview.rating, navController)
             }
             is MovieReview -> {
                 val movieReview: MovieReview = review
-                Review(movieReview.title, movieReview.director, movieReview.date, movieReview.rating)
+                Review(movieReview.title, movieReview.director, movieReview.date, movieReview.rating, navController)
             }
         }
     }
@@ -199,7 +200,7 @@ fun ReviewsPagePreview(navController: NavController) {
                 .weight(1F)
         ){
             repeat(3) {
-                Review()
+                //Review()
             }
         }
 

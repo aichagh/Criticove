@@ -24,6 +24,9 @@ class userModel: ViewModel {
     var userID: String = "ZFZrCVjIR0P76TqT5lxX0W3dUI93"
     private val _reviewList: MutableStateFlow<MutableList<Review>> = MutableStateFlow(mutableListOf())
     val reviewList: StateFlow<MutableList<Review>> = _reviewList
+    private val _selReview: MutableStateFlow<Review> = MutableStateFlow(Review("Book",
+        "test", "test", "test", 4, "test"))
+    val selReview: StateFlow<Review> = _selReview
 
     fun getReviews() {
         println("this is the user id : ${userID}")
@@ -91,6 +94,75 @@ class userModel: ViewModel {
             })
 
         }
+
+    fun getSelReview(reviewTitle: String) {
+        println("this is the user id : ${userID}")
+        var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Reviews")
+        var selReviewQuery = reviewsRef.orderByChild("title").equalTo(reviewTitle)
+
+        println("the users ${this.userID} reviews keys and their corresponding values: ,")
+        selReviewQuery.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                var newReviewList: MutableList<Review> = mutableListOf()
+                for (reviewSnapshot in dataSnapshot.children) {
+                    val reviewKey = reviewSnapshot.key
+                    val review = reviewSnapshot.value as Map<String, Any>
+                    lateinit var reviewPost: Review
+                    val rDB = review["rating"]
+                    val r = when (rDB) {
+                        is Int -> rDB
+                        is Long -> rDB.toInt()
+                        else -> 3
+                    }
+                    println("this is rint $r")
+
+                    when (review["type"]) {
+                        "Book" -> {
+                            reviewPost = BookReview(
+                                "Book", review["title"].toString(), review["date"].toString(),
+                                review["genre"].toString(), r , review["paragraph"].toString(),
+                                review["author"].toString(), review["booktype"].toString()
+                            )
+                        }
+
+                        "Movie" -> {
+                            reviewPost = MovieReview(
+                                "Movie",
+                                review["title"].toString(),
+                                review["date"].toString(),
+                                review["genre"].toString(),
+                                r,
+                                review["paragraph"].toString(),
+                                review["director"].toString(),
+                                review["publicationcompany"].toString()
+                            )
+                        }
+
+                        "TV Show" -> {
+                            reviewPost = TVShowReview(
+                                "Book", review["title"].toString(), review["date"].toString(),
+                                review["genre"].toString(), r, review["paragraph"].toString(),
+                                review["director"].toString(), review["streamingservice"].toString()
+                            )
+                        }
+                    }
+                    newReviewList.add(reviewPost)
+                    _selReview.update{reviewPost}
+                    println("selReview in the event handler $selReview")
+                    println("this is the review back to a structure $reviewPost")
+                    println("this is the reviews title ${reviewPost.title}")
+                    println("this is the reviews date ${reviewPost.date}")
+                    println("this is the reviews par ${reviewPost.paragraph}")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Log.w(TAG, "review:onCancelled", databaseError.toException())
+            }
+
+        })
+    }
+
     //var friends: List<String>
     constructor() {
         val user = Firebase.auth.currentUser
@@ -101,6 +173,8 @@ class userModel: ViewModel {
 
     }
 }
+
+
 open class Review(val type: String, val title: String, val date: String, val genre: String, val rating: Int, val paragraph: String) {
 }
 

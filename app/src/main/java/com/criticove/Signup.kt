@@ -74,6 +74,9 @@ class Signup : ComponentActivity() {
                 composable("Friends") {
                     FriendsMainContent(navController)
                 }
+                composable("ViewReview") {
+                    ReviewDetailsMainContent(navController)
+                }
             }
         }
     }
