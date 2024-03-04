@@ -37,9 +37,13 @@ class userModel: ViewModel {
                         val reviewKey = reviewSnapshot.key
                         val review = reviewSnapshot.value as Map<String, Any>
                         lateinit var reviewPost: Review
-                        //var rLong = 3
-                        //rLong = review["rating"] as Int
-                        val r = 3
+                        val rDB = review["rating"]
+                        val r = when (rDB) {
+                            is Int -> rDB
+                            is Long -> rDB.toInt()
+                            else -> 3
+                        }
+                        println("this is rint $r")
 
                         when (review["type"]) {
                             "Book" -> {
@@ -95,6 +99,7 @@ class userModel: ViewModel {
           this.userID = user.uid
           println("in the constructor user id is $userID")
        }
+
     }
 }
 open class Review(val type: String, val title: String, val date: String, val genre: String, val rating: Int, val paragraph: String) {
