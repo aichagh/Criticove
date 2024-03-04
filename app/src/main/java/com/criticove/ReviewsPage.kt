@@ -97,7 +97,9 @@ fun ReviewPageMainContent(navController: NavController) {
 fun Stars(rating: Int) {
     var id = R.drawable.star_full
     for (i in 1..5) {
-        if (i > rating) id = R.drawable.star_empty
+        if (i > rating) {
+            id = R.drawable.star_empty
+        }
             Icon(
                 modifier = Modifier
                     .height(30.dp),
