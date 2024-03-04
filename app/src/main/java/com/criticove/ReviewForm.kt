@@ -50,6 +50,8 @@ import com.criticove.backend.SubmittedReview
 import com.criticove.m3.ButtonStyles.PrimaryButton
 import android.content.Context
 import android.content.Intent
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 
 val filled = mutableMapOf(
     "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Date Published" to "", "Genre" to "", "Book Type" to ""),
@@ -98,14 +100,15 @@ fun ReviewHeader() {
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
-            .background(colorResource(id = R.color.blue)),
+            .background(colorResource(id = R.color.blue))
+            .padding(5.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = "New Review",
             color = colorResource(id = R.color.white),
-            fontSize = 20.sp
-
+            fontSize = 30.sp,
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_bold))
         )
     }
 }
@@ -115,7 +118,8 @@ fun Selection(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(30.dp),
+            .height(30.dp)
+            .padding(top = 5.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         val mediaType = listOf("Book", "TV Show", "Movie")
@@ -172,9 +176,11 @@ fun CreateForm(type:String, navController: NavController) {
                         value = bookData,
                         onValueChange = { bookData = it },
                         singleLine = true,
-                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),) },
+                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),
+                            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
                         modifier = Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             focusedBorderColor = colorResource(id = R.color.blue),
                             unfocusedBorderColor = colorResource(id = R.color.teal)
@@ -187,7 +193,8 @@ fun CreateForm(type:String, navController: NavController) {
                         value = tvData,
                         onValueChange = { tvData = it },
                         singleLine = true,
-                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),) },
+                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),
+                            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
                         modifier = Modifier
                             .fillMaxWidth(),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -202,7 +209,7 @@ fun CreateForm(type:String, navController: NavController) {
                         value = movieData,
                         onValueChange = { movieData = it },
                         singleLine = true,
-                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),) },
+                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),fontFamily = FontFamily(Font(R.font.alegreya_sans_bold))) },
                         modifier = Modifier
                             .fillMaxWidth(),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -218,9 +225,10 @@ fun CreateForm(type:String, navController: NavController) {
                 value = text,
                 onValueChange = { text = it },
                 minLines = 7,
-                label = { Text( text = "Review", color = colorResource(id = R.color.coolGrey),) },
+                label = { Text( text = "Review", color = colorResource(id = R.color.coolGrey),fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = colorResource(id = R.color.blue),
                     unfocusedBorderColor = colorResource(id = R.color.teal)
@@ -254,8 +262,10 @@ fun Submission(type: String, navController: NavController) {
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.teal),
                 contentColor = colorResource(id = R.color.off_white)),
-            modifier = Modifier.weight(1F)
-        ) { Text("Share") }
+            modifier = Modifier
+                .weight(1F)
+                .padding(10.dp),
+        ) { Text("Share", fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) }
 
         Button(
             onClick = {
@@ -267,8 +277,10 @@ fun Submission(type: String, navController: NavController) {
                 containerColor = colorResource(id = R.color.teal),
                 contentColor = colorResource(id = R.color.off_white)
             ),
-            modifier = Modifier.weight(1F)
-        ) { Text("Cancel") }
+            modifier = Modifier
+                .weight(1F)
+                .padding(10.dp),
+        ) { Text("Cancel", fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) }
     }
 }
 
@@ -278,8 +290,10 @@ fun StarRating(type: String) {
     var tvScore by remember { mutableIntStateOf(1) }
     var movieScore by remember { mutableIntStateOf(1) }
     var id = R.drawable.star_empty
-        Column ( modifier = Modifier.padding(10.dp).fillMaxWidth()) {
-            Text(text = "Rating", modifier= Modifier.fillMaxWidth())
+        Column ( modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()) {
+            Text(text = "Rating", modifier= Modifier.fillMaxWidth(),fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)))
             Row() {
                 for (i in 1..5) {
                     when (type) {
@@ -348,21 +362,7 @@ fun StarRating(type: String) {
 @Preview
 @Composable
 fun PreviewCreateReview() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(colorResource(id = R.color.off_white)),
-    ) {
-        ReviewHeader()
-        Column(
-            modifier = Modifier
-                .padding(10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            //Selection()
-        }
-    }
+    ReviewFormMainContent(navController = rememberNavController())
 }
 
 
