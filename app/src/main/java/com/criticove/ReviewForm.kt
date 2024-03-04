@@ -98,7 +98,8 @@ fun ReviewHeader() {
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
-            .background(colorResource(id = R.color.blue)),
+            .background(colorResource(id = R.color.blue))
+            .padding(5.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -115,7 +116,8 @@ fun Selection(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(30.dp),
+            .height(30.dp)
+            .padding(top = 5.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         val mediaType = listOf("Book", "TV Show", "Movie")
@@ -174,7 +176,8 @@ fun CreateForm(type:String, navController: NavController) {
                         singleLine = true,
                         label = { Text( text = label, color = colorResource(id = R.color.coolGrey),) },
                         modifier = Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             focusedBorderColor = colorResource(id = R.color.blue),
                             unfocusedBorderColor = colorResource(id = R.color.teal)
@@ -220,7 +223,8 @@ fun CreateForm(type:String, navController: NavController) {
                 minLines = 7,
                 label = { Text( text = "Review", color = colorResource(id = R.color.coolGrey),) },
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = colorResource(id = R.color.blue),
                     unfocusedBorderColor = colorResource(id = R.color.teal)
@@ -254,7 +258,9 @@ fun Submission(type: String, navController: NavController) {
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.teal),
                 contentColor = colorResource(id = R.color.off_white)),
-            modifier = Modifier.weight(1F)
+            modifier = Modifier
+                .weight(1F)
+                .padding(10.dp),
         ) { Text("Share") }
 
         Button(
@@ -267,7 +273,9 @@ fun Submission(type: String, navController: NavController) {
                 containerColor = colorResource(id = R.color.teal),
                 contentColor = colorResource(id = R.color.off_white)
             ),
-            modifier = Modifier.weight(1F)
+            modifier = Modifier
+                .weight(1F)
+                .padding(5.dp),
         ) { Text("Cancel") }
     }
 }
@@ -278,7 +286,9 @@ fun StarRating(type: String) {
     var tvScore by remember { mutableIntStateOf(1) }
     var movieScore by remember { mutableIntStateOf(1) }
     var id = R.drawable.star_empty
-        Column ( modifier = Modifier.padding(10.dp).fillMaxWidth()) {
+        Column ( modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()) {
             Text(text = "Rating", modifier= Modifier.fillMaxWidth())
             Row() {
                 for (i in 1..5) {
@@ -348,21 +358,7 @@ fun StarRating(type: String) {
 @Preview
 @Composable
 fun PreviewCreateReview() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(colorResource(id = R.color.off_white)),
-    ) {
-        ReviewHeader()
-        Column(
-            modifier = Modifier
-                .padding(10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            //Selection()
-        }
-    }
+    ReviewFormMainContent(navController = rememberNavController())
 }
 
 
