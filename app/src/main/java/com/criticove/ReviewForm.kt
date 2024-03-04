@@ -50,6 +50,7 @@ import com.criticove.backend.SubmittedReview
 import com.criticove.m3.ButtonStyles.PrimaryButton
 import android.content.Context
 import android.content.Intent
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 
@@ -86,7 +87,8 @@ fun ReviewFormMainContent(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .background(colorResource(id = R.color.off_white))
+            .background(colorResource(id = R.color.off_white)),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         ReviewHeader()
         Selection(navController)
@@ -118,8 +120,7 @@ fun Selection(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(30.dp)
-            .padding(top = 5.dp),
+            .height(30.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         val mediaType = listOf("Book", "TV Show", "Movie")
@@ -248,7 +249,7 @@ fun Submission(type: String, navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(15.dp)
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Button(
             onClick = {
@@ -267,7 +268,11 @@ fun Submission(type: String, navController: NavController) {
             modifier = Modifier
                 .weight(1F)
                 .padding(10.dp),
-        ) { Text("Share", fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) }
+        ) { Text(
+            text = "Share",
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
+            fontSize = 20.sp
+        ) }
 
         Button(
             onClick = {
@@ -281,8 +286,12 @@ fun Submission(type: String, navController: NavController) {
             ),
             modifier = Modifier
                 .weight(1F)
-                .padding(10.dp),
-        ) { Text("Cancel", fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) }
+                .padding(10.dp)
+        ) { Text(
+            text = "Cancel",
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
+            fontSize = 20.sp
+        ) }
     }
 }
 
