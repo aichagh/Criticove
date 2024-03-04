@@ -50,6 +50,8 @@ import com.criticove.backend.SubmittedReview
 import com.criticove.m3.ButtonStyles.PrimaryButton
 import android.content.Context
 import android.content.Intent
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 
 val filled = mutableMapOf(
     "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Date Published" to "", "Genre" to "", "Book Type" to ""),
@@ -105,8 +107,8 @@ fun ReviewHeader() {
         Text(
             text = "New Review",
             color = colorResource(id = R.color.white),
-            fontSize = 20.sp
-
+            fontSize = 30.sp,
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_bold))
         )
     }
 }
@@ -174,7 +176,8 @@ fun CreateForm(type:String, navController: NavController) {
                         value = bookData,
                         onValueChange = { bookData = it },
                         singleLine = true,
-                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),) },
+                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),
+                            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 10.dp),
@@ -190,7 +193,8 @@ fun CreateForm(type:String, navController: NavController) {
                         value = tvData,
                         onValueChange = { tvData = it },
                         singleLine = true,
-                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),) },
+                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),
+                            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
                         modifier = Modifier
                             .fillMaxWidth(),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -205,7 +209,7 @@ fun CreateForm(type:String, navController: NavController) {
                         value = movieData,
                         onValueChange = { movieData = it },
                         singleLine = true,
-                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),) },
+                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),fontFamily = FontFamily(Font(R.font.alegreya_sans_bold))) },
                         modifier = Modifier
                             .fillMaxWidth(),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -221,7 +225,7 @@ fun CreateForm(type:String, navController: NavController) {
                 value = text,
                 onValueChange = { text = it },
                 minLines = 7,
-                label = { Text( text = "Review", color = colorResource(id = R.color.coolGrey),) },
+                label = { Text( text = "Review", color = colorResource(id = R.color.coolGrey),fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp),
@@ -261,7 +265,7 @@ fun Submission(type: String, navController: NavController) {
             modifier = Modifier
                 .weight(1F)
                 .padding(10.dp),
-        ) { Text("Share") }
+        ) { Text("Share", fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) }
 
         Button(
             onClick = {
@@ -275,8 +279,8 @@ fun Submission(type: String, navController: NavController) {
             ),
             modifier = Modifier
                 .weight(1F)
-                .padding(5.dp),
-        ) { Text("Cancel") }
+                .padding(10.dp),
+        ) { Text("Cancel", fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) }
     }
 }
 
@@ -289,7 +293,7 @@ fun StarRating(type: String) {
         Column ( modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth()) {
-            Text(text = "Rating", modifier= Modifier.fillMaxWidth())
+            Text(text = "Rating", modifier= Modifier.fillMaxWidth(),fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)))
             Row() {
                 for (i in 1..5) {
                     when (type) {
