@@ -94,21 +94,23 @@ fun ReviewPageMainContent(navController: NavController) {
 
 // This is a temporary function, later this would take the rating in account
 @Composable
-fun Stars() {
-    repeat(5) {
-        Icon(
-            modifier = Modifier
-                .height(30.dp),
-            imageVector = ImageVector.vectorResource(id = R.drawable.star_full),
-            contentDescription = "star", tint = colorResource(id = R.color.black)
-        )
-    }
+fun Stars(rating: Int) {
+    var id = R.drawable.star_full
+    for (i in 1..5) {
+        if (i > rating) id = R.drawable.star_empty
+            Icon(
+                modifier = Modifier
+                    .height(30.dp),
+                imageVector = ImageVector.vectorResource(id = id),
+                contentDescription = "star", tint = colorResource(id = R.color.black)
+            )
+        }
 }
 @Composable
 fun Review(title: String = "Title",
            author: String = "Author",
            year: String = "1999",
-           rating: Number = 1) {
+           rating: Int = 1) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -133,14 +135,14 @@ fun Review(title: String = "Title",
                 )
                 Text("$author, $year")
                 Row() {
-                    Stars()
+                    Stars(rating)
                 }
             }
 
             TextButton(
                 modifier = Modifier
                     .width(50.dp),
-                onClick = { TODO() }
+                onClick = { }
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.bookmark_empty),
