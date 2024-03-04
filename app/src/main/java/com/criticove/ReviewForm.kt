@@ -270,7 +270,7 @@ fun Submission(type: String, navController: NavController) {
                 .padding(10.dp),
         ) { Text(
             text = "Share",
-            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
             fontSize = 20.sp
         ) }
 
@@ -289,7 +289,7 @@ fun Submission(type: String, navController: NavController) {
                 .padding(10.dp)
         ) { Text(
             text = "Cancel",
-            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
             fontSize = 20.sp
         ) }
     }
