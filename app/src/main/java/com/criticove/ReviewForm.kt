@@ -196,7 +196,8 @@ fun CreateForm(type:String, navController: NavController) {
                         label = { Text( text = label, color = colorResource(id = R.color.coolGrey),
                             fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
                         modifier = Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             focusedBorderColor = colorResource(id = R.color.blue),
                             unfocusedBorderColor = colorResource(id = R.color.teal)
@@ -211,7 +212,8 @@ fun CreateForm(type:String, navController: NavController) {
                         singleLine = true,
                         label = { Text( text = label, color = colorResource(id = R.color.coolGrey),fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
                         modifier = Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             focusedBorderColor = colorResource(id = R.color.blue),
                             unfocusedBorderColor = colorResource(id = R.color.teal)
