@@ -209,7 +209,7 @@ fun CreateForm(type:String, navController: NavController) {
                         value = movieData,
                         onValueChange = { movieData = it },
                         singleLine = true,
-                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),fontFamily = FontFamily(Font(R.font.alegreya_sans_bold))) },
+                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
                         modifier = Modifier
                             .fillMaxWidth(),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
