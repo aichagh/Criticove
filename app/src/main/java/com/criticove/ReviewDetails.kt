@@ -48,7 +48,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 // get this data from database, or passed from review select page, currently sample data
-var reviewID = "mew"   // replace with other id
+var reviewID = "Insert Title"   // replace with other id
 // var reviewData = getSelectedReview(reviewID)
 var reviewType = ""   // reviewData["type"]!!
 
