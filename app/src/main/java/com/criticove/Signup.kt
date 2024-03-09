@@ -62,9 +62,28 @@ class Signup : ComponentActivity() {
                 composable("Login") {
                     LoginMainContent(navController)
                 }
+                composable("ReviewForm") {
+                    ReviewFormMainContent(navController)
+                }
+                composable("Reviews") {
+                    ReviewPageMainContent(navController)
+                }
                 composable("Dashboard") {
                     DashboardMainContent(navController)
                 }
+                composable("Friends") {
+                    FriendsMainContent(navController)
+                }
+                composable("Books") {
+                 /*     TODO() */
+                }
+                composable("Movies") {
+                    /*     TODO() */
+                }
+                composable("TVShows") {
+                    /*     TODO() */
+                }
+
             }
         }
     }

@@ -28,6 +28,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,8 +38,10 @@ import androidx.compose.ui.unit.sp
 import com.criticove.m3.ButtonStyles.IconButton
 
 @Composable
-@Preview
-fun Topbar(onMenuClicked: () -> Unit, pageTitle: String = "Default") {
+fun Topbar(
+    pageTitle: String = "Default",
+    onMenuClicked: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -46,11 +50,8 @@ fun Topbar(onMenuClicked: () -> Unit, pageTitle: String = "Default") {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         TextButton(onClick = onMenuClicked) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.hamburger),
-                contentDescription = "Menu", // Ensure you have a content description
-                tint = colorResource(id = R.color.off_white)
-            )
+            Icon(imageVector = ImageVector.vectorResource(id = R.drawable.hamburger),
+                contentDescription = "menu", tint = colorResource(id = R.color.off_white) )
         }
 
         Column(
@@ -61,7 +62,8 @@ fun Topbar(onMenuClicked: () -> Unit, pageTitle: String = "Default") {
             Text(
                 text = pageTitle,
                 color = colorResource(id = R.color.off_white),
-                fontSize = 20.sp
+                fontSize = 30.sp,
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_bold))
             )
         }
 
