@@ -32,3 +32,9 @@
 | 2024/03/01 | 3     |         |        |          |            |      | Updating the create review UI |
 | 2024/03/02 |       | 4       |        |          |            |      | navbar navigation setup |
 | 2024/03/03 |       |         |        |          | 0.5        |      | Navbar navigation complete |
+| 2024/03/03 |       | 1.5     |        |          |            |      | Prepare for prototype demo |
+| 2023/03/04 |       | 1.25    |        |          |            |      | Prototype demo presentation and discussion  |
+| 2023/03/08 |       | 1.5     |        |          |            |      | Prototype document discussion and work | 
+| 2023/03/09 |       | 10      |        |          |            |      | Setting hamburger menu and navigation |
+
+
