@@ -74,6 +74,16 @@ class Signup : ComponentActivity() {
                 composable("Friends") {
                     FriendsMainContent(navController)
                 }
+                composable("Books") {
+                 /*     TODO() */
+                }
+                composable("Movies") {
+                    /*     TODO() */
+                }
+                composable("TVShows") {
+                    /*     TODO() */
+                }
+
             }
         }
     }

@@ -38,8 +38,10 @@ import androidx.compose.ui.unit.sp
 import com.criticove.m3.ButtonStyles.IconButton
 
 @Composable
-@Preview
-fun Topbar(pageTitle: String = "Default") {
+fun Topbar(
+    pageTitle: String = "Default",
+    onMenuClicked: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -47,7 +49,7 @@ fun Topbar(pageTitle: String = "Default") {
             .background(colorResource(id = R.color.blue)),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        TextButton(onClick = { TODO() }) {
+        TextButton(onClick = onMenuClicked) {
             Icon(imageVector = ImageVector.vectorResource(id = R.drawable.hamburger),
                 contentDescription = "menu", tint = colorResource(id = R.color.off_white) )
         }

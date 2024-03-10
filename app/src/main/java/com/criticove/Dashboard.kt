@@ -42,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun DashboardMainContent(navController: NavController) {
@@ -504,3 +505,10 @@ fun DashboardCardHeader(heading: String, navController: NavController) {
         )
     }
 }
+
+@Preview
+@Composable
+fun Preview_Display() {
+        DashboardMainContent(rememberNavController())
+}
+

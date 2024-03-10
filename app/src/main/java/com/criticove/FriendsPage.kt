@@ -84,65 +84,72 @@ fun FriendsMainContent(navController: NavController) {
     }
 
     perform_search()
-    
-    Column (
-        modifier = Modifier
-            .background(colorResource(id = R.color.off_white))
-            .fillMaxHeight()
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.SpaceBetween
-    ){
 
-        Topbar("Friends")
-
+    MainLayout(
+        title = "Friends",
+        navController = navController
+    ) { padding ->
         Column(
-            verticalArrangement = Arrangement.Top,
             modifier = Modifier
-                .weight(1F)
-        ){
-            // Search Bar
-            OutlinedTextField(
-                value = searchText,
-                onValueChange = {
-                    searchText = it
-                    isSearchActive = it.isNotEmpty()
-                    perform_search()
-                },
+                .padding(padding)
+                .background(colorResource(id = R.color.off_white))
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Column(
+                verticalArrangement = Arrangement.Top,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    containerColor = colorResource(id = R.color.off_white),
-                    focusedBorderColor = colorResource(id = R.color.blue),
-                    unfocusedBorderColor = colorResource(id = R.color.teal)
-                ),
-                label = { Text(
-                    text = "Search friends ...",
-                    style = TextStyle(
-                        fontSize = 20.sp,
-                        fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
-                    )) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.search),
-                        contentDescription = "delete", tint = colorResource(id = R.color.black),
-                        modifier = Modifier
-                            .size(24.dp)
+                    .weight(1F)
+            ) {
+                // Search Bar
+                OutlinedTextField(
+                    value = searchText,
+                    onValueChange = {
+                        searchText = it
+                        isSearchActive = it.isNotEmpty()
+                        perform_search()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        containerColor = colorResource(id = R.color.off_white),
+                        focusedBorderColor = colorResource(id = R.color.blue),
+                        unfocusedBorderColor = colorResource(id = R.color.teal)
+                    ),
+                    label = {
+                        Text(
+                            text = "Search friends ...",
+                            style = TextStyle(
+                                fontSize = 20.sp,
+                                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+                            )
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.search),
+                            contentDescription = "delete", tint = colorResource(id = R.color.black),
+                            modifier = Modifier
+                                .size(24.dp)
+
+                        )
+                    },
 
                     )
-                },
 
-            )
-
-            LazyColumn {
-                items(filteredFriends) { friend ->
-                    Friends(friend)
+                LazyColumn {
+                    items(filteredFriends) { friend ->
+                        Friends(friend)
+                    }
                 }
             }
-        }
 
-        Navbar(navController)
+            Navbar(navController)
+        }
     }
 }
 

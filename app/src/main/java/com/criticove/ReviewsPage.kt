@@ -64,32 +64,35 @@ class ReviewsPage: ComponentActivity() {
 
 @Composable
 fun ReviewPageMainContent(navController: NavController) {
-    var userModel = userModel()
-    userModel.getReviews()
-    println("in review page main content")
-    Column(
-        modifier = Modifier
-            .background(colorResource(id = R.color.off_white))
-            .fillMaxHeight()
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-
-        Topbar()
-
+    MainLayout(
+        title = "Review Page",
+        navController = navController
+    ) { padding ->
         Column(
-            verticalArrangement = Arrangement.Top,
             modifier = Modifier
-                .weight(1F)
+                .padding(padding)
+                .background(colorResource(id = R.color.off_white))
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            print("after calling ${userModel.reviewList}")
-            displayReviews(userModel.reviewList)
+            val userModel = userModel()
+            userModel.getReviews()
+            println("in review page main content")
+
+            Column(
+                verticalArrangement = Arrangement.Top,
+                modifier = Modifier
+                    .weight(1F)
+            ) {
+                print("after calling ${userModel.reviewList}")
+                displayReviews(userModel.reviewList)
+            }
+
+            Navbar(navController)
         }
-
-        Navbar(navController)
     }
-
 }
 
 // This is a temporary function, later this would take the rating in account
@@ -100,13 +103,13 @@ fun Stars(rating: Int) {
         if (i > rating) {
             id = R.drawable.star_empty
         }
-            Icon(
-                modifier = Modifier
-                    .height(30.dp),
-                imageVector = ImageVector.vectorResource(id = id),
-                contentDescription = "star", tint = colorResource(id = R.color.black)
-            )
-        }
+        Icon(
+            modifier = Modifier
+                .height(30.dp),
+            imageVector = ImageVector.vectorResource(id = id),
+            contentDescription = "star", tint = colorResource(id = R.color.black)
+        )
+    }
 }
 @Composable
 fun Review(title: String = "Title",
@@ -181,28 +184,29 @@ fun displayReviews(reviewList: StateFlow<MutableList<Review>>) {
 }
 @Composable
 fun ReviewsPagePreview(navController: NavController) {
-    val userModel = userModel()
-    Column (
-        modifier = Modifier
-            .background(colorResource(id = R.color.off_white))
-            .fillMaxHeight()
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.SpaceBetween
-    ){
-
-        Topbar()
-
+    MainLayout(
+        title = "Review Page",
+        navController = navController
+    ) { padding ->
         Column(
-            verticalArrangement = Arrangement.Top,
             modifier = Modifier
-                .weight(1F)
-        ){
-            repeat(3) {
-                Review()
+                .background(colorResource(id = R.color.off_white))
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            val userModel = userModel()
+            Column(
+                verticalArrangement = Arrangement.Top,
+                modifier = Modifier
+                    .weight(1F)
+            ){
+                repeat(3) {
+                    Review()
+                }
             }
+            Navbar(navController)
         }
-
-        Navbar(navController)
     }
 }
