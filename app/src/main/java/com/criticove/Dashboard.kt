@@ -44,6 +44,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
+import com.criticove.backend.FirebaseManager
+
 @Composable
 fun DashboardMainContent(navController: NavController) {
     Column(
@@ -109,8 +111,7 @@ fun DashboardHeader() {
 
 @Composable
 fun WelcomeBanner() {
-    // TO DO: Get username from firebase - currently logged in user's displayName
-    val username = "happyBunny123"
+    val username = FirebaseManager.getUsername()
 
     Column(
         modifier = Modifier
@@ -120,7 +121,7 @@ fun WelcomeBanner() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Welcome, $username!",
+            text = "Welcome $username!",
             style = TextStyle(
                 brush = Brush.linearGradient(
                     colors = listOf(
