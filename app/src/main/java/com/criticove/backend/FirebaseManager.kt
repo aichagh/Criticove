@@ -1,7 +1,9 @@
 package com.criticove.backend
 
 import android.util.Log
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.auth.userProfileChangeRequest
 
 object FirebaseManager {
@@ -40,5 +42,14 @@ object FirebaseManager {
                     callback(false)
                 }
             }
+    }
+
+    fun getUsername(): String {
+        val username = Firebase.auth.currentUser?.displayName
+        return if (username.isNullOrEmpty()) {
+            ""
+        } else {
+            username
+        }
     }
 }

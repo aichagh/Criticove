@@ -62,12 +62,7 @@ fun LoginMainContent(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    var loginResult by remember { mutableStateOf(false) }
-    LaunchedEffect(key1 = loginResult) {
-        if (loginResult) {
-            navController.navigate("Dashboard")
-        }
-    }
+    var errorMessage by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -106,6 +101,14 @@ fun LoginMainContent(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(
+                modifier = Modifier.padding(top = 10.dp),
+                text = errorMessage,
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
+                color = colorResource(id = R.color.red),
+                fontSize = 18.sp
+            )
+
             OutlinedTextFieldLogin("Email") { email = it }
 
             OutlinedTextFieldLogin("Password", true) { password = it }
@@ -113,7 +116,12 @@ fun LoginMainContent(navController: NavController) {
             Button(
                 onClick = {
                     FirebaseManager.login(email, password) { success ->
-                        loginResult = success
+                        if (success) {
+                            errorMessage = ""
+                            navController.navigate("Dashboard")
+                        } else {
+                            errorMessage = "Login failed. Try again."
+                        }
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
@@ -122,7 +130,7 @@ fun LoginMainContent(navController: NavController) {
                 ),
                 modifier = Modifier
                     .width(150.dp)
-                    .padding(top = 20.dp, bottom = 20.dp),
+                    .padding(top = 20.dp, bottom = 30.dp),
             ) {
                 Text(
                     text = "Login",
@@ -164,11 +172,6 @@ fun OutlinedTextFieldLogin(
     onValueChanged: (String) -> Unit
 ) {
     var text by remember { mutableStateOf("") }
-    val paddingValues = if (isPassword) {
-        PaddingValues(10.dp)
-    } else {
-        PaddingValues(top = 30.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
-    }
 
     OutlinedTextField(
         value = text,
@@ -178,7 +181,7 @@ fun OutlinedTextFieldLogin(
         },
         modifier = Modifier
             .width(280.dp)
-            .padding(paddingValues)
+            .padding(10.dp)
             .background(colorResource(id = R.color.green), shape = RoundedCornerShape(10.dp)),
         singleLine = true,
         colors = TextFieldDefaults.outlinedTextFieldColors(
