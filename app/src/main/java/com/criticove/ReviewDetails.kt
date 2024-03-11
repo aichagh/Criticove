@@ -48,7 +48,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 // get this data from database, or passed from review select page, currently sample data
-var reviewID = "Insert Title"   // replace with other id
+var reviewID = "Insert ID"   // replace with other id
 // var reviewData = getSelectedReview(reviewID)
 var reviewType = ""   // reviewData["type"]!!
 
@@ -69,7 +69,7 @@ class ReviewDetails: ComponentActivity() {
                 userModel.selReview.collect {
                     println("here sel review is ${userModel.selReview}")
                     setContent {
-                        ReviewDetailsMainContent(rememberNavController())
+                        ReviewDetailsMainContent(rememberNavController(), reviewID)
 
                     }
                 }
@@ -79,10 +79,12 @@ class ReviewDetails: ComponentActivity() {
 }
 
 @Composable
-fun ReviewDetailsMainContent(navController: NavController) {
+fun ReviewDetailsMainContent(navController: NavController,
+                             reviewID: String) {
     var userModel = userModel()
     userModel.getSelReview(reviewID)
     val selReview by userModel.selReview.collectAsState()
+    println(reviewID)
 
     Box(
         modifier = Modifier
@@ -126,23 +128,30 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>) {
 
     var elements =  mutableListOf<String>()
     var reviewData: MutableMap<String, String> = mutableMapOf()
+
+    /*
     reviewData = mutableMapOf("Title" to "The Night Circus", "Author" to "Erin Morgenstern",
     "Date Published" to "01/01/2024", "Genre" to "Fantasy", "Book Type" to "eBook",
     "Started" to "01/01/2024", "Finished" to "20/01/2024", "Rating" to "4",
     "Review" to "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+    */
+
+    elements = listOf(
+        "Title", "Author", "Date Published", "Genre", "Book Type", "Started",
+        "Finished", "Rating"
+    ).toMutableList()
 
     when (selReview) {
         is BookReview -> {
-            // reviewData.clear()
+            reviewData.clear()
 
             elements = listOf(
                 "Title", "Author", "Date Published", "Genre", "Book Type", "Started",
-                "Finished", "Rating", "Review"
+                "Finished", "Rating"
             ).toMutableList()
 
-            // val bookReview: BookReview = selReview as BookReview
+            val bookReview: BookReview = selReview as BookReview
 
-            /**
             reviewData["Title"] = bookReview.title
             reviewData["Author"] = bookReview.author
             reviewData["Date Published"] = bookReview.date
@@ -150,25 +159,43 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>) {
             reviewData["Book Type"] = bookReview.booktype
             reviewData["Rating"] = bookReview.rating.toString()
             reviewData["Review"] = bookReview.paragraph
-            **/
+
         }
         is TVShowReview -> {
+            reviewData.clear()
             elements = listOf(
                 "Title", "Director", "Date Released", "Genre", "Streaming Service", "Started",
-                "Finished", "Rating", "Review"
+                "Finished", "Rating"
             ).toMutableList()
+
+            val tvReview: TVShowReview = selReview as TVShowReview
+
+            reviewData["Title"] = tvReview.title
+            reviewData["Director"] = tvReview.director
+            reviewData["Date Released"] = tvReview.date
+            reviewData["Genre"] = tvReview.genre
+            reviewData["Streaming Service"] = tvReview.streamingservice
+            reviewData["Rating"] = tvReview.rating.toString()
+            reviewData["Review"] = tvReview.paragraph
         }
         is MovieReview -> {
+            reviewData.clear()
             elements = listOf(
                 "Title", "Director", "Date Released", "Genre", "Publication Company", "Started",
-                "Finished", "Rating", "Review"
+                "Finished", "Rating"
             ).toMutableList()
+
+            val movieReview: MovieReview = selReview as MovieReview
+
+            reviewData["Title"] = movieReview.title
+            reviewData["Director"] = movieReview.director
+            reviewData["Date Released"] = movieReview.date
+            reviewData["Genre"] = movieReview.genre
+            reviewData["Publication Company"] = movieReview.publicationcompany
+            reviewData["Rating"] = movieReview.rating.toString()
+            reviewData["Review"] = movieReview.paragraph
         }
     }
-    elements = listOf(
-        "Title", "Author", "Date Published", "Genre", "Book Type", "Started",
-        "Finished", "Rating", "Review"
-    ).toMutableList()
 
     Box(
         modifier = Modifier
@@ -183,17 +210,33 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>) {
                         .fillMaxWidth()
                 ) {
                     Column() {
-                        var curData by remember {mutableStateOf(reviewData[label].toString())}
+                        var curData = reviewData[label].toString()
 
-                        OutlinedTextField(
-                            value = curData,
-                            onValueChange = { curData = it },
-                            label = {Text( text = label, color = colorResource(id = R.color.blue)) },
+                        Text(
+                            text = "$label: $curData",
                             modifier = Modifier.fillMaxWidth()
+                                .padding(10.dp)
                         )
-                        reviewData.set(label, curData).toString()
 
                     }
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            ) {
+                Column() {
+                    var revData by remember {mutableStateOf(selReview.paragraph)}
+
+                    OutlinedTextField(
+                        value = revData,
+                        onValueChange = { revData = it },
+                        label = {Text( text = "Review", color = colorResource(id = R.color.blue)) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    reviewData.set("Review", revData).toString()
+
                 }
             }
         }

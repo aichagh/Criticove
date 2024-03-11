@@ -113,6 +113,7 @@ fun Review(title: String = "Title",
            author: String = "Author",
            year: String = "1999",
            rating: Int = 1,
+           reviewID: String,
            navController: NavController) {
     Box(
         modifier = Modifier
@@ -145,7 +146,7 @@ fun Review(title: String = "Title",
             TextButton(
                 modifier = Modifier
                     .width(50.dp),
-                onClick = { navController.navigate("ViewReview") }
+                onClick = { navController.navigate("ViewReview/$reviewID") }
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.bookmark_empty),
@@ -167,15 +168,15 @@ fun displayReviews(navController: NavController, reviewList: StateFlow<MutableLi
                 val bookReview: BookReview = review
                 println("here book review")
                 println("this is the review $review")
-                Review(bookReview.title, bookReview.author, bookReview.date, bookReview.rating, navController)
+                Review(bookReview.title, bookReview.author, bookReview.date, bookReview.rating, bookReview.reviewID, navController)
             }
             is TVShowReview -> {
                 val tvShowReview: TVShowReview = review
-                Review(tvShowReview.title, tvShowReview.director,tvShowReview.date, tvShowReview.rating, navController)
+                Review(tvShowReview.title, tvShowReview.director,tvShowReview.date, tvShowReview.rating, tvShowReview.reviewID, navController)
             }
             is MovieReview -> {
                 val movieReview: MovieReview = review
-                Review(movieReview.title, movieReview.director, movieReview.date, movieReview.rating, navController)
+                Review(movieReview.title, movieReview.director, movieReview.date, movieReview.rating, movieReview.reviewID, navController)
             }
         }
     }

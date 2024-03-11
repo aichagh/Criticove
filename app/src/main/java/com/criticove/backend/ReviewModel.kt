@@ -25,83 +25,14 @@ class userModel: ViewModel {
     private val _reviewList: MutableStateFlow<MutableList<Review>> = MutableStateFlow(mutableListOf())
     val reviewList: StateFlow<MutableList<Review>> = _reviewList
     private val _selReview: MutableStateFlow<Review> = MutableStateFlow(Review("Book",
-        "test", "test", "test", 4, "test"))
+        "test", "test", "test", 4, "test", "test"))
     val selReview: StateFlow<Review> = _selReview
 
     fun getReviews() {
         println("this is the user id : ${userID}")
-            var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Reviews")
-            println("the users ${this.userID} reviews keys and their corresponding values: ,")
-            reviewsRef.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    var newReviewList: MutableList<Review> = mutableListOf()
-                    for (reviewSnapshot in dataSnapshot.children) {
-                        val reviewKey = reviewSnapshot.key
-                        val review = reviewSnapshot.value as Map<String, Any>
-                        lateinit var reviewPost: Review
-                        val rDB = review["rating"]
-                        val r = when (rDB) {
-                            is Int -> rDB
-                            is Long -> rDB.toInt()
-                            else -> 3
-                        }
-                        println("this is rint $r")
-
-                        when (review["type"]) {
-                            "Book" -> {
-                                reviewPost = BookReview(
-                                    "Book", review["title"].toString(), review["date"].toString(),
-                                    review["genre"].toString(), r , review["paragraph"].toString(),
-                                    review["author"].toString(), review["booktype"].toString()
-                                )
-                            }
-
-                            "Movie" -> {
-                                reviewPost = MovieReview(
-                                    "Movie",
-                                    review["title"].toString(),
-                                    review["date"].toString(),
-                                    review["genre"].toString(),
-                                    r,
-                                    review["paragraph"].toString(),
-                                    review["director"].toString(),
-                                    review["publicationcompany"].toString()
-                                )
-                            }
-
-                            "TV Show" -> {
-                                reviewPost = TVShowReview(
-                                    "Book", review["title"].toString(), review["date"].toString(),
-                                    review["genre"].toString(), r, review["paragraph"].toString(),
-                                    review["director"].toString(), review["streamingservice"].toString()
-                                )
-                            }
-                        }
-                        newReviewList.add(reviewPost)
-                        _reviewList.update{newReviewList}
-                        println("reviewList in the event handelr $reviewList")
-                        println("this is the review back to a structure $reviewPost")
-                        println("this is the reviews title ${reviewPost.title}")
-                        println("this is the reviews date ${reviewPost.date}")
-                        println("this is the reviews par ${reviewPost.paragraph}")
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    // Log.w(TAG, "review:onCancelled", databaseError.toException())
-                }
-
-            })
-
-        }
-
-    fun getSelReview(reviewTitle: String) {
-        println("this is the user id : ${userID}")
         var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Reviews")
-        var selReviewQuery = reviewsRef.orderByChild("title").equalTo(reviewTitle)
-
         println("the users ${this.userID} reviews keys and their corresponding values: ,")
-        selReviewQuery.addValueEventListener(object : ValueEventListener {
+        reviewsRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 var newReviewList: MutableList<Review> = mutableListOf()
                 for (reviewSnapshot in dataSnapshot.children) {
@@ -121,7 +52,8 @@ class userModel: ViewModel {
                             reviewPost = BookReview(
                                 "Book", review["title"].toString(), review["date"].toString(),
                                 review["genre"].toString(), r , review["paragraph"].toString(),
-                                review["author"].toString(), review["booktype"].toString()
+                                review["reviewID"].toString(), review["author"].toString(),
+                                review["booktype"].toString()
                             )
                         }
 
@@ -133,6 +65,7 @@ class userModel: ViewModel {
                                 review["genre"].toString(),
                                 r,
                                 review["paragraph"].toString(),
+                                review["reviewID"].toString(),
                                 review["director"].toString(),
                                 review["publicationcompany"].toString()
                             )
@@ -142,18 +75,88 @@ class userModel: ViewModel {
                             reviewPost = TVShowReview(
                                 "Book", review["title"].toString(), review["date"].toString(),
                                 review["genre"].toString(), r, review["paragraph"].toString(),
-                                review["director"].toString(), review["streamingservice"].toString()
+                                review["reviewID"].toString(), review["director"].toString(),
+                                review["streamingservice"].toString()
                             )
                         }
                     }
                     newReviewList.add(reviewPost)
-                    _selReview.update{reviewPost}
-                    println("selReview in the event handler $selReview")
+                    _reviewList.update{newReviewList}
+                    println("reviewList in the event handelr $reviewList")
                     println("this is the review back to a structure $reviewPost")
                     println("this is the reviews title ${reviewPost.title}")
                     println("this is the reviews date ${reviewPost.date}")
                     println("this is the reviews par ${reviewPost.paragraph}")
                 }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Log.w(TAG, "review:onCancelled", databaseError.toException())
+            }
+
+        })
+
+    }
+
+    fun getSelReview(reviewID: String) {
+        println("this is the user id : ${userID}")
+        var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Reviews/${reviewID}")
+        // var selReviewQuery = reviewsRef.orderByChild("title").equalTo(reviewTitle)
+
+        println("the users ${this.userID} reviews keys and their corresponding values: ,")
+        reviewsRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(reviewSnapshot: DataSnapshot) {
+                val reviewKey = reviewSnapshot.key
+                val review = reviewSnapshot.value as Map<String, Any>
+                lateinit var reviewPost: Review
+                val rDB = review["rating"]
+                val r = when (rDB) {
+                    is Int -> rDB
+                    is Long -> rDB.toInt()
+                    else -> 3
+                }
+                println("this is rint $r")
+
+                when (review["type"]) {
+                    "Book" -> {
+                        reviewPost = BookReview(
+                            "Book", review["title"].toString(), review["date"].toString(),
+                            review["genre"].toString(), r , review["paragraph"].toString(),
+                            review["reviewID"].toString(), review["author"].toString(),
+                            review["booktype"].toString()
+                        )
+                    }
+
+                    "Movie" -> {
+                        reviewPost = MovieReview(
+                            "Movie",
+                            review["title"].toString(),
+                            review["date"].toString(),
+                            review["genre"].toString(),
+                            r,
+                            review["paragraph"].toString(),
+                            review["reviewID"].toString(),
+                            review["director"].toString(),
+                            review["publicationcompany"].toString()
+                        )
+                    }
+
+                    "TV Show" -> {
+                        reviewPost = TVShowReview(
+                            "Book", review["title"].toString(), review["date"].toString(),
+                            review["genre"].toString(), r, review["paragraph"].toString(),
+                            review["reviewID"].toString(), review["director"].toString(),
+                            review["streamingservice"].toString()
+                        )
+                    }
+                }
+                _selReview.update{reviewPost}
+                println("selReview in the event handler $selReview")
+                println("this is the review back to a structure $reviewPost")
+                println("this is the reviews title ${reviewPost.title}")
+                println("this is the reviews date ${reviewPost.date}")
+                println("this is the reviews par ${reviewPost.paragraph}")
+                println("this is the reviews ID ${reviewPost.reviewID}")
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -167,26 +170,26 @@ class userModel: ViewModel {
     constructor() {
         val user = Firebase.auth.currentUser
         if (user != null) {
-          this.userID = user.uid
-          println("in the constructor user id is $userID")
-       }
+            this.userID = user.uid
+            println("in the constructor user id is $userID")
+        }
 
     }
 }
 
 
-open class Review(val type: String, val title: String, val date: String, val genre: String, val rating: Int, val paragraph: String) {
+open class Review(val type: String, val title: String, val date: String, val genre: String, val rating: Int, val paragraph: String, val reviewID: String) {
 }
 
-class BookReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String,
-                 val author: String, val booktype: String): Review(type, title, date, genre, rating, paragraph) {
+class BookReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String, reviewID: String,
+                 val author: String, val booktype: String): Review(type, title, date, genre, rating, paragraph, reviewID) {
 }
-class TVShowReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String,
-                 val director: String, val streamingservice: String): Review(type, title, date, genre, rating, paragraph) {
+class TVShowReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String, reviewID: String,
+                   val director: String, val streamingservice: String): Review(type, title, date, genre, rating, paragraph, reviewID) {
 }
 
-class MovieReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String,
-                   val director: String, val publicationcompany: String): Review(type, title, date, genre, rating, paragraph) {
+class MovieReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String, reviewID: String,
+                  val director: String, val publicationcompany: String): Review(type, title, date, genre, rating, paragraph, reviewID) {
 }
 
 fun SubmittedReview(type: String, rating: Int, review: MutableMap<String, String>) {
@@ -197,26 +200,29 @@ fun SubmittedReview(type: String, rating: Int, review: MutableMap<String, String
         println("the user id is $userID")
     }
     //userID = "ZFZrCVjIR0P76TqT5lxX0W3dUI93"
+
     var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/$userID/Reviews")
+    var newReview = reviewsRef.push()
+    var newReviewID = newReview.key!!
     lateinit var reviewPost: Review
     when (type) {
         "Book" -> {
             reviewPost = BookReview("Book", review["Book Title"].toString(), review["Date Published"].toString(),
-                review["Genre"].toString(), rating, review["Review"].toString(),
+                review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
                 review["Author"].toString(), review["Book Type"].toString())
         }
         "TV Show" -> {
             reviewPost = TVShowReview("TV Show", review["TV Show Title"].toString(), review["Date Released"].toString(),
-            review["Genre"].toString(), rating, review["Review"].toString(),
-            review["Director"].toString(), review["Streaming Service"].toString())
-    }
+                review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
+                review["Director"].toString(), review["Streaming Service"].toString())
+        }
         "Movie" -> {
             reviewPost = MovieReview("Movie", review["Movie Title"].toString(), review["Date Released"].toString(),
-                review["Genre"].toString(), rating, review["Review"].toString(),
+                review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
                 review["Director"].toString(), review["Publication Company"].toString())
         }
     }
-    var newReview = reviewsRef.push()
+
     println("this si the review i just shared${reviewPost.title}")
     newReview.setValue(reviewPost)
         .addOnCompleteListener { task ->

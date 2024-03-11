@@ -74,8 +74,11 @@ class Signup : ComponentActivity() {
                 composable("Friends") {
                     FriendsMainContent(navController)
                 }
-                composable("ViewReview") {
-                    ReviewDetailsMainContent(navController)
+                composable("ViewReview/{reviewID}") {
+                    val reviewID = it.arguments?.getString("reviewID")!!
+                    println("In composable: " + reviewID)
+
+                    ReviewDetailsMainContent(navController, reviewID)
                 }
             }
         }
