@@ -301,74 +301,74 @@ fun StarRating(type: String) {
     var tvScore by remember { mutableIntStateOf(1) }
     var movieScore by remember { mutableIntStateOf(1) }
     var id = R.drawable.star_empty
-        Column ( modifier = Modifier
-            .padding(10.dp)
-            .fillMaxWidth()) {
-            Text(text = "Rating", modifier= Modifier.fillMaxWidth(),fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)))
-            Row() {
-                for (i in 1..5) {
-                    when (type) {
-                        "Book" -> {
-                            if (i <= bookScore) {
-                                id = R.drawable.star_full
-                            } else {
-                                id = R.drawable.star_empty
-                            }
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = id),
-                                contentDescription = "Star $i",
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .clickable(onClick = {
-                                        bookScore = i
-                                        reviewScore = bookScore
-                                    })
-                                    .size(32.dp)
-                            )
+    Column ( modifier = Modifier
+        .padding(10.dp)
+        .fillMaxWidth()) {
+        Text(text = "Rating", modifier= Modifier.fillMaxWidth(),fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)))
+        Row() {
+            for (i in 1..5) {
+                when (type) {
+                    "Book" -> {
+                        if (i <= bookScore) {
+                            id = R.drawable.star_full
+                        } else {
+                            id = R.drawable.star_empty
                         }
-
-                        "TV Show" -> {
-                            if (i <= tvScore) {
-                                id = R.drawable.star_full
-                            } else {
-                                id = R.drawable.star_empty
-                            }
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = id),
-                                contentDescription = "Star $i",
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .clickable(onClick = {
-                                        tvScore = i
-                                        reviewScore = tvScore
-                                    })
-                                    .size(32.dp)
-                            )
-                        }
-
-                        "Movie" -> {
-                            if (i <= movieScore) {
-                                id = R.drawable.star_full
-                            } else {
-                                id = R.drawable.star_empty
-                            }
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = id),
-                                contentDescription = "Star $i",
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .clickable(onClick = {
-                                        movieScore = i
-                                        reviewScore = movieScore
-                                    })
-                                    .size(32.dp)
-                            )
-                        }
-
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = id),
+                            contentDescription = "Star $i",
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .clickable(onClick = {
+                                    bookScore = i
+                                    reviewScore = bookScore
+                                })
+                                .size(32.dp)
+                        )
                     }
+
+                    "TV Show" -> {
+                        if (i <= tvScore) {
+                            id = R.drawable.star_full
+                        } else {
+                            id = R.drawable.star_empty
+                        }
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = id),
+                            contentDescription = "Star $i",
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .clickable(onClick = {
+                                    tvScore = i
+                                    reviewScore = tvScore
+                                })
+                                .size(32.dp)
+                        )
+                    }
+
+                    "Movie" -> {
+                        if (i <= movieScore) {
+                            id = R.drawable.star_full
+                        } else {
+                            id = R.drawable.star_empty
+                        }
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = id),
+                            contentDescription = "Star $i",
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .clickable(onClick = {
+                                    movieScore = i
+                                    reviewScore = movieScore
+                                })
+                                .size(32.dp)
+                        )
+                    }
+
                 }
             }
         }
+    }
     }
 @Preview
 @Composable
