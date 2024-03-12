@@ -98,6 +98,12 @@ fun SignupMainContent(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    var isSignupEnabled by remember { mutableStateOf(false) }
+    fun checkSignupEnabled() {
+        isSignupEnabled = username.isNotBlank() && email.isNotBlank()
+                && password.isNotBlank()
+    }
+
     var errorMessage by remember { mutableStateOf("") }
 
     Column(
@@ -144,11 +150,20 @@ fun SignupMainContent(navController: NavController) {
                 fontSize = 18.sp
             )
 
-            OutlinedTextFieldSignup("Username") { username = it }
+            OutlinedTextFieldSignup("Username") {
+                username = it
+                checkSignupEnabled()
+            }
 
-            OutlinedTextFieldSignup("Email") { email = it }
+            OutlinedTextFieldSignup("Email") {
+                email = it
+                checkSignupEnabled()
+            }
 
-            OutlinedTextFieldSignup("Password", true) { password = it }
+            OutlinedTextFieldSignup("Password", true) {
+                password = it
+                checkSignupEnabled()
+            }
 
             Button(
                 onClick = {
@@ -166,6 +181,7 @@ fun SignupMainContent(navController: NavController) {
                         }
                     }
                 },
+                enabled = isSignupEnabled,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.teal),
                     contentColor = colorResource(id = R.color.yellow)
