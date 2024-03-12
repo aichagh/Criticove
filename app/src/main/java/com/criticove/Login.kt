@@ -62,6 +62,11 @@ fun LoginMainContent(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    var isLoginEnabled by remember { mutableStateOf(false) }
+    fun checkLoginEnabled() {
+        isLoginEnabled = email.isNotBlank() && password.isNotBlank()
+    }
+
     var errorMessage by remember { mutableStateOf("") }
 
     Column(
@@ -109,9 +114,15 @@ fun LoginMainContent(navController: NavController) {
                 fontSize = 18.sp
             )
 
-            OutlinedTextFieldLogin("Email") { email = it }
+            OutlinedTextFieldLogin("Email") {
+                email = it
+                checkLoginEnabled()
+            }
 
-            OutlinedTextFieldLogin("Password", true) { password = it }
+            OutlinedTextFieldLogin("Password", true) {
+                password = it
+                checkLoginEnabled()
+            }
 
             Button(
                 onClick = {
@@ -124,6 +135,7 @@ fun LoginMainContent(navController: NavController) {
                         }
                     }
                 },
+                enabled = isLoginEnabled,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.teal),
                     contentColor = colorResource(id = R.color.yellow)
