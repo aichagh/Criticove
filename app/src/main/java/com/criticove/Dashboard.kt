@@ -84,7 +84,7 @@ fun DashboardHeader() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
+            .height(50.dp)
             .background(colorResource(id = R.color.blue))
     ) {
         Row(

@@ -128,7 +128,8 @@ fun MainLayout(
             topBar = {
                 Topbar(
                     pageTitle = title,
-                    onMenuClicked = { coroutineScope.launch { drawerState.open() } }
+                    onMenuClicked = { coroutineScope.launch { drawerState.open() } },
+                    navController
                 )
             }
         ) { innerPadding ->

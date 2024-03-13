@@ -35,12 +35,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.criticove.m3.ButtonStyles.IconButton
 
 @Composable
 fun Topbar(
     pageTitle: String = "Default",
-    onMenuClicked: () -> Unit
+    onMenuClicked: () -> Unit,
+    navController: NavController
 ) {
     Row(
         modifier = Modifier
@@ -67,7 +69,7 @@ fun Topbar(
             )
         }
 
-        TextButton(onClick = { TODO() }) {
+        TextButton(onClick = { navController.navigate("ProfilePage") }) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.default_profile),
                 contentDescription = "profile", tint = colorResource(id = R.color.off_white)
