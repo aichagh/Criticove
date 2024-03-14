@@ -84,6 +84,9 @@ class Signup : ComponentActivity() {
                 composable("TVShows") {
                     /*     TODO() */
                 }
+                composable("ProfilePage") {
+                    ProfilePageMainContent(navController)
+                }
 
             }
         }

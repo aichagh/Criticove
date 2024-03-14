@@ -56,19 +56,31 @@ import androidx.compose.material3.TextButton
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import com.criticove.backend.FirebaseManager
+import java.util.Date
 
 @Composable
 fun ProfilePageMainContent(navController: NavController) {
-    ProfileHeader(navController)
+
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
             .background(colorResource(id = R.color.off_white))
+            .fillMaxHeight(),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        ProfileMain()
+        ProfileHeader(navController)
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1F)
+                .verticalScroll(rememberScrollState())
+                .background(colorResource(id = R.color.off_white))
+        ) {
+            ProfileMain()
+        }
+        Navbar(navController)
     }
-    Navbar(navController)
+
 }
 
 @Composable
@@ -106,31 +118,35 @@ fun ProfileHeader(navController: NavController) {
 //@Preview
 fun ProfileMain() {
     val username = FirebaseManager.getUsername()
+//    var signupDate = username.getCreationTimestamp()
+
 
     Column(
         modifier = Modifier
             .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         //Temporary placeholder
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.default_profile),
             contentDescription = "profile", tint = colorResource(id = R.color.blue),
-            modifier = Modifier.height(75.dp).padding(10.dp)
+            modifier = Modifier
+                .height(75.dp)
+                .padding(10.dp)
         )
 
         Text(
            text = "$username",
-//            text = "Username placeholder", // temporary to view preview
             fontSize = 20.sp,
             fontFamily = FontFamily(Font(R.font.alegreya_sans_medium)),
         )
 
-        Text(
-            text = "Joined: mm/dd/yyyy", // temporary to view preview
-            fontSize = 18.sp,
-            fontFamily = FontFamily(Font(R.font.alegreya_sans_medium)),
-        )
+//        Text(
+//            text = "Joined: mm/dd/yyyy", // temporary to view preview
+//            fontSize = 18.sp,
+//            fontFamily = FontFamily(Font(R.font.alegreya_sans_medium)),
+//        )
 
         Button(
             onClick = {TODO()},
@@ -142,6 +158,34 @@ fun ProfileMain() {
                 .padding(10.dp)
         ) { Text(
             text = "Edit profile",
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
+            fontSize = 20.sp
+        ) }
+
+        Button(
+            onClick = {TODO()},
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.teal),
+                contentColor = colorResource(id = R.color.off_white)
+            ),
+            modifier = Modifier
+                .padding(10.dp)
+        ) { Text(
+            text = "Logout",
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
+            fontSize = 20.sp
+        ) }
+
+        Button(
+            onClick = {TODO()},
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.teal),
+                contentColor = colorResource(id = R.color.off_white)
+            ),
+            modifier = Modifier
+                .padding(10.dp)
+        ) { Text(
+            text = "Delete account",
             fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
             fontSize = 20.sp
         ) }

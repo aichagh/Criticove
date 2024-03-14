@@ -49,5 +49,6 @@ fun Navbar(navController: NavController) {
                 contentDescription = "friends", tint = colorResource(id = R.color.off_white)
             )
         }
+
     }
 }
