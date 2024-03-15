@@ -106,6 +106,8 @@ fun ProfileMain(navController: NavController) {
     val username = FirebaseManager.getUsername()
     val profilePic = R.drawable.default_pic // later if profile pic is set, change it
     var showDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -141,14 +143,14 @@ fun ProfileMain(navController: NavController) {
             customButton("Logout") {
                 showDialog = true
             }
-            customButton("Delete Account",{/* TODO */})
+            customButton("Delete Account")
+            {showDeleteDialog = true}
         }
     }
     // Dialog
     if (showDialog) {
         AlertDialog(
             onDismissRequest = {
-                // Dismiss the dialog when the user clicks outside the dialog or on the back button
                 showDialog = false
             },
             title = {
@@ -165,6 +167,28 @@ fun ProfileMain(navController: NavController) {
             },
             dismissButton = {
                 customButton("Cancel",{showDialog = false})
+            }
+        )
+    }
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showDeleteDialog = false
+            },
+            title = {
+                Text(text = "Delete Account")
+            },
+            text = {
+                Text("Are you sure?")
+            },
+            confirmButton = {
+                customButton("Delete", {
+                    showDeleteDialog = false
+                    FirebaseAuth.getInstance().getCurrentUser()?.delete()
+                    navController.navigate("Login")})
+            },
+            dismissButton = {
+                customButton("Cancel",{showDeleteDialog = false})
             }
         )
     }
