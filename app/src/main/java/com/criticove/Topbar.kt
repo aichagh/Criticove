@@ -23,6 +23,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -44,28 +45,30 @@ fun Topbar(
     onMenuClicked: () -> Unit,
     navController: NavController
 ) {
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
-            .background(colorResource(id = R.color.blue)),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .background(colorResource(id = R.color.blue))
     ) {
         TextButton(onClick = onMenuClicked) {
             Icon(imageVector = ImageVector.vectorResource(id = R.drawable.hamburger),
                 contentDescription = "menu", tint = colorResource(id = R.color.off_white) )
         }
 
-        Column(
+        Row(
             modifier = Modifier
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Center
-        ) {
+                .fillMaxHeight()
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+            ) {
             Text(
                 text = pageTitle,
                 color = colorResource(id = R.color.off_white),
                 fontSize = 30.sp,
-                fontFamily = FontFamily(Font(R.font.alegreya_sans_bold))
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
+                textAlign = TextAlign.Center,
             )
         }
     }
