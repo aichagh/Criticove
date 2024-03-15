@@ -47,6 +47,6 @@
 | 2024/03/14 | 4     |         |        |          |            |      | finished profile page UI + edit page |
 | 2024/03/14 | 4     |         |        | 0.5      |            |      | Verification of input field testing for sign up page |
 | 2024/03/15 |       |         |        | 1        |            |      | Work on the profile page buttons and changing colors |
-| 2024/03/15 | 2     |         |  2     |          |            |      | Debugging editing the review after creation |
+| 2024/03/15 | 2     |         |  4     |          |            |      | Debugging editing the review after creation |
 
 
