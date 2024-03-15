@@ -1,6 +1,9 @@
 package com.criticove
 
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +33,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -213,9 +219,7 @@ fun EditMain(navController: NavController) {
     ) {
 
         TextButton(
-            onClick = {/* TODO */},
-//            modifier = Modifier
-//                .padding(10.dp)
+            onClick = {},
         ) {
             Image(
                 painter = painterResource(id = profilePic),
@@ -241,6 +245,7 @@ fun EditMain(navController: NavController) {
 
     }
 }
+
 
 fun changed() {
 

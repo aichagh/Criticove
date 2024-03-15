@@ -54,7 +54,7 @@ fun DashboardMainContent(navController: NavController) {
             .fillMaxSize()
             .background(color = colorResource(id = R.color.off_white))
     ) {
-        DashboardHeader()
+        DashboardHeader(navController)
 
         Column(
             modifier = Modifier
@@ -81,7 +81,7 @@ fun DashboardMainContent(navController: NavController) {
 }
 
 @Composable
-fun DashboardHeader() {
+fun DashboardHeader(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()

@@ -3,6 +3,8 @@ package com.criticove
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -56,7 +58,14 @@ class Signup : ComponentActivity() {
         setTheme(R.style.Theme_CritiCove)
         setContent {
             val navController = rememberNavController()
-            NavHost(navController, startDestination = "Signup") {
+            NavHost(
+                navController,
+                startDestination = "Signup",
+
+                // removes the default crossfade animation when changing between pages
+                enterTransition = { EnterTransition.None },
+                exitTransition = { ExitTransition.None }
+            ) {
                 composable("Signup") {
                     SignupMainContent(navController)
                 }
