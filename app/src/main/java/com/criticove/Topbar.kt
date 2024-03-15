@@ -68,12 +68,5 @@ fun Topbar(
                 fontFamily = FontFamily(Font(R.font.alegreya_sans_bold))
             )
         }
-
-        TextButton(onClick = { navController.navigate("ProfilePage") }) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.default_profile),
-                contentDescription = "profile", tint = colorResource(id = R.color.off_white)
-            )
-        }
     }
 }

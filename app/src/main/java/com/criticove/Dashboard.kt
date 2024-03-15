@@ -22,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -90,12 +91,12 @@ fun DashboardHeader() {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(10.dp)
-            )
+            TextButton(onClick = { navController.navigate("ProfilePage") }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.default_profile),
+                    contentDescription = "profile", tint = colorResource(id = R.color.off_white)
+                )
+            }
 
             Spacer(modifier = Modifier.width(80.dp))
 

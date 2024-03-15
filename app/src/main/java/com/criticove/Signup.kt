@@ -87,6 +87,9 @@ class Signup : ComponentActivity() {
                 composable("ProfilePage") {
                     ProfilePageMainContent(navController)
                 }
+                composable("EditProfile") {
+                    editProfile(navController)
+                }
 
             }
         }

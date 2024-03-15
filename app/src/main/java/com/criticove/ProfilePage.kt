@@ -24,9 +24,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -53,11 +55,9 @@ fun ProfilePageMainContent(navController: NavController) {
                 .verticalScroll(rememberScrollState())
                 .background(colorResource(id = R.color.off_white))
         ) {
-            ProfileMain()
+            ProfileMain(navController)
         }
-        Navbar(navController)
     }
-
 }
 
 @Composable
@@ -71,7 +71,7 @@ fun ProfileHeader(navController: NavController, title: String, route: String) {
         TextButton(onClick = { navController.navigate(route) }) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.right_arrow),
-                contentDescription = "profile", tint = colorResource(id = R.color.off_white)
+                contentDescription = "backarrow", tint = colorResource(id = R.color.off_white)
             )
         }
 
@@ -93,7 +93,7 @@ fun ProfileHeader(navController: NavController, title: String, route: String) {
 
 @Composable
 //@Preview
-fun ProfileMain() {
+fun ProfileMain(navController: NavController) {
     val username = FirebaseManager.getUsername()
     val profilePic = R.drawable.default_pic // later if profile pic is set, change it
 
@@ -128,7 +128,7 @@ fun ProfileMain() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            customButton("Edit Profile", {/* TODO */})
+            customButton("Edit Profile",  { navController.navigate("EditProfile") })
             customButton("Logout", {/* TODO */})
             customButton("Delete Account",{/* TODO */})
         }
@@ -152,6 +152,96 @@ fun customButton(text: String = "Default",
 }
 
 @Composable
-fun editProfile() {
+fun editProfile(navController: NavController) {
+    Column(
+        modifier = Modifier
+            .background(colorResource(id = R.color.off_white))
+            .fillMaxHeight(),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        EditHeader()
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1F)
+                .verticalScroll(rememberScrollState())
+                .background(colorResource(id = R.color.off_white))
+        ) {
+            EditMain(navController)
+        }
+    }
+}
+
+@Composable
+fun EditHeader() {
+    Column(
+        modifier = Modifier
+            .height(50.dp)
+            .background(colorResource(id = R.color.blue))
+            .fillMaxWidth()
+            .fillMaxHeight(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            Alignment.Center
+        ) {
+            Text(
+                text = "Edit Profile",
+                color = colorResource(id = R.color.off_white),
+                fontSize = 30.sp,
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_bold))
+            )
+        }
+    }
+}
+
+@Composable
+fun EditMain(navController: NavController) {
+    val username = FirebaseManager.getUsername()
+    val profilePic = R.drawable.default_pic // later if profile pic is set, change it
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(colorResource(id = R.color.off_white)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+
+        TextButton(
+            onClick = {/* TODO */},
+//            modifier = Modifier
+//                .padding(10.dp)
+        ) {
+            Image(
+                painter = painterResource(id = profilePic),
+                contentDescription = "profile picture",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(200.dp)
+                    .clip(CircleShape)
+            )
+        }
+
+        OutlinedTextField(
+            value = username,
+            onValueChange = { /* TODO */ }
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+            customButton("Save changes", {/* TODO */})
+            customButton("Cancel", { navController.navigate("ProfilePage") })
+        }
+
+    }
+}
+
+fun changed() {
 
 }
