@@ -31,17 +31,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import com.criticove.backend.FirebaseManager
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun ProfilePageMainContent(navController: NavController) {
@@ -102,7 +105,7 @@ fun ProfileHeader(navController: NavController, title: String, route: String) {
 fun ProfileMain(navController: NavController) {
     val username = FirebaseManager.getUsername()
     val profilePic = R.drawable.default_pic // later if profile pic is set, change it
-
+    var showDialog by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -135,11 +138,38 @@ fun ProfileMain(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             customButton("Edit Profile",  { navController.navigate("EditProfile") })
-            customButton("Logout", {/* TODO */})
+            customButton("Logout") {
+                showDialog = true
+            }
             customButton("Delete Account",{/* TODO */})
         }
     }
+    // Dialog
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                // Dismiss the dialog when the user clicks outside the dialog or on the back button
+                showDialog = false
+            },
+            title = {
+                Text(text = "Logout")
+            },
+            text = {
+                Text("Are you sure?")
+            },
+            confirmButton = {
+                customButton("Logout", {
+                    showDialog = false
+                    FirebaseAuth.getInstance().signOut()
+                    navController.navigate("Login")})
+            },
+            dismissButton = {
+                customButton("Cancel",{showDialog = false})
+            }
+        )
+    }
 }
+
 
 @Composable
 fun customButton(text: String = "Default",
