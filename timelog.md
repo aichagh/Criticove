@@ -13,6 +13,8 @@
 | 2024/02/14 | 1     | 1       |2       |1         | 1.5        | 1    | Finalizing D2 document |
 | 2024/02/19 | 7     | 7       |7       |7         | 5          | 6    | Created project, set up Firebase and integrated Firebase Auth |
 | 2024/02/20 |       |         |        |          | 2          |      | Sign Up Page UI |
+| 2024/02/20 | 2     |         |        |          |            |      | reviews Page UI (XML) |
+| 2024/02/20 | 2     |         |        |          |            |      | topbar / navbar Page UI (XML)|
 | 2024/02/20 |       |         |        |1         |            |      | Splash Screen UI |
 | 2024/02/20 |       | 3.5     |        |          |            |      | Jetpack compose research and Integrating M3 |
 | 2024/02/20 |       |         |4       |          |            |      | Create Review Form UI |
@@ -32,9 +34,9 @@
 | 2024/03/01 | 3     |         |        |          |            |      | Updating the create review UI |
 | 2024/03/02 |       | 4       |        |          |            |      | Navbar navigation setup |
 | 2024/03/03 |       |         |        |          | 0.5        |      | Navbar navigation complete |
-| 2024/03/03 |       | 1.5     | 1.5    |          | 1.5        |      | Prepare for prototype demo |
-| 2024/03/04 |       | 1.25    | 1.5    |          | 1.5        |      | Prototype demo presentation and discussion  |
-| 2024/03/08 |       | 1.5     | 2.5    |          | 2          |      | Prototype document discussion and work | 
+| 2024/03/03 | 1.5   | 1.5     | 1.5    |          | 1.5        |      | Prepare for prototype demo |
+| 2024/03/04 | 1.5   | 1.25    | 1.5    |          | 1.5        |      | Prototype demo presentation and discussion  |
+| 2024/03/08 | 1.5   | 1.5     | 2.5    |          | 2          |      | Prototype document discussion and work | 
 | 2024/03/09 |       | 10      |        |          |            |      | Setting hamburger menu and navigation |
 | 2024/03/11 |       |         |        |          | 1.5        |      | Auth error message on Signup & Login pages and show real username on Dashboard |
 | 2024/03/12 |       |         |        |          | 0.5        |      | Enable/Disable Signup & Login buttons |
