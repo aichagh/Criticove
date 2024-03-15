@@ -38,3 +38,7 @@
 | 2024/03/09 |       | 10      |        |          |            |      | Setting hamburger menu and navigation |
 | 2024/03/11 |       |         |        |          | 1.5        |      | Auth error message on Signup & Login pages and show real username on Dashboard |
 | 2024/03/12 |       |         |        |          | 0.5        |      | Enable/Disable Signup & Login buttons |
+| 2024/03/12 | 3     |         |        |          |            |      | Created UI for profile page + added app icon |
+| 2024/03/13 | 4     |         |        |          |            |      | Set up navigation to profile page + created default profile picture asset |
+
+
