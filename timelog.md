@@ -45,4 +45,4 @@
 | 2024/03/13 | 4     |         |        |          |            |      | Set up navigation to profile page + created default profile picture asset |
 | 2024/03/14 |       |         |        | 2        |            |      | Set up logout feature as well as delete user from firebase |
 | 2024/03/14 | 4     |         |        |          |            |      | finished profile page UI + edit page |
-
+| 2024/03/14 | 4     |         |        | 0.5      |            |      | Verification of input field testing for sign up page |
