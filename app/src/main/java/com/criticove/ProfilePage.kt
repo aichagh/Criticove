@@ -261,7 +261,8 @@ fun EditHeader() {
 
 @Composable
 fun EditMain(navController: NavController) {
-    val username = FirebaseManager.getUsername()
+    val user = FirebaseManager.getUsername()
+    var username by remember { mutableStateOf(user) }
     val profilePic = R.drawable.default_pic // later if profile pic is set, change it
 
     Column(
@@ -287,7 +288,9 @@ fun EditMain(navController: NavController) {
 
         OutlinedTextField(
             value = username,
-            onValueChange = { /* TODO */ }
+            onValueChange = {
+                username = it
+            },
         )
 
         Row(
