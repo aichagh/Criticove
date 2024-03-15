@@ -55,9 +55,9 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 
 val filled = mutableMapOf(
-    "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Date Published" to "", "Genre" to "", "Book Type" to ""),
-    "TV Show" to mutableMapOf("TV Show Title" to "", "Director" to "", "Date Released" to "", "Genre" to "", "Streaming Service" to ""),
-    "Movie" to mutableMapOf("Movie Title" to "", "Director" to "" , "Date Released" to "", "Genre" to "", "Publication Company" to ""))
+    "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Date Published" to "", "Genre" to "", "Book Type" to "", "Review" to ""),
+    "TV Show" to mutableMapOf("TV Show Title" to "", "Director" to "", "Date Released" to "", "Genre" to "", "Streaming Service" to "", "Review" to ""),
+    "Movie" to mutableMapOf("Movie Title" to "", "Director" to "" , "Date Released" to "", "Genre" to "", "Publication Company" to "", "Review" to ""))
 
 var reviewScore = 1
 var submittedReview: MutableMap<String, String>? = null
@@ -156,9 +156,9 @@ fun CreateForm(type:String, navController: NavController) {
     var text by remember { mutableStateOf("") }
 
     when (type) {
-        "Book" -> elements = listOf("Book Title","Author", "Date Published", "Genre", "Book Type").toMutableList()
-        "TV Show" -> elements = listOf("TV Show Title", "Director", "Date Released", "Genre", "Streaming Service").toMutableList()
-        "Movie" -> elements = listOf("Movie Title", "Director", "Date Released", "Genre", "Publication Company").toMutableList()
+        "Book" -> elements = listOf("Book Title","Author", "Date Published", "Genre", "Book Type", "Review").toMutableList()
+        "TV Show" -> elements = listOf("TV Show Title", "Director", "Date Released", "Genre", "Streaming Service", "Review").toMutableList()
+        "Movie" -> elements = listOf("Movie Title", "Director", "Date Released", "Genre", "Publication Company", "Review").toMutableList()
     }
         Column(
             modifier = Modifier
@@ -224,20 +224,6 @@ fun CreateForm(type:String, navController: NavController) {
                         filled["Movie"]?.set(label, movieData).toString()}
                 }
             }
-            OutlinedTextField(
-                value = text,
-                onValueChange = { text = it },
-                minLines = 7,
-                label = { Text( text = "Review", color = colorResource(id = R.color.coolGrey),fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = colorResource(id = R.color.blue),
-                    unfocusedBorderColor = colorResource(id = R.color.teal)
-                ),
-                shape = RoundedCornerShape(10.dp)
-            )
         }
     println("this is filled $filled")
     StarRating(type)

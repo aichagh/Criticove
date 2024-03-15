@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -28,6 +32,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,7 +71,7 @@ class ReviewDetails: ComponentActivity() {
         super.onCreate(savedInstanceState)
         val userModel: userModel by viewModels()
         lifecycleScope.launch {
-            userModel.getReviews()
+            //userModel.getReviews()
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 userModel.selReview.collect {
                     println("here sel review is ${userModel.selReview}")
@@ -95,7 +102,7 @@ fun ReviewDetailsMainContent(navController: NavController,
     ) {
         Column {
             Topbar(selReview.title)
-            ReviewDetailsTable(reviewType, userModel.selReview)
+            ReviewDetailsTable(reviewType, userModel.selReview, reviewID)
         }
     }
 }
@@ -123,7 +130,8 @@ fun ReviewDetailsHeader() {
 **/
 
 @Composable
-fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>) {
+fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
+                       reviewID: String) {
     val selReview by selReview.collectAsState()
 
     var elements =  mutableListOf<String>()
@@ -196,6 +204,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>) {
             reviewData["Review"] = movieReview.paragraph
         }
     }
+    elements.add("Review")
 
     Box(
         modifier = Modifier
@@ -204,6 +213,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>) {
             .padding(10.dp)
     ) {
         Column() {
+            println("in the review details page but not yet added info")
             elements.forEach { label ->
                 Box(
                     modifier = Modifier
@@ -212,15 +222,67 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>) {
                     Column() {
                         var curData = reviewData[label].toString()
 
-                        Text(
-                            text = "$label: $curData",
-                            modifier = Modifier.fillMaxWidth()
-                                .padding(10.dp)
-                        )
+                        if (label != "Review") {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(5.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "$label: ",
+                                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                                    textAlign = TextAlign.End,
+                                    color = colorResource(id = R.color.teal),
+                                    modifier = Modifier
+                                        .padding(5.dp)
+                                        .width(100.dp)
+                                )
+                                Text(
+                                    text = "$curData",
+                                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                                    modifier = Modifier
+                                        .padding(5.dp)
+                                )
+
+
+
+                                /*
+                                if (label == "Rating" && !curData.isNullOrEmpty()) {
+                                    println("at rating point $label : $curData")
+                                    Stars(curData.toInt())
+                                } else {
+                                    Text(
+                                        text = "$curData",
+                                        modifier = Modifier
+                                            .padding(5.dp)
+                                    )
+                                }
+
+                                 */
+
+
+                            }
+                        } else {
+                            OutlinedTextField(
+                                value = curData,
+                                onValueChange = { curData = it },
+                                minLines = 3,
+                                maxLines = 7,
+                                label = {Text( text = "Review", color = colorResource(id = R.color.blue)) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .horizontalScroll(rememberScrollState())
+                            )
+
+                            reviewData.set("Review", curData).toString()
+                            println("new reviewData is $reviewData")
+                        }
 
                     }
                 }
             }
+            /*
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -239,13 +301,15 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>) {
 
                 }
             }
+            */
         }
     }
-    SubmitUpdatedReview(type, reviewData)
+    SubmitUpdatedReview(type, reviewData, reviewID)
 }
 
 @Composable
-fun SubmitUpdatedReview(type: String, reviewData: MutableMap<String, String>) {
+fun SubmitUpdatedReview(type: String, reviewData: MutableMap<String, String>,
+                        reviewID: String) {
     var saveToDB by remember { mutableStateOf(false) }
 
     Box(
@@ -277,7 +341,6 @@ fun SubmitUpdatedReview(type: String, reviewData: MutableMap<String, String>) {
 }
 
 
-/**
 @Preview
 @Composable
 fun PreviewReviewDetails() {
@@ -285,12 +348,51 @@ fun PreviewReviewDetails() {
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
+            .verticalScroll(rememberScrollState())
             .background(colorResource(id = R.color.off_white))
     ) {
-        Column {
-            reviewData["Title"]?.let { Topbar(it) }
-            ReviewDetailsTable(reviewType)
+        Column() {
+            Topbar()
+
+            Row(
+                modifier = Modifier
+                .fillMaxWidth()
+                    .padding(5.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "title: ",
+                    textAlign = TextAlign.End,
+                    modifier = Modifier
+                        .width(150.dp)
+                        .padding(5.dp)
+                )
+                Text(
+                    text = "mew",
+                    modifier = Modifier
+                        .padding(5.dp)
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "author: ",
+                    textAlign = TextAlign.End,
+                    modifier = Modifier
+                        .width(150.dp)
+                        .padding(5.dp)
+                )
+                Text(
+                    text = "mew mew",
+                    modifier = Modifier
+                        .padding(5.dp)
+                )
+            }
+
         }
     }
 }
-**/

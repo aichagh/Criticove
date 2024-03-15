@@ -83,7 +83,7 @@ fun ReviewPageMainContent(navController: NavController) {
             modifier = Modifier
                 .weight(1F)
         ) {
-            print("after calling ${userModel.reviewList}")
+            //print("after calling ${userModel.reviewList}")
             displayReviews(navController, userModel.reviewList)
         }
 
@@ -96,6 +96,7 @@ fun ReviewPageMainContent(navController: NavController) {
 @Composable
 fun Stars(rating: Int) {
     var id = R.drawable.star_full
+    println("got id in stars() $id")
     for (i in 1..5) {
         if (i > rating) {
             id = R.drawable.star_empty
@@ -160,14 +161,14 @@ fun Review(title: String = "Title",
 @Composable
 fun displayReviews(navController: NavController, reviewList: StateFlow<MutableList<Review>>) {
     val reviewsList by reviewList.collectAsState()
-    println("the review list in reviewspage is $reviewsList")
-    println(reviewList)
+    //println("the review list in reviewspage is $reviewsList")
+    //println(reviewList)
     for (review in reviewsList) {
         when (review) {
             is BookReview -> {
                 val bookReview: BookReview = review
-                println("here book review")
-                println("this is the review $review")
+                //println("here book review")
+                //println("this is the review $review")
                 Review(bookReview.title, bookReview.author, bookReview.date, bookReview.rating, bookReview.reviewID, navController)
             }
             is TVShowReview -> {

@@ -29,11 +29,12 @@ class userModel: ViewModel {
     val selReview: StateFlow<Review> = _selReview
 
     fun getReviews() {
-        println("this is the user id : ${userID}")
+        //println("this is the user id : ${userID}")
         var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Reviews")
-        println("the users ${this.userID} reviews keys and their corresponding values: ,")
+        //println("the users ${this.userID} reviews keys and their corresponding values: ,")
         reviewsRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
+                println("still in getReviews")
                 var newReviewList: MutableList<Review> = mutableListOf()
                 for (reviewSnapshot in dataSnapshot.children) {
                     val reviewKey = reviewSnapshot.key
@@ -45,7 +46,7 @@ class userModel: ViewModel {
                         is Long -> rDB.toInt()
                         else -> 3
                     }
-                    println("this is rint $r")
+                    //println("this is rint $r")
 
                     when (review["type"]) {
                         "Book" -> {
@@ -82,11 +83,11 @@ class userModel: ViewModel {
                     }
                     newReviewList.add(reviewPost)
                     _reviewList.update{newReviewList}
-                    println("reviewList in the event handelr $reviewList")
-                    println("this is the review back to a structure $reviewPost")
-                    println("this is the reviews title ${reviewPost.title}")
-                    println("this is the reviews date ${reviewPost.date}")
-                    println("this is the reviews par ${reviewPost.paragraph}")
+                    //println("reviewList in the event handelr $reviewList")
+                    //println("this is the review back to a structure $reviewPost")
+                    //println("this is the reviews title ${reviewPost.title}")
+                    //println("this is the reviews date ${reviewPost.date}")
+                    //println("this is the reviews par ${reviewPost.paragraph}")
                 }
             }
 
@@ -200,6 +201,7 @@ fun SubmittedReview(type: String, rating: Int, review: MutableMap<String, String
         println("the user id is $userID")
     }
     //userID = "ZFZrCVjIR0P76TqT5lxX0W3dUI93"
+    println("Here is review para in submitRev: ${review["Review"]}")
 
     var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/$userID/Reviews")
     var newReview = reviewsRef.push()
