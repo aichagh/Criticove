@@ -39,6 +39,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -80,7 +81,8 @@ fun ProfileHeader(navController: NavController, title: String, route: String) {
         TextButton(onClick = { navController.navigate(route) }) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.right_arrow),
-                contentDescription = "backarrow", tint = colorResource(id = R.color.off_white)
+                contentDescription = "backarrow", tint = colorResource(id = R.color.off_white),
+                modifier = Modifier.scale(scaleX = -1f, scaleY = 1f)
             )
         }
 
@@ -154,10 +156,10 @@ fun ProfileMain(navController: NavController) {
                 showDialog = false
             },
             title = {
-                Text(text = "Logout")
+                Text(text = "Logout", fontSize = 24.sp, fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)))
             },
             text = {
-                Text("Are you sure?")
+                Text(text = "Are you sure?", fontSize = 20.sp, fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)))
             },
             confirmButton = {
                 customButton("Logout", {
@@ -167,7 +169,7 @@ fun ProfileMain(navController: NavController) {
             },
             dismissButton = {
                 customButton("Cancel",{showDialog = false})
-            }
+            },
         )
     }
     if (showDeleteDialog) {
@@ -176,10 +178,10 @@ fun ProfileMain(navController: NavController) {
                 showDeleteDialog = false
             },
             title = {
-                Text(text = "Delete Account")
+                Text(text = "Delete Account", fontSize = 24.sp, fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)))
             },
             text = {
-                Text("Are you sure?")
+                Text("Are you sure?", fontSize = 20.sp, fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)))
             },
             confirmButton = {
                 customButton("Delete", {
