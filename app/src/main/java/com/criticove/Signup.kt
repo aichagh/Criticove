@@ -3,6 +3,7 @@ package com.criticove
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -48,37 +49,39 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 import com.criticove.backend.FirebaseManager
+import com.criticove.backend.userModel
 
 class Signup : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val userModel: userModel by viewModels()
         setTheme(R.style.Theme_CritiCove)
         setContent {
             val navController = rememberNavController()
             NavHost(navController, startDestination = "Signup") {
                 composable("Signup") {
-                    SignupMainContent(navController)
+                    SignupMainContent(navController, userModel)
                 }
                 composable("Login") {
-                    LoginMainContent(navController)
+                    LoginMainContent(navController, userModel)
                 }
                 composable("ReviewForm") {
-                    ReviewFormMainContent(navController)
+                    ReviewFormMainContent(navController, userModel)
                 }
                 composable("Reviews") {
-                    ReviewPageMainContent(navController)
+                    ReviewPageMainContent(navController, userModel)
                 }
                 composable("Dashboard") {
-                    DashboardMainContent(navController)
+                    DashboardMainContent(navController, userModel)
                 }
                 composable("Friends") {
-                    FriendsMainContent(navController)
+                    FriendsMainContent(navController, userModel)
                 }
                 composable("ViewReview/{reviewID}") {
                     val reviewID = it.arguments?.getString("reviewID")!!
                     println("In composable: " + reviewID)
 
-                    ReviewDetailsMainContent(navController, reviewID)
+                    ReviewDetailsMainContent(navController, reviewID, userModel)
                 }
             }
         }
@@ -86,7 +89,7 @@ class Signup : ComponentActivity() {
 }
 
 @Composable
-fun SignupMainContent(navController: NavController) {
+fun SignupMainContent(navController: NavController, userModel: userModel) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -143,6 +146,9 @@ fun SignupMainContent(navController: NavController) {
             Button(
                 onClick = {
                     FirebaseManager.signup(username, email, password) { success ->
+                        if (success) {
+                            userModel.getCurUser()
+                        }
                         signupResult = success
                     }
                 },

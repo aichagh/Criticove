@@ -168,6 +168,14 @@ class userModel: ViewModel {
     }
 
     //var friends: List<String>
+    fun getCurUser() {
+        val user = Firebase.auth.currentUser
+        if (user != null) {
+            this.userID = user.uid
+            println("in the constructor user id is $userID")
+        }
+    }
+
     constructor() {
         val user = Firebase.auth.currentUser
         if (user != null) {

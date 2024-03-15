@@ -66,6 +66,7 @@ var reviewType = ""   // reviewData["type"]!!
 
 var updatedReview: MutableMap<String, String>? = null
 
+/*
 class ReviewDetails: ComponentActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,10 +86,11 @@ class ReviewDetails: ComponentActivity() {
     }
 }
 
+ */
+
 @Composable
 fun ReviewDetailsMainContent(navController: NavController,
-                             reviewID: String) {
-    var userModel = userModel()
+                             reviewID: String, userModel: userModel) {
     userModel.getSelReview(reviewID)
     val selReview by userModel.selReview.collectAsState()
     println(reviewID)

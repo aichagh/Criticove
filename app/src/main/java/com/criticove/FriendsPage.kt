@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.criticove.backend.userModel
 
 data class Friend(val firstName: String, val lastName: String)
 
@@ -67,7 +68,7 @@ Friend("Ashmita", "M")
 )
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FriendsMainContent(navController: NavController) {
+fun FriendsMainContent(navController: NavController, userModel: userModel) {
     var searchText by remember { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
     var filteredFriends by remember { mutableStateOf(emptyList<Friend>()) }
@@ -206,8 +207,11 @@ fun remove_friend(firstName: String, lastName : String) {
     ogFriendsList.remove(Friend(firstName, lastName))
 }
 
+/*
 @Preview
 @Composable
 fun Preview_friends(){
     FriendsMainContent(rememberNavController())
 }
+
+ */

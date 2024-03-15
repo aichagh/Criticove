@@ -42,9 +42,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.criticove.backend.userModel
 
 @Composable
-fun DashboardMainContent(navController: NavController) {
+fun DashboardMainContent(navController: NavController, userModel: userModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()

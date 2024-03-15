@@ -53,7 +53,7 @@ class ReviewsPage: ComponentActivity() {
                 userModel.reviewList.collect {
                     println("here review list is ${userModel.reviewList}")
                     setContent {
-                        ReviewPageMainContent(rememberNavController())
+                        ReviewPageMainContent(rememberNavController(), userModel)
 
                     }
                 }
@@ -63,8 +63,7 @@ class ReviewsPage: ComponentActivity() {
 }
 
 @Composable
-fun ReviewPageMainContent(navController: NavController) {
-    var userModel = userModel()
+fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
     userModel.getReviews()
     println("in review page main content")
     Column(
@@ -182,6 +181,8 @@ fun displayReviews(navController: NavController, reviewList: StateFlow<MutableLi
         }
     }
 }
+
+/*
 @Composable
 fun ReviewsPagePreview(navController: NavController) {
     val userModel = userModel()
@@ -209,3 +210,5 @@ fun ReviewsPagePreview(navController: NavController) {
         Navbar(navController)
     }
 }
+
+ */

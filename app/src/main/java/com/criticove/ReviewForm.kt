@@ -53,6 +53,7 @@ import android.content.Intent
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import com.criticove.backend.userModel
 
 val filled = mutableMapOf(
     "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Date Published" to "", "Genre" to "", "Book Type" to "", "Review" to ""),
@@ -63,7 +64,7 @@ var reviewScore = 1
 var submittedReview: MutableMap<String, String>? = null
 
 
-
+/*
 class ReviewForm : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,8 +82,10 @@ class ReviewForm : ComponentActivity() {
     }
 }
 
+ */
+
 @Composable
-fun ReviewFormMainContent(navController: NavController) {
+fun ReviewFormMainContent(navController: NavController, userModel: userModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -356,10 +359,14 @@ fun StarRating(type: String) {
         }
     }
     }
+
+/*
 @Preview
 @Composable
 fun PreviewCreateReview() {
     ReviewFormMainContent(navController = rememberNavController())
 }
+
+ */
 
 
