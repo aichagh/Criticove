@@ -55,6 +55,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import com.criticove.backend.userModel
 
 val filled = mutableMapOf(
     "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Date Published" to "", "Genre" to "", "Book Type" to ""),
@@ -73,10 +74,10 @@ class ReviewForm : ComponentActivity() {
             val navController = rememberNavController()
             NavHost(navController, startDestination = "ReviewForm") {
                 composable("ReviewForm") {
-                    ReviewFormMainContent(navController)
+                    //ReviewFormMainContent(navController)
                 }
                 composable("Reviews") {
-                    ReviewPageMainContent(navController)
+                   //ReviewPageMainContent(navController)
                 }
             }
         }
@@ -84,7 +85,7 @@ class ReviewForm : ComponentActivity() {
 }
 
 @Composable
-fun ReviewFormMainContent(navController: NavController) {
+fun ReviewFormMainContent(navController: NavController, userModel: userModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -440,5 +441,8 @@ fun StarRating(type: String) {
 @Preview
 @Composable
 fun PreviewCreateReview() {
-    ReviewFormMainContent(navController = rememberNavController())
+
+    //ReviewFormMainContent(navController = rememberNavController())
 }
+
+

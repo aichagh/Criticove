@@ -46,9 +46,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 import com.criticove.backend.FirebaseManager
+import com.criticove.backend.userModel
 
 @Composable
-fun DashboardMainContent(navController: NavController) {
+fun DashboardMainContent(navController: NavController, userModel: userModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -511,6 +512,6 @@ fun DashboardCardHeader(heading: String, navController: NavController) {
 @Preview
 @Composable
 fun Preview_Display() {
-        DashboardMainContent(rememberNavController())
+        //DashboardMainContent(rememberNavController())
 }
 

@@ -53,7 +53,7 @@ class ReviewsPage: ComponentActivity() {
                 userModel.reviewList.collect {
                     println("here review list is ${userModel.reviewList}")
                     setContent {
-                        ReviewPageMainContent(rememberNavController())
+                       // ReviewPageMainContent(rememberNavController())
 
                     }
                 }
@@ -63,7 +63,7 @@ class ReviewsPage: ComponentActivity() {
 }
 
 @Composable
-fun ReviewPageMainContent(navController: NavController) {
+fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
     MainLayout(
         title = "Review Page",
         navController = navController
@@ -77,7 +77,6 @@ fun ReviewPageMainContent(navController: NavController) {
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            val userModel = userModel()
             userModel.getReviews()
             println("in review page main content")
 
@@ -196,7 +195,7 @@ fun ReviewsPagePreview(navController: NavController) {
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            val userModel = userModel()
+            //val userModel = userModel("jelly")
             Column(
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier
