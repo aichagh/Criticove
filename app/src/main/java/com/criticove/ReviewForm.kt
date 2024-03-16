@@ -51,8 +51,11 @@ import com.criticove.m3.ButtonStyles.PrimaryButton
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import com.criticove.backend.userModel
 
 val filled = mutableMapOf(
     "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Date Published" to "", "Genre" to "", "Book Type" to ""),
@@ -71,10 +74,10 @@ class ReviewForm : ComponentActivity() {
             val navController = rememberNavController()
             NavHost(navController, startDestination = "ReviewForm") {
                 composable("ReviewForm") {
-                    ReviewFormMainContent(navController)
+                    //ReviewFormMainContent(navController)
                 }
                 composable("Reviews") {
-                    ReviewPageMainContent(navController)
+                   //ReviewPageMainContent(navController)
                 }
             }
         }
@@ -82,7 +85,7 @@ class ReviewForm : ComponentActivity() {
 }
 
 @Composable
-fun ReviewFormMainContent(navController: NavController) {
+fun ReviewFormMainContent(navController: NavController, userModel: userModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -91,7 +94,9 @@ fun ReviewFormMainContent(navController: NavController) {
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         ReviewHeader()
-        Selection(navController)
+        Column (modifier = Modifier.verticalScroll(rememberScrollState())) {
+            Selection(navController)
+        }
         println("this is filled $filled")
     }
 }
@@ -160,7 +165,7 @@ fun CreateForm(type:String, navController: NavController) {
         "TV Show" -> elements = listOf("TV Show Title", "Director", "Date Released", "Genre", "Streaming Service").toMutableList()
         "Movie" -> elements = listOf("Movie Title", "Director", "Date Released", "Genre", "Publication Company").toMutableList()
     }
-        Column(
+    Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(colorResource(id = R.color.off_white)),
@@ -246,6 +251,64 @@ fun CreateForm(type:String, navController: NavController) {
 
 @Composable
 fun Submission(type: String, navController: NavController) {
+    var shareOption by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+    ) {
+        Text(
+            text = "Do you want to share your review with your friends?",
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_medium)),
+            fontSize = 18.sp
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = shareOption == true,
+                    onClick = { shareOption = true},
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = colorResource(id = R.color.blue),
+                        unselectedColor = colorResource(id = R.color.blue),
+                    )
+                )
+
+                Text(
+                    text = "Share",
+                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                    fontSize = 18.sp
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = shareOption == false,
+                    onClick = { shareOption = false},
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = colorResource(id = R.color.blue),
+                        unselectedColor = colorResource(id = R.color.blue),
+                    )
+                )
+
+                Text(
+                    text = "Keep private",
+                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                    fontSize = 18.sp
+                )
+            }
+        }
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -304,7 +367,12 @@ fun StarRating(type: String) {
         Column ( modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth()) {
-            Text(text = "Rating", modifier= Modifier.fillMaxWidth(),fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)))
+            Text(
+                text = "Rating",
+                modifier= Modifier.fillMaxWidth(),
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_medium)),
+                fontSize = 18.sp
+            )
             Row() {
                 for (i in 1..5) {
                     when (type) {
@@ -373,7 +441,8 @@ fun StarRating(type: String) {
 @Preview
 @Composable
 fun PreviewCreateReview() {
-    ReviewFormMainContent(navController = rememberNavController())
+
+    //ReviewFormMainContent(navController = rememberNavController())
 }
 
 

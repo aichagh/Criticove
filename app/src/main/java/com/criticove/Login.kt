@@ -46,19 +46,20 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 import com.criticove.backend.FirebaseManager
+import com.criticove.backend.userModel
 
 class Login : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.Theme_CritiCove)
         setContent {
-            LoginMainContent(rememberNavController())
+            //LoginMainContent(rememberNavController())
         }
     }
 }
 
 @Composable
-fun LoginMainContent(navController: NavController) {
+fun LoginMainContent(navController: NavController, userModel: userModel) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -128,6 +129,7 @@ fun LoginMainContent(navController: NavController) {
                 onClick = {
                     FirebaseManager.login(email, password) { success ->
                         if (success) {
+                            userModel.loginUser()
                             errorMessage = ""
                             navController.navigate("Dashboard")
                         } else {

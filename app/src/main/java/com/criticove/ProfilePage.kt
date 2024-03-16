@@ -1,9 +1,9 @@
 package com.criticove
 
-
+import android.content.ContentValues.TAG
+import android.content.Context
 import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,11 +44,24 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.core.content.FileProvider
 import com.criticove.backend.FirebaseManager
+
+import com.criticove.backend.userModel
+
+import com.google.firebase.Firebase
+
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.auth.userProfileChangeRequest
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Objects
+import kotlin.coroutines.CoroutineContext
 
 @Composable
-fun ProfilePageMainContent(navController: NavController) {
+fun ProfilePageMainContent(navController: NavController, userModel: userModel) {
 
     Column(
         modifier = Modifier
@@ -214,7 +227,7 @@ fun customButton(text: String = "Default",
 }
 
 @Composable
-fun editProfile(navController: NavController) {
+fun editProfile(navController: NavController, userModel: userModel) {
     Column(
         modifier = Modifier
             .background(colorResource(id = R.color.off_white))
@@ -263,7 +276,8 @@ fun EditHeader() {
 
 @Composable
 fun EditMain(navController: NavController) {
-    val username = FirebaseManager.getUsername()
+    val user = FirebaseManager.getUsername()
+    var username by remember { mutableStateOf(user) }
     val profilePic = R.drawable.default_pic // later if profile pic is set, change it
 
     Column(
@@ -289,20 +303,32 @@ fun EditMain(navController: NavController) {
 
         OutlinedTextField(
             value = username,
-            onValueChange = { /* TODO */ }
+            onValueChange = {
+                username = it
+            }
         )
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-            customButton("Save changes", {/* TODO */})
-            customButton("Cancel", { navController.navigate("ProfilePage") })
+            customButton("Save changes", { changed(username) })
+            customButton("Back", { navController.navigate("ProfilePage") })
         }
 
     }
 }
 
+fun changed(newUsername: String) {
+    val user = Firebase.auth.currentUser
+    val profileUpdates = userProfileChangeRequest {
+        displayName = newUsername
+//        photoUri = Uri.parse("https://example.com/jane-q-user/profile.jpg")
+    }
 
-fun changed() {
-
+    user!!.updateProfile(profileUpdates)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d(TAG, "User profile updated.")
+            }
+        }
 }
