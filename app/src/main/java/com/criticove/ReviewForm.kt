@@ -206,10 +206,8 @@ fun CreateForm(type:String, navController: NavController) {
     {
         when (type) {
             "Book" -> { BookForm() }
-
             "TV Show" -> { TVShowForm() }
-
-//            "Movie" -> { MovieForm() }
+            "Movie" -> { MovieForm() }
         }
         OutlinedTextField(
             value = text,
@@ -452,10 +450,28 @@ fun BookForm() {
 @Composable
 fun TVShowForm() {
 //    "TV Show Title", "Director", "Date Released", "Genre", "Streaming Service"
+    val genreList = listOf<String>("Romance", "Thriller", "Drama", "Autobiography", "Sci-fi")
+    val serviceList = listOf<String>("Netflix", "Prime", "Hulu", "HBO", "Other")
+
     normalText(field = "TV Show Title", type = "TV Show")
     normalText(field = "Director", type = "TV Show")
     normalText(field = "Date Released", type = "TV Show")
+    Dropdown(type = "TV Show", field = "Genre", list = genreList)
+    Dropdown(type = "TV Show", field = "Streaming Service", list = serviceList)
 
+}
+
+@Composable
+fun MovieForm() {
+    //"Movie Title", "Director", "Date Released", "Genre", "Publication Company"
+    val genreList = listOf<String>("Romance", "Thriller", "Drama", "Autobiography", "Sci-fi")
+    val serviceList = listOf<String>("Netflix", "Prime", "Hulu", "HBO", "Other")
+
+    normalText(field = "Movie Title", type = "Movie")
+    normalText(field = "Director", type = "Movie")
+    normalText(field = "Date Released", type = "Movie")
+    Dropdown(type = "Movie", field = "Genre", list = genreList)
+    Dropdown(type = "Movie", field = "Streaming Service", list = serviceList)
 
 }
 
