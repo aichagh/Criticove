@@ -67,6 +67,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -207,7 +209,7 @@ fun CreateForm(type:String, navController: NavController) {
 
             "TV Show" -> { TVShowForm() }
 
-            "Movie" -> { MovieForm() }
+//            "Movie" -> { MovieForm() }
         }
         OutlinedTextField(
             value = text,
@@ -436,143 +438,59 @@ fun PreviewCreateReview() {
 @Composable
 fun BookForm() {
     // Fields: "Book Title","Author", "Date Published", "Genre", "Book Type"
-    var title by remember {mutableStateOf("")}
-    var author by remember {mutableStateOf("")}
-    var date by remember {mutableStateOf("")}
+    val genreList = listOf<String>("Romance", "Thriller", "Drama", "Autobiography", "Sci-fi")
+    val typeList = listOf<String>("Physical", "E-Book")
 
-
-    OutlinedTextField(
-        value = title,
-        onValueChange = { title = it },
-        singleLine = true,
-        label = { Text( text = "Book Title", color = colorResource(id = R.color.coolGrey),
-            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = colorResource(id = R.color.blue),
-            unfocusedBorderColor = colorResource(id = R.color.teal)
-        ),
-        shape = RoundedCornerShape(10.dp)
-    )
-    filled["Book"]?.set("Book Title", title).toString()
-
-
-    OutlinedTextField(
-        value = author,
-        onValueChange = { author = it },
-        singleLine = true,
-        label = { Text( text = "Author", color = colorResource(id = R.color.coolGrey),
-            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = colorResource(id = R.color.blue),
-            unfocusedBorderColor = colorResource(id = R.color.teal)
-        ),
-        shape = RoundedCornerShape(10.dp)
-    )
-    filled["Book"]?.set("Author", author).toString()
-
-
-    OutlinedTextField(
-        value = date,
-        onValueChange = { date = it },
-        singleLine = true,
-        label = { Text( text = "Date", color = colorResource(id = R.color.coolGrey),
-            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = colorResource(id = R.color.blue),
-            unfocusedBorderColor = colorResource(id = R.color.teal)
-        ),
-        shape = RoundedCornerShape(10.dp),
-//        visualTransformation = DateTransformation()
-    )
-    filled["Book"]?.set("Date Published", date).toString()
-
-    genresMenu()
-    typesMenu()
+    normalText(field = "Book Title", type = "Book")
+    normalText(field = "Author", type = "Book")
+    normalText(field = "Date Published", type = "Show")
+    Dropdown(type = "Book", field = "Genre", list = genreList)
+    Dropdown(type = "Book", field = "Book Type", list = typeList)
 }
 
-@Suppress("ModifierParameter")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun genresMenu() {
-    val genresList = listOf("Romance", "Thriller", "Horror", "Fantasy", "Drama")
-    var expanded by remember { mutableStateOf(false) }
-    var genre by remember { mutableStateOf("Genre") }
+fun TVShowForm() {
+//    "TV Show Title", "Director", "Date Released", "Genre", "Streaming Service"
+    normalText(field = "TV Show Title", type = "TV Show")
+    normalText(field = "Director", type = "TV Show")
+    normalText(field = "Date Released", type = "TV Show")
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 10.dp, vertical = 5.dp)
-            .wrapContentSize(Alignment.TopCenter)
-    ) {
-        TextButton(
-            onClick = { expanded = true },
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = colorResource(id = R.color.teal),
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .background(colorResource(id = R.color.off_white)),
-        ) {
-            var textColor = colorResource(id = R.color.black);
-            if(genre == "Genre") {
-                textColor = colorResource(id = R.color.coolGrey)
-            }
 
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun normalText(field: String, type: String) {
+    var entered by remember { mutableStateOf("") }
+
+    OutlinedTextField(
+        value = entered,
+        onValueChange = { entered = it },
+        singleLine = true,
+        label = {
             Text(
-                text = genre,
-                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-                fontSize = 18.sp,
-                color = textColor,
-                textAlign = TextAlign.Left,
-                modifier = Modifier.fillMaxWidth()
+                text = field, color = colorResource(id = R.color.coolGrey),
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
             )
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier
-                .background(colorResource(id = R.color.off_white))
-                .fillMaxWidth()
-        ) {
-            genresList.forEach { el ->
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = el,
-                            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )},
-                    onClick = { genre = el; expanded = false},
-                    modifier = Modifier
-                        .background(colorResource(id = R.color.off_white))
-                        .fillMaxWidth(),
-                )
-            }
-        }
-    }
-
-    filled["Book"]?.set("Genre", genre).toString()
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = colorResource(id = R.color.blue),
+            unfocusedBorderColor = colorResource(id = R.color.teal)
+        ),
+        shape = RoundedCornerShape(10.dp)
+    )
+    filled[type]?.set(field, entered).toString()
 }
 
 @Suppress("ModifierParameter")
 @Composable
-@Preview
-fun typesMenu() {
-    val typesList = listOf("Physical", "Ebook")
+fun Dropdown(type: String, field: String, list: List<String>) {
     var expanded by remember { mutableStateOf(false) }
-    var type by remember { mutableStateOf("Book type") }
+    var entered by remember { mutableStateOf(field) }
 
     Box(
         modifier = Modifier
@@ -592,18 +510,27 @@ fun typesMenu() {
                 .background(colorResource(id = R.color.off_white)),
         ) {
             var textColor = colorResource(id = R.color.black);
-            if(type == "Book type") {
+            if(entered == field) {
                 textColor = colorResource(id = R.color.coolGrey)
             }
 
             Text(
-                text = type,
+                text = entered,
                 fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
                 fontSize = 18.sp,
                 color = textColor,
                 textAlign = TextAlign.Left,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.weight(1F)
             )
+
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.right_arrow),
+                contentDescription = "drop", tint = colorResource(id = R.color.black),
+                modifier = Modifier
+                    .rotate(90F)
+                    .height(20.dp)
+            )
+
         }
 
         DropdownMenu(
@@ -613,7 +540,7 @@ fun typesMenu() {
                 .background(colorResource(id = R.color.off_white))
                 .fillMaxWidth()
         ) {
-            typesList.forEach { el ->
+            list.forEach { el ->
                 DropdownMenuItem(
                     text = {
                         Text(
@@ -622,7 +549,7 @@ fun typesMenu() {
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxSize()
                         )},
-                    onClick = { type = el; expanded = false},
+                    onClick = { entered = el; expanded = false},
                     modifier = Modifier
                         .background(colorResource(id = R.color.off_white))
                         .fillMaxWidth(),
@@ -631,78 +558,5 @@ fun typesMenu() {
         }
     }
 
-    filled["Book"]?.set("Book Type", type).toString()
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TVShowForm() {
-//    "TV Show Title", "Director", "Date Released", "Genre", "Streaming Service"
-    var title by remember { mutableStateOf("") }
-    var director by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("") }
-
-
-    OutlinedTextField(
-        value = title,
-        onValueChange = { title = it },
-        singleLine = true,
-        label = {
-            Text(
-                text = "TV Show Title", color = colorResource(id = R.color.coolGrey),
-                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
-            )
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = colorResource(id = R.color.blue),
-            unfocusedBorderColor = colorResource(id = R.color.teal)
-        ),
-        shape = RoundedCornerShape(10.dp)
-    )
-    filled["TV Show"]?.set("TV Show Title", title).toString()
-
-    OutlinedTextField(
-        value = director,
-        onValueChange = { director = it },
-        singleLine = true,
-        label = {
-            Text(
-                text = "Director", color = colorResource(id = R.color.coolGrey),
-                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
-            )
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = colorResource(id = R.color.blue),
-            unfocusedBorderColor = colorResource(id = R.color.teal)
-        ),
-        shape = RoundedCornerShape(10.dp)
-    )
-    filled["TV Show"]?.set("Director", director).toString()
-
-    OutlinedTextField(
-        value = date,
-        onValueChange = { date = it },
-        singleLine = true,
-        label = {
-            Text(
-                text = "Date Released", color = colorResource(id = R.color.coolGrey),
-                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
-            )
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = colorResource(id = R.color.blue),
-            unfocusedBorderColor = colorResource(id = R.color.teal)
-        ),
-        shape = RoundedCornerShape(10.dp)
-    )
-    filled["TV Show"]?.set("Date Released", date).toString()
+    filled[type]?.set(field, entered).toString()
 }
