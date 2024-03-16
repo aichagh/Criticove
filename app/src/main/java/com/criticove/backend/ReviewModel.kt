@@ -51,6 +51,7 @@ class userModel: ViewModel {
 
     fun getUsers() {
         val usersRef = FirebaseDatabase.getInstance().getReference("Users")
+        var curuserID = this.userID
 
         usersRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -61,7 +62,9 @@ class userModel: ViewModel {
                     println("get users $userID")
                     println("get users $userName")
                     if (userID is String && userName is String) {
-                        newUserMap[userID] = userName
+                        if (userID != curuserID) {
+                            newUserMap[userID] = userName
+                        }
                     }
                     _userMap.update{newUserMap}
                 }

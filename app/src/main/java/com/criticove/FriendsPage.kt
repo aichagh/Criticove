@@ -55,20 +55,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.criticove.backend.userModel
 
-data class Friend(val firstName: String, val lastName: String)
+data class Friend(val username: String)
 
 var ogFriendsList = mutableStateListOf(
-Friend("Sara", "Z"),
-Friend("Reem", "F"),
-Friend("Uma", "G"),
-Friend("Sharmistha", "G"),
-Friend("Ashmita", "M"),
-    Friend("Aicha", "G")
+Friend("Sara"),
+Friend("Reem"),
+Friend("Uma"),
+Friend("Sharmistha"),
+Friend("Ashmita"),
+    Friend("Aicha")
 )
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FriendsMainContent(navController: NavController) {
+fun FriendsMainContent(navController: NavController, userModel: userModel) {
     var searchText by remember { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
     var filteredFriends by remember { mutableStateOf(emptyList<Friend>()) }
@@ -76,8 +77,7 @@ fun FriendsMainContent(navController: NavController) {
     fun perform_search() {
         filteredFriends = if (isSearchActive) {
             ogFriendsList.filter {
-                it.firstName.contains(searchText, ignoreCase = true) ||
-                        it.lastName.contains(searchText, ignoreCase = true)
+                it.username.contains(searchText, ignoreCase = true)
             }
         } else {
             ogFriendsList
@@ -187,7 +187,7 @@ fun Friends(friend: Friend) {
                     .align(Alignment.CenterVertically),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(text = "${friend.firstName} ${friend.lastName}",
+                Text(text = "${friend.username}",
                     style = TextStyle(
                         fontSize = 20.sp,
                         fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
@@ -200,8 +200,8 @@ fun Friends(friend: Friend) {
                 modifier = Modifier
                     .width(50.dp),
                 onClick = {
-                    ognewFriendsList.add(Friend(friend.firstName, friend.lastName))
-                    remove_friend(friend.firstName, friend.lastName)}
+//                    ognewFriendsList.add(Friend(friend.username))
+                    remove_friend(friend.username)}
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.delete_user),
@@ -212,12 +212,12 @@ fun Friends(friend: Friend) {
     }
 }
 
-fun remove_friend(firstName: String, lastName : String) {
-    ogFriendsList.remove(Friend(firstName, lastName))
+fun remove_friend(username: String) {
+    ogFriendsList.remove(Friend(username))
 }
 
-@Preview
-@Composable
-fun Preview_friends(){
-    FriendsMainContent(rememberNavController())
-}
+//@Preview
+//@Composable
+//fun Preview_friends(){
+//    FriendsMainContent(rememberNavController())
+//}

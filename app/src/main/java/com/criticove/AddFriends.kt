@@ -1,5 +1,6 @@
 package com.criticove
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,11 +23,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,29 +45,45 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.criticove.backend.userModel
 
 
-var ognewFriendsList = mutableStateListOf(
-    Friend("Aras", "Z"),
-    Friend("Meer", "F"),
-    Friend("Amu", "G"),
-    Friend("Ahtsimrahs", "G"),
-    Friend("Atimhsa", "M"),
-    Friend("Ahcia", "G")
-)
+//var ognewFriendsList = mutableStateListOf(
+//    Friend("Aras"),
+//    Friend("Meer"),
+//    Friend("Amu"),
+//    Friend("Ahtsimrahs"),
+//    Friend("Atimhsa"),
+//    Friend("Ahcia")
+//)
+
+
+
+//@SuppressLint("UnrememberedMutableState")
+@SuppressLint("UnrememberedMutableState")
+@Composable
+fun createNewFriendsList(usermodel: userModel): SnapshotStateList<Friend> {
+    usermodel.getUsers()
+    var FriendsList = mutableStateListOf<Friend>()
+    val user_map by usermodel.userMap.collectAsState()
+    for ((key, value) in user_map) {
+        FriendsList.add(Friend(value))
+    }
+    return FriendsList
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddFriends(navController: NavController) {
+fun AddFriends(navController: NavController, usermodel: userModel) {
     var searchText by remember { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
     var filteredFriends by remember { mutableStateOf(emptyList<Friend>()) }
+    var ognewFriendsList = createNewFriendsList(usermodel)
 
     fun perform_search() {
         filteredFriends = if (isSearchActive) {
             ognewFriendsList.filter {
-                it.firstName.contains(searchText, ignoreCase = true) ||
-                        it.lastName.contains(searchText, ignoreCase = true)
+                it.username.contains(searchText, ignoreCase = true)
             }
         } else {
             ognewFriendsList
@@ -129,7 +149,7 @@ fun AddFriends(navController: NavController) {
 
                 LazyColumn {
                     items(filteredFriends) { friend ->
-                        AddFriends(friend)
+                        AddFriends(friend, ognewFriendsList)
                     }
                 }
             }
@@ -140,7 +160,7 @@ fun AddFriends(navController: NavController) {
 }
 
 @Composable
-fun AddFriends(friend: Friend) {
+fun AddFriends(friend: Friend, ognewFriendsList: SnapshotStateList<Friend>) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -173,7 +193,7 @@ fun AddFriends(friend: Friend) {
                     .align(Alignment.CenterVertically),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(text = "${friend.firstName} ${friend.lastName}",
+                Text(text = "${friend.username}",
                     style = TextStyle(
                         fontSize = 20.sp,
                         fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
@@ -185,8 +205,8 @@ fun AddFriends(friend: Friend) {
             TextButton(
                 modifier = Modifier
                     .width(50.dp),
-                onClick = {ogFriendsList.add(Friend(friend.firstName, friend.lastName))
-                    remove_new_friend(friend.firstName, friend.lastName)
+                onClick = {ogFriendsList.add(Friend(friend.username))
+                    remove_new_friend(friend.username, ognewFriendsList)
                     println("the new list of new friends is $ognewFriendsList")}
             ) {
                 Icon(
@@ -198,6 +218,6 @@ fun AddFriends(friend: Friend) {
     }
 }
 
-fun remove_new_friend(firstName: String, lastName : String) {
-    ognewFriendsList.remove(Friend(firstName, lastName))
+fun remove_new_friend(username: String, ognewFriendsList: SnapshotStateList<Friend>) {
+    ognewFriendsList.remove(Friend(username))
 }

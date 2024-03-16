@@ -88,7 +88,7 @@ class Signup : ComponentActivity() {
                     FriendsMainContent(navController, userModel)
                 }
                 composable("AddFriends") {
-                    AddFriends(navController)
+                    AddFriends(navController, userModel)
                 }
                 composable("FriendsReviews") {
                     FriendsReviews(navController)
