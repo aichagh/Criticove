@@ -50,3 +50,4 @@
 | 2024/03/15 | 2     |         |  4     |          |            |      | Debugging editing the review after creation |
 | 2024/03/15 |       |         |        | 2         |            |      | Updated Friends UI page and hamburger menu |
 | 2024/03/15 |       |         |        | 2         |            |      | Worked on integrating the backend into the friends page to display in real time |
+| 2024/03/16 |       |         |  4     |          |            |      | Backend for adding friends and obtaining users |
