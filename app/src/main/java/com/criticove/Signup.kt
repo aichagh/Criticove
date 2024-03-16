@@ -1,5 +1,6 @@
 package com.criticove
 
+import FriendsReviews
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -85,6 +86,12 @@ class Signup : ComponentActivity() {
                 }
                 composable("Friends") {
                     FriendsMainContent(navController, userModel)
+                }
+                composable("AddFriends") {
+                    AddFriends(navController, userModel)
+                }
+                composable("FriendsReviews") {
+                    FriendsReviews(navController)
                 }
                 composable("Books") {
                  /*     TODO() */

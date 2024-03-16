@@ -43,7 +43,7 @@ fun Navbar(navController: NavController) {
                 contentDescription = "new review", tint = colorResource(id = R.color.off_white) )
         }
 
-        TextButton(onClick = { navController.navigate("Friends") }) {
+        TextButton(onClick = { navController.navigate("FriendsReviews") }) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.people_white),
                 contentDescription = "friends", tint = colorResource(id = R.color.off_white)
