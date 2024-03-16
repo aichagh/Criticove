@@ -45,10 +45,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import com.criticove.backend.FirebaseManager
+import com.criticove.backend.userModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun ProfilePageMainContent(navController: NavController) {
+fun ProfilePageMainContent(navController: NavController, userModel: userModel) {
 
     Column(
         modifier = Modifier
@@ -214,7 +215,7 @@ fun customButton(text: String = "Default",
 }
 
 @Composable
-fun editProfile(navController: NavController) {
+fun editProfile(navController: NavController, userModel: userModel) {
     Column(
         modifier = Modifier
             .background(colorResource(id = R.color.off_white))
