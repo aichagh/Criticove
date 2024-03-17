@@ -53,7 +53,6 @@ val menuItems = listOf(
     MenuItem("Bookmarks", Icons.Filled.Bookmark, "Bookmarks"),
     MenuItem("Manage Friends", Icons.Filled.Group, "Friends"),
     MenuItem("Add Friends", Icons.Filled.Group, "AddFriends"),
-    MenuItem("Logout", Icons.AutoMirrored.Filled.Logout, "Logout")
 )
 
 @Composable
