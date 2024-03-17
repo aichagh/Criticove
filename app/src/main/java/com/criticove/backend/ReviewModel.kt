@@ -124,7 +124,8 @@ class userModel: ViewModel {
                                 reviewPost = BookReview(
                                     "Book", review["title"].toString(), review["date"].toString(),
                                     review["genre"].toString(), r , review["paragraph"].toString(),
-                                    review["author"].toString(), review["booktype"].toString(), s
+                                    review["author"].toString(), review["booktype"].toString(),
+                                    review["datefinished"].toString()
                                 )
                             }
 
@@ -137,7 +138,8 @@ class userModel: ViewModel {
                                     r,
                                     review["paragraph"].toString(),
                                     review["director"].toString(),
-                                    review["publicationcompany"].toString(), s
+                                    review["streamingservice"].toString(),
+                                    review["datewatched"].toString()
                                 )
                             }
 
@@ -145,7 +147,8 @@ class userModel: ViewModel {
                                 reviewPost = TVShowReview(
                                     "Book", review["title"].toString(), review["date"].toString(),
                                     review["genre"].toString(), r, review["paragraph"].toString(),
-                                    review["director"].toString(), review["streamingservice"].toString(), s
+                                    review["director"].toString(), review["streamingservice"].toString(),
+                                    review["datefinished"].toString()
                                 )
                             }
                         }
@@ -205,14 +208,14 @@ open class Review(val type: String, val title: String, val date: String, val gen
 }
 
 class BookReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String,
-                 val author: String, val booktype: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, shared) {
+                 val author: String, val booktype: String, val datefinished: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, shared) {
 }
 class TVShowReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String,
-                 val director: String, val streamingservice: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, shared) {
+                 val director: String, val streamingservice: String, val datefinished: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, shared) {
 }
 
 class MovieReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String,
-                   val director: String, val publicationcompany: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, shared) {
+                   val director: String, val streamingservice: String, val datewatched: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, shared) {
 }
 
 fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableMap<String, String>) {
@@ -227,19 +230,20 @@ fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableM
     lateinit var reviewPost: Review
     when (type) {
         "Book" -> {
-            reviewPost = BookReview("Book", review["Book Title"].toString(), review["Date Published"].toString(),
+            reviewPost = BookReview("Book", review["Book Title"].toString(), review["Year Published"].toString(),
                 review["Genre"].toString(), rating, review["Review"].toString(),
-                review["Author"].toString(), review["Book Type"].toString(), shared)
+                review["Author"].toString(), review["Book Type"].toString(), review["Date finished"].toString())
         }
         "TV Show" -> {
-            reviewPost = TVShowReview("TV Show", review["TV Show Title"].toString(), review["Date Released"].toString(),
+            reviewPost = TVShowReview("TV Show", review["TV Show Title"].toString(), review["Year Released"].toString(),
             review["Genre"].toString(), rating, review["Review"].toString(),
-            review["Director"].toString(), review["Streaming Service"].toString(), shared)
+            review["Director"].toString(), review["Streaming Service"].toString(), review["Date finished"].toString())
     }
         "Movie" -> {
-            reviewPost = MovieReview("Movie", review["Movie Title"].toString(), review["Date Released"].toString(),
+            reviewPost = MovieReview("Movie", review["Movie Title"].toString(), review["Year Released"].toString(),
                 review["Genre"].toString(), rating, review["Review"].toString(),
-                review["Director"].toString(), review["Publication Company"].toString(), shared)
+
+                review["Director"].toString(), review["Streaming Service"].toString(), review["Date watched"].toString())
         }
     }
     var newReview = reviewsRef.push()
