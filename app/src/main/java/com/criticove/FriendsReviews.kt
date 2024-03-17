@@ -54,7 +54,6 @@ val profilePic = R.drawable.default_pic // later if profile pic is set, change i
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun createFriendsReviews(usermodel: userModel) {
-    usermodel.getfriendReviews()
     val friendsReviewsList by usermodel.friendReviews.collectAsState()
     for ((key, value) in friendsReviewsList) {
         displayFriendsReviews(key, value)
@@ -63,6 +62,7 @@ fun createFriendsReviews(usermodel: userModel) {
 
 @Composable
 fun FriendsReviews(navController: NavController, usermodel: userModel) {
+    usermodel.getfriendReviews()
     MainLayout(
         title = "Friends Reviews",
         navController = navController
@@ -72,18 +72,20 @@ fun FriendsReviews(navController: NavController, usermodel: userModel) {
                 .padding(padding)
                 .background(colorResource(id = R.color.off_white))
                 .fillMaxHeight()
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
+                .fillMaxWidth(),
+
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            val userModel = userModel()
-            userModel.getReviews()
-            println("in review page main content")
+//            val userModel = userModel()
+//            userModel.getReviews()
+//            println("in review page main content")
 
             Column(
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier
                     .weight(1F)
+                    .padding(bottom = 10.dp)
+                    .verticalScroll(rememberScrollState()),
             ) {
                 createFriendsReviews(usermodel)
             }
