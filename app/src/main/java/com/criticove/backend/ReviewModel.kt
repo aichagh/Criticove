@@ -21,35 +21,60 @@ import kotlinx.coroutines.flow.update
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-//fun addFriend(friendID: String) {
-//    println(getUsers())
-//    val user = Firebase.auth.currentUser
-//    lateinit var userID : String
-//    if (user != null) {
-//        userID = user.uid
-//        println("the user id is $userID")
-//    }
-//    var friendsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Friends")
-//    friendsRef.child("$friendID").setValue("")
-//
-//}
+fun addFriend(friendID: String) {
+    val user = Firebase.auth.currentUser
+    lateinit var userID : String
+    if (user != null) {
+        userID = user.uid
+        println("the user id is $userID")
+    }
+    var friendsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Friends")
+    friendsRef.child("$friendID").setValue("")
+
+}
 class userModel: ViewModel {
     //private val _userID: MutableStateFlow<String> = MutableStateFlow("ZFZrCVjIR0P76TqT5lxX0W3dUI93")
     var userID: String = "ZFZrCVjIR0P76TqT5lxX0W3dUI93"
     private val _reviewList: MutableStateFlow<MutableList<Review>> = MutableStateFlow(mutableListOf())
     val reviewList: StateFlow<MutableList<Review>> = _reviewList
-    private val _friendList: MutableStateFlow<MutableList<Review>> = MutableStateFlow(mutableListOf())
-    val friendList: StateFlow<MutableList<Review>> = _friendList
+    private val _friendMap: MutableStateFlow<MutableMap<String, String>> = MutableStateFlow(mutableMapOf<String, String>())
+    val friendMap: StateFlow<MutableMap<String, String>> = _friendMap
     private val _userMap: MutableStateFlow<MutableMap<String, String>> = MutableStateFlow(mutableMapOf<String, String>())
     val userMap: StateFlow<MutableMap<String, String>> = _userMap
 
-    fun addFriend(friendID: String) {
-        var friendsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Reviews/${friendID}")
+    fun addFriend(friendusername: String) {
+        val friendID = userMap.value.entries.find { it.value == friendusername }?.key
+        var friendsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Friends")
+        if (friendID != null) {
+            friendsRef.child("$friendID").setValue(friendusername)
+        }
+        var curuserID = this.userID
+        friendsRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val newfriendMap: MutableMap<String, String> = mutableMapOf<String, String>()
+                for (childSnapshot in dataSnapshot.children) {
+                    val friendID = childSnapshot.key
+                    if (friendID is String) {
+                        val frienduserName =
+                            childSnapshot.getValue(String::class.java)
+                        println("in addfriend friends id $friendID")
+                        println("in addfriend friends name $frienduserName")
+                        if (friendID is String && frienduserName is String) {
+                            newfriendMap[friendID] = frienduserName
+                        }
+                        _friendMap.update{newfriendMap}
+                    }
+                }
+            }
 
-
+            override fun onCancelled(error: DatabaseError) {
+                // Log.w(TAG, "review:onCancelled", databaseError.toException())
+            }
+        })
     }
 
     fun getUsers() {
+        //addFriend("bear")
         val usersRef = FirebaseDatabase.getInstance().getReference("Users")
         var curuserID = this.userID
 
@@ -75,8 +100,6 @@ class userModel: ViewModel {
             }
 
         })
-
-
     }
 
     fun getReviews() {
