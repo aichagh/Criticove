@@ -1,3 +1,4 @@
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -30,17 +35,34 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.criticove.Friend
 import com.criticove.MainLayout
 import com.criticove.Navbar
 import com.criticove.R
+import com.criticove.Review
 import com.criticove.Stars
+import com.criticove.backend.BookReview
+import com.criticove.backend.MovieReview
+import com.criticove.backend.Review
+import com.criticove.backend.TVShowReview
 import com.criticove.backend.userModel
 import com.criticove.displayReviews
+import kotlinx.coroutines.flow.StateFlow
 
 val profilePic = R.drawable.default_pic // later if profile pic is set, change it
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
-fun FriendsReviews(navController: NavController) {
+fun createFriendsReviews(usermodel: userModel) {
+    val friendsReviewsList by usermodel.friendReviews.collectAsState()
+    for ((key, value) in friendsReviewsList) {
+        displayFriendsReviews(key, value)
+    }
+}
+
+@Composable
+fun FriendsReviews(navController: NavController, usermodel: userModel) {
+    usermodel.getfriendReviews()
     MainLayout(
         title = "Friends Reviews",
         navController = navController
@@ -50,20 +72,22 @@ fun FriendsReviews(navController: NavController) {
                 .padding(padding)
                 .background(colorResource(id = R.color.off_white))
                 .fillMaxHeight()
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
+                .fillMaxWidth(),
+
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            val userModel = userModel()
-            userModel.getReviews()
-            println("in review page main content")
+//            val userModel = userModel()
+//            userModel.getReviews()
+//            println("in review page main content")
 
             Column(
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier
                     .weight(1F)
+                    .padding(bottom = 10.dp)
+                    .verticalScroll(rememberScrollState()),
             ) {
-                // Add here
+                createFriendsReviews(usermodel)
             }
 
             Navbar(navController)
@@ -138,6 +162,31 @@ fun FriendReview(
                     imageVector = ImageVector.vectorResource(id = R.drawable.bookmark_empty),
                     contentDescription = "bookmark", tint = colorResource(id = R.color.black)
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun displayFriendsReviews(username: String, reviewsList: List<Review>) {
+//    val reviewsList by reviewList.collectAsState()
+    println("the review list in reviewspage is $reviewsList")
+    println(reviewsList)
+    for (review in reviewsList) {
+        when (review) {
+            is BookReview -> {
+                val bookReview: BookReview = review
+                println("here book review")
+                println("this is the review $review")
+                FriendReview(username, bookReview.title, bookReview.author, bookReview.date, bookReview.rating)
+            }
+            is TVShowReview -> {
+                val tvShowReview: TVShowReview = review
+                FriendReview(username, tvShowReview.title, tvShowReview.director,tvShowReview.date, tvShowReview.rating)
+            }
+            is MovieReview -> {
+                val movieReview: MovieReview = review
+                FriendReview(username, movieReview.title, movieReview.director, movieReview.date, movieReview.rating)
             }
         }
     }

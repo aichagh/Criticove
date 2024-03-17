@@ -75,8 +75,7 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                 .padding(padding)
                 .background(colorResource(id = R.color.off_white))
                 .fillMaxHeight()
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             userModel.getReviews()
@@ -86,6 +85,8 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier
                     .weight(1F)
+                    .padding(bottom = 10.dp)
+                    .verticalScroll(rememberScrollState()),
             ) {
                 print("after calling ${userModel.reviewList}")
                 displayReviews(userModel.reviewList)
