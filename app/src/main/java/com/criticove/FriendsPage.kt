@@ -61,15 +61,6 @@ import com.criticove.backend.userModel
 
 data class Friend(val username: String)
 
-//var ogFriendsList = mutableStateListOf(
-//Friend("Sara"),
-//Friend("Reem"),
-//Friend("Uma"),
-//Friend("Sharmistha"),
-//Friend("Ashmita"),
-//    Friend("Aicha")
-//)
-
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun createFriendsList(usermodel: userModel): SnapshotStateList<Friend> {
