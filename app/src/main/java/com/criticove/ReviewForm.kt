@@ -429,7 +429,7 @@ fun StarRating(type: String) {
 @Preview
 @Composable
 fun PreviewCreateReview() {
-    ReviewFormMainContent(navController = rememberNavController())
+//    ReviewFormMainContent(navController = rememberNavController())
 }
 
 
