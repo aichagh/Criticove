@@ -1,9 +1,9 @@
 package com.criticove
 
-
+import android.content.ContentValues.TAG
+import android.content.Context
 import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,15 +39,29 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.core.content.FileProvider
 import com.criticove.backend.FirebaseManager
+
+import com.criticove.backend.userModel
+
+import com.google.firebase.Firebase
+
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.auth.userProfileChangeRequest
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Objects
+import kotlin.coroutines.CoroutineContext
 
 @Composable
-fun ProfilePageMainContent(navController: NavController) {
+fun ProfilePageMainContent(navController: NavController, userModel: userModel) {
 
     Column(
         modifier = Modifier
@@ -80,7 +94,8 @@ fun ProfileHeader(navController: NavController, title: String, route: String) {
         TextButton(onClick = { navController.navigate(route) }) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.right_arrow),
-                contentDescription = "backarrow", tint = colorResource(id = R.color.off_white)
+                contentDescription = "backarrow", tint = colorResource(id = R.color.off_white),
+                modifier = Modifier.scale(scaleX = -1f, scaleY = 1f)
             )
         }
 
@@ -154,10 +169,10 @@ fun ProfileMain(navController: NavController) {
                 showDialog = false
             },
             title = {
-                Text(text = "Logout")
+                Text(text = "Logout", fontSize = 24.sp, fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)))
             },
             text = {
-                Text("Are you sure?")
+                Text(text = "Are you sure?", fontSize = 20.sp, fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)))
             },
             confirmButton = {
                 customButton("Logout", {
@@ -167,7 +182,7 @@ fun ProfileMain(navController: NavController) {
             },
             dismissButton = {
                 customButton("Cancel",{showDialog = false})
-            }
+            },
         )
     }
     if (showDeleteDialog) {
@@ -176,10 +191,10 @@ fun ProfileMain(navController: NavController) {
                 showDeleteDialog = false
             },
             title = {
-                Text(text = "Delete Account")
+                Text(text = "Delete Account", fontSize = 24.sp, fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)))
             },
             text = {
-                Text("Are you sure?")
+                Text("Are you sure?", fontSize = 20.sp, fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)))
             },
             confirmButton = {
                 customButton("Delete", {
@@ -212,7 +227,7 @@ fun customButton(text: String = "Default",
 }
 
 @Composable
-fun editProfile(navController: NavController) {
+fun editProfile(navController: NavController, userModel: userModel) {
     Column(
         modifier = Modifier
             .background(colorResource(id = R.color.off_white))
@@ -290,20 +305,30 @@ fun EditMain(navController: NavController) {
             value = username,
             onValueChange = {
                 username = it
-            },
+            }
         )
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-            customButton("Save changes", {/* TODO */})
-            customButton("Cancel", { navController.navigate("ProfilePage") })
+            customButton("Save changes", { changed(username) })
+            customButton("Back", { navController.navigate("ProfilePage") })
         }
 
     }
 }
 
+fun changed(newUsername: String) {
+    val user = Firebase.auth.currentUser
+    val profileUpdates = userProfileChangeRequest {
+        displayName = newUsername
+//        photoUri = Uri.parse("https://example.com/jane-q-user/profile.jpg")
+    }
 
-fun changed() {
-
+    user!!.updateProfile(profileUpdates)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d(TAG, "User profile updated.")
+            }
+        }
 }
