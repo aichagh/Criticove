@@ -24,6 +24,8 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -44,9 +46,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.criticove.backend.BookReview
 
 import com.criticove.backend.FirebaseManager
+import com.criticove.backend.MovieReview
+import com.criticove.backend.Review
+import com.criticove.backend.TVShowReview
 import com.criticove.backend.userModel
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun DashboardMainContent(navController: NavController, userModel: userModel) {
@@ -70,7 +77,7 @@ fun DashboardMainContent(navController: NavController, userModel: userModel) {
 
             CallToActionExistingEntry(navController)
 
-            TopGenres(navController)
+            TopGenres(navController, userModel)
 
             ReviewsPerMediaType(navController)
 
@@ -253,11 +260,12 @@ fun CallToActionExistingEntry(navController: NavController) {
 }
 
 @Composable
-fun TopGenres(navController: NavController) {
+fun TopGenres(navController: NavController, userModel: userModel) {
+    val genres: List<String> = CalcTopGenres(userModel.reviewList)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(260.dp)
             .padding(top = 20.dp)
             .background(
                 colorResource(id = R.color.green),
@@ -269,44 +277,58 @@ fun TopGenres(navController: NavController) {
 
         Spacer(modifier = Modifier.size(15.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
+        if(genres.isEmpty()) {
+            Text(
+                text = "You do not have any reviews yet.",
+                fontSize = 18.sp,
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
                 modifier = Modifier
-                    .size(150.dp)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
+                textAlign = TextAlign.Center
+            )
+
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // TO DO: Get user's top 3 genres (number of entries in each genre)
-                val numbers = listOf(6f, 10f, 7f)
-                val colors = listOf(colorResource(id = R.color.black),
-                    colorResource(id = R.color.teal),
-                    colorResource(id = R.color.blue))
+                Box(
+                    modifier = Modifier
+                        .size(150.dp)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // TO DO: Get user's top 3 genres (number of entries in each genre)
 
-                PieChart(numbers, colors)
-            }
+                    val numbers = listOf(6f, 10f, 7f)
+                    val colors = listOf(colorResource(id = R.color.black),
+                        colorResource(id = R.color.teal),
+                        colorResource(id = R.color.blue))
 
-            Column {
-                // TO DO: Get the user's top genres and calculate percentages
-                // TO DO: Also generate # of rows accordingly
-                PieChartLegendRow(
-                    color = colorResource(id = R.color.blue),
-                    str = "Romance (30.4%)"
-                )
+                    PieChart(numbers, colors)
+                }
 
-                PieChartLegendRow(
-                    modifier = Modifier.padding(top = 20.dp, bottom = 20.dp, start = 20.dp),
-                    color = colorResource(id = R.color.black),
-                    str = "Fantasy (26.1%)"
-                )
+                Column {
+                    // TO DO: Get the user's top genres and calculate percentages
+                    // TO DO: Also generate # of rows accordingly
+                    PieChartLegendRow(
+                        color = colorResource(id = R.color.blue),
+                        str = "Romance (30.4%)"
+                    )
 
-                PieChartLegendRow(
-                    color = colorResource(id = R.color.teal),
-                    str = "Thriller (43.5%)"
-                )
+                    PieChartLegendRow(
+                        modifier = Modifier.padding(top = 20.dp, bottom = 20.dp, start = 20.dp),
+                        color = colorResource(id = R.color.black),
+                        str = "Fantasy (26.1%)"
+                    )
+
+                    PieChartLegendRow(
+                        color = colorResource(id = R.color.teal),
+                        str = "Thriller (43.5%)"
+                    )
+                }
             }
         }
     }
@@ -515,3 +537,24 @@ fun Preview_Display() {
         //DashboardMainContent(rememberNavController())
 }
 
+@Composable
+fun CalcTopGenres(reviewList: StateFlow<MutableList<Review>>): List<String> {
+    val reviewsList by reviewList.collectAsState()
+    var allGenres = mutableListOf<String>()
+
+    for (review in reviewsList) {
+        allGenres.add(review.genre)
+    }
+
+    val distinctGenres: List<String> = allGenres.distinct()
+
+    if(distinctGenres.isEmpty()) {
+        println("No genres")
+    } else if (distinctGenres.size < 3) {
+        println("Number of genres = $distinctGenres.size" )
+    } else {
+        println("Number of genres = $distinctGenres.size" )
+    }
+
+    return distinctGenres
+}

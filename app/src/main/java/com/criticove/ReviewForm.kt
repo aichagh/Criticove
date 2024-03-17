@@ -92,6 +92,9 @@ var reviewScore = 1
 var submittedReview: MutableMap<String, String>? = null
 var shared: Boolean = false
 
+val genreList = listOf<String>("Romance", "Thriller", "Drama", "Autobiography", "Sci-fi")
+val serviceList = listOf<String>("Netflix", "Prime", "Hulu", "HBO", "Other")
+
 class ReviewForm : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -461,8 +464,6 @@ fun BookForm() {
 @Composable
 fun TVShowForm() {
 //    "TV Show Title", "Director", "Date Released", "Genre", "Streaming Service"
-    val genreList = listOf<String>("Romance", "Thriller", "Drama", "Autobiography", "Sci-fi")
-    val serviceList = listOf<String>("Netflix", "Prime", "Hulu", "HBO", "Other")
 
     normalText(field = "TV Show Title", type = "TV Show")
     normalText(field = "Director", type = "TV Show")
@@ -476,8 +477,6 @@ fun TVShowForm() {
 @Composable
 fun MovieForm() {
     //"Movie Title", "Director", "Date Released", "Genre", "Publication Company"
-    val genreList = listOf<String>("Romance", "Thriller", "Drama", "Autobiography", "Sci-fi")
-    val serviceList = listOf<String>("Netflix", "Prime", "Hulu", "HBO", "Other")
 
     normalText(field = "Movie Title", type = "Movie")
     normalText(field = "Director", type = "Movie")
