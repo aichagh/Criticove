@@ -75,6 +75,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.window.PopupProperties
 import com.criticove.m3.ButtonStyles.IconButton
+import com.criticove.backend.userModel
 
 val filled = mutableMapOf(
     "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Date Published" to "", "Genre" to "", "Book Type" to ""),
@@ -91,10 +92,10 @@ class ReviewForm : ComponentActivity() {
             val navController = rememberNavController()
             NavHost(navController, startDestination = "ReviewForm") {
                 composable("ReviewForm") {
-                    ReviewFormMainContent(navController)
+                    //ReviewFormMainContent(navController)
                 }
                 composable("Reviews") {
-                    ReviewPageMainContent(navController)
+                   //ReviewPageMainContent(navController)
                 }
             }
         }
@@ -102,7 +103,7 @@ class ReviewForm : ComponentActivity() {
 }
 
 @Composable
-fun ReviewFormMainContent(navController: NavController) {
+fun ReviewFormMainContent(navController: NavController, userModel: userModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()

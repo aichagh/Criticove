@@ -1,5 +1,6 @@
 package com.criticove
 
+import FriendsReviews
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -51,11 +52,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 import com.criticove.backend.FirebaseManager
+import com.criticove.backend.userModel
 
 class Signup : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.Theme_CritiCove)
+        val userModel = userModel()
         setContent {
             val navController = rememberNavController()
             NavHost(
@@ -67,22 +70,28 @@ class Signup : ComponentActivity() {
                 exitTransition = { ExitTransition.None }
             ) {
                 composable("Signup") {
-                    SignupMainContent(navController)
+                    SignupMainContent(navController, userModel)
                 }
                 composable("Login") {
-                    LoginMainContent(navController)
+                    LoginMainContent(navController, userModel)
                 }
                 composable("ReviewForm") {
-                    ReviewFormMainContent(navController)
+                    ReviewFormMainContent(navController, userModel)
                 }
                 composable("Reviews") {
-                    ReviewPageMainContent(navController)
+                    ReviewPageMainContent(navController, userModel)
                 }
                 composable("Dashboard") {
-                    DashboardMainContent(navController)
+                    DashboardMainContent(navController, userModel)
                 }
                 composable("Friends") {
-                    FriendsMainContent(navController)
+                    FriendsMainContent(navController, userModel)
+                }
+                composable("AddFriends") {
+                    AddFriends(navController, userModel)
+                }
+                composable("FriendsReviews") {
+                    FriendsReviews(navController)
                 }
                 composable("Books") {
                  /*     TODO() */
@@ -94,10 +103,10 @@ class Signup : ComponentActivity() {
                     /*     TODO() */
                 }
                 composable("ProfilePage") {
-                    ProfilePageMainContent(navController)
+                    ProfilePageMainContent(navController, userModel)
                 }
                 composable("EditProfile") {
-                    editProfile(navController)
+                    editProfile(navController, userModel)
                 }
 
             }
@@ -106,7 +115,7 @@ class Signup : ComponentActivity() {
 }
 
 @Composable
-fun SignupMainContent(navController: NavController) {
+fun SignupMainContent(navController: NavController, userModel: userModel) {
     val scope = rememberCoroutineScope()
 
     var username by remember { mutableStateOf("") }
@@ -184,6 +193,7 @@ fun SignupMainContent(navController: NavController) {
                 onClick = {
                     FirebaseManager.signup(username, email, password) { success ->
                         if (success) {
+                            userModel.signupUser(username)
                             errorMessage = ""
                             scope.launch {
                                 // Allow 0.5s delay for username update in Firebase so fetching the

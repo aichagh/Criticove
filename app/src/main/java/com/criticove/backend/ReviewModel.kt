@@ -4,6 +4,8 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.Firebase
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.auth.FirebaseAuth
@@ -19,12 +21,63 @@ import kotlinx.coroutines.flow.update
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-
+//fun addFriend(friendID: String) {
+//    println(getUsers())
+//    val user = Firebase.auth.currentUser
+//    lateinit var userID : String
+//    if (user != null) {
+//        userID = user.uid
+//        println("the user id is $userID")
+//    }
+//    var friendsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Friends")
+//    friendsRef.child("$friendID").setValue("")
+//
+//}
 class userModel: ViewModel {
     //private val _userID: MutableStateFlow<String> = MutableStateFlow("ZFZrCVjIR0P76TqT5lxX0W3dUI93")
     var userID: String = "ZFZrCVjIR0P76TqT5lxX0W3dUI93"
     private val _reviewList: MutableStateFlow<MutableList<Review>> = MutableStateFlow(mutableListOf())
     val reviewList: StateFlow<MutableList<Review>> = _reviewList
+    private val _friendList: MutableStateFlow<MutableList<Review>> = MutableStateFlow(mutableListOf())
+    val friendList: StateFlow<MutableList<Review>> = _friendList
+    private val _userMap: MutableStateFlow<MutableMap<String, String>> = MutableStateFlow(mutableMapOf<String, String>())
+    val userMap: StateFlow<MutableMap<String, String>> = _userMap
+
+    fun addFriend(friendID: String) {
+        var friendsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Reviews/${friendID}")
+
+
+    }
+
+    fun getUsers() {
+        val usersRef = FirebaseDatabase.getInstance().getReference("Users")
+        var curuserID = this.userID
+
+        usersRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val newUserMap: MutableMap<String, String> = mutableMapOf<String, String>()
+                for (childSnapshot in dataSnapshot.children) {
+                    val userID = childSnapshot.key
+                    val userName = childSnapshot.child("username").getValue(String::class.java)
+                    println("get users $userID")
+                    println("get users $userName")
+                    if (userID is String && userName is String) {
+                        if (userID != curuserID) {
+                            newUserMap[userID] = userName
+                        }
+                    }
+                    _userMap.update{newUserMap}
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Log.w(TAG, "review:onCancelled", databaseError.toException())
+            }
+
+        })
+
+
+    }
 
     fun getReviews() {
         println("this is the user id : ${userID}")
@@ -92,28 +145,55 @@ class userModel: ViewModel {
             })
 
         }
-    //var friends: List<String>
-    constructor() {
+
+    fun signupUser(username: String) {
         val user = Firebase.auth.currentUser
         if (user != null) {
-          this.userID = user.uid
-          println("in the constructor user id is $userID")
-       }
+            this.userID = user.uid
+            println("in the constructor user id is $userID")
+        }
+        var userRef = FirebaseDatabase.getInstance().getReference("Users/${userID}")
+        userRef.child("username").setValue(username)
+    }
+    fun loginUser() {
+        val user = Firebase.auth.currentUser
+        if (user != null) {
+            this.userID = user.uid
+            println("in the constructor user id is $userID")
+        }
+    }
+
+    constructor() {
+//        val username = "jelly"
+//        var userRef = FirebaseDatabase.getInstance().getReference("Users/${userID}")
+//        userRef.child("username").setValue(username)
+//        val user = Firebase.auth.currentUser
+//        if (user != null) {
+//          this.userID = user.uid
+//          println("in the constructor user id is $userID")
+//       }
 
     }
+
 }
-open class Review(val type: String, val title: String, val date: String, val genre: String, val rating: Int, val paragraph: String) {
+
+fun getUserID(username: String) {
+
+
+}
+open class Review(val type: String, val title: String, val date: String, val genre: String, val rating: Int, val paragraph: String,
+    val shared: Boolean = false) {
 }
 
 class BookReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String,
-                 val author: String, val booktype: String): Review(type, title, date, genre, rating, paragraph) {
+                 val author: String, val booktype: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, shared) {
 }
 class TVShowReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String,
-                 val director: String, val streamingservice: String): Review(type, title, date, genre, rating, paragraph) {
+                 val director: String, val streamingservice: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, shared) {
 }
 
 class MovieReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String,
-                   val director: String, val publicationcompany: String): Review(type, title, date, genre, rating, paragraph) {
+                   val director: String, val publicationcompany: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, shared) {
 }
 
 fun SubmittedReview(type: String, rating: Int, review: MutableMap<String, String>) {

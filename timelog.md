@@ -47,6 +47,11 @@
 | 2024/03/14 | 4     |         |        |          |            |      | finished profile page UI + edit page |
 | 2024/03/14 | 4     |         |        | 0.5      |            |      | Verification of input field testing for sign up page |
 | 2024/03/15 |       |         |        | 1        |            |      | Work on the profile page buttons and changing colors |
-| 2024/03/15 | 2     |         |  4     |          |            |      | Debugging editing the review after creation |
-
+| 2024/03/15 | 2     |         |  4     | 2        |            |      | Debugging editing the review after creation |
+| 2024/03/15 |       |         |        | 2        |            |      | Fixing the edit review after creation feature |
+| 2024/03/15 |       |         |        | 2        |            |      | Updated Friends UI page and hamburger menu |
+| 2024/03/15 |       |         |        | 2        |            |      | Worked on integrating the backend into the friends page to display in real time |
+| 2024/03/16 |       |         |  4     |          |            |      | Backend for adding friends and obtaining users |
+| 2024/03/16 |       |         |        | 2      |            |      | Debugging errors while integrating fronted and backend |
+| 2024/03/15 | 4.5   |         |        |        |            |      | Updating the create review form UI |
 
