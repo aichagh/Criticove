@@ -56,4 +56,4 @@
 | 2024/03/15 | 4.5   |         |        |        |            |      | Updating the create review form UI |
 | 2024/03/16 | 5     |         |        |        |            |      | fixed review form UI + created friend review card UI + started dashboard real data update|
 | 2024/03/17 |       |         | 5       |        |            |     | backend for adding friends, setting visibility of reviews, viewing friends reviews|
-
+| 2024/03/17 |       |         |         | 5      |            |     | worked on displaying friends reviews in real time and adjusting the ui for that, and minor changes on the ui for hamburger |
