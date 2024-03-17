@@ -149,7 +149,7 @@ fun AddFriends(navController: NavController, usermodel: userModel) {
 
                 LazyColumn {
                     items(filteredFriends) { friend ->
-                        AddFriends(friend, ognewFriendsList)
+                        AddFriends(friend, ognewFriendsList, usermodel)
                     }
                 }
             }
@@ -160,7 +160,7 @@ fun AddFriends(navController: NavController, usermodel: userModel) {
 }
 
 @Composable
-fun AddFriends(friend: Friend, ognewFriendsList: SnapshotStateList<Friend>) {
+fun AddFriends(friend: Friend, ognewFriendsList: SnapshotStateList<Friend>, usermodel: userModel) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -205,13 +205,15 @@ fun AddFriends(friend: Friend, ognewFriendsList: SnapshotStateList<Friend>) {
             TextButton(
                 modifier = Modifier
                     .width(50.dp),
-                onClick = {ogFriendsList.add(Friend(friend.username))
+                onClick = {
+//                    ogcurFriendsList.add(Friend(friend.username))
+                    usermodel.addFriend(friend.username)
                     remove_new_friend(friend.username, ognewFriendsList)
                     println("the new list of new friends is $ognewFriendsList")}
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.add_friend_svgrepo_com),
-                    contentDescription = "delete", tint = colorResource(id = R.color.black)
+                    contentDescription = "add", tint = colorResource(id = R.color.black)
                 )
             }
         }
