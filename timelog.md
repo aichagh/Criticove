@@ -53,3 +53,5 @@
 | 2024/03/15 |       |         |        | 2        |            |      | Worked on integrating the backend into the friends page to display in real time |
 | 2024/03/16 |       |         |  4     |          |            |      | Backend for adding friends and obtaining users |
 | 2024/03/16 |       |         |        | 2      |            |      | Debugging errors while integrating fronted and backend |
+| 2024/03/15 | 4.5   |         |        |        |            |      | Updating the create review form UI |
+
