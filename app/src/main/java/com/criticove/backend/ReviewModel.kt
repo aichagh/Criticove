@@ -21,17 +21,6 @@ import kotlinx.coroutines.flow.update
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-fun addFriend(friendID: String) {
-    val user = Firebase.auth.currentUser
-    lateinit var userID : String
-    if (user != null) {
-        userID = user.uid
-        println("the user id is $userID")
-    }
-    var friendsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Friends")
-    friendsRef.child("$friendID").setValue("")
-
-}
 class userModel: ViewModel {
     //private val _userID: MutableStateFlow<String> = MutableStateFlow("ZFZrCVjIR0P76TqT5lxX0W3dUI93")
     var userID: String = "ZFZrCVjIR0P76TqT5lxX0W3dUI93"
@@ -48,7 +37,11 @@ class userModel: ViewModel {
         if (friendID != null) {
             friendsRef.child("$friendID").setValue(friendusername)
         }
+    }
+
+    fun getFriends() {
         var curuserID = this.userID
+        var friendsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Friends")
         friendsRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val newfriendMap: MutableMap<String, String> = mutableMapOf<String, String>()
@@ -119,6 +112,11 @@ class userModel: ViewModel {
                             is Long -> rDB.toInt()
                             else -> 3
                         }
+                        val sDB = review["shared"]
+                        val s = when (sDB) {
+                            is Boolean -> sDB
+                            else -> false
+                        }
                         println("this is rint $r")
 
                         when (review["type"]) {
@@ -126,7 +124,7 @@ class userModel: ViewModel {
                                 reviewPost = BookReview(
                                     "Book", review["title"].toString(), review["date"].toString(),
                                     review["genre"].toString(), r , review["paragraph"].toString(),
-                                    review["author"].toString(), review["booktype"].toString()
+                                    review["author"].toString(), review["booktype"].toString(), s
                                 )
                             }
 
@@ -139,7 +137,7 @@ class userModel: ViewModel {
                                     r,
                                     review["paragraph"].toString(),
                                     review["director"].toString(),
-                                    review["publicationcompany"].toString()
+                                    review["publicationcompany"].toString(), s
                                 )
                             }
 
@@ -147,7 +145,7 @@ class userModel: ViewModel {
                                 reviewPost = TVShowReview(
                                     "Book", review["title"].toString(), review["date"].toString(),
                                     review["genre"].toString(), r, review["paragraph"].toString(),
-                                    review["director"].toString(), review["streamingservice"].toString()
+                                    review["director"].toString(), review["streamingservice"].toString(), s
                                 )
                             }
                         }
@@ -166,9 +164,7 @@ class userModel: ViewModel {
                 }
 
             })
-
         }
-
     fun signupUser(username: String) {
         val user = Firebase.auth.currentUser
         if (user != null) {
@@ -219,7 +215,7 @@ class MovieReview(type: String, title:String, date:String, genre: String, rating
                    val director: String, val publicationcompany: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, shared) {
 }
 
-fun SubmittedReview(type: String, rating: Int, review: MutableMap<String, String>) {
+fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableMap<String, String>) {
     val user = Firebase.auth.currentUser
     lateinit var userID : String
     if (user != null) {
@@ -233,17 +229,17 @@ fun SubmittedReview(type: String, rating: Int, review: MutableMap<String, String
         "Book" -> {
             reviewPost = BookReview("Book", review["Book Title"].toString(), review["Date Published"].toString(),
                 review["Genre"].toString(), rating, review["Review"].toString(),
-                review["Author"].toString(), review["Book Type"].toString())
+                review["Author"].toString(), review["Book Type"].toString(), shared)
         }
         "TV Show" -> {
             reviewPost = TVShowReview("TV Show", review["TV Show Title"].toString(), review["Date Released"].toString(),
             review["Genre"].toString(), rating, review["Review"].toString(),
-            review["Director"].toString(), review["Streaming Service"].toString())
+            review["Director"].toString(), review["Streaming Service"].toString(), shared)
     }
         "Movie" -> {
             reviewPost = MovieReview("Movie", review["Movie Title"].toString(), review["Date Released"].toString(),
                 review["Genre"].toString(), rating, review["Review"].toString(),
-                review["Director"].toString(), review["Publication Company"].toString())
+                review["Director"].toString(), review["Publication Company"].toString(), shared)
         }
     }
     var newReview = reviewsRef.push()
