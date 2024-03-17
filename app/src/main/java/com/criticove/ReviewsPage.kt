@@ -28,6 +28,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -135,9 +137,14 @@ fun Review(title: String = "Title",
             ) {
                 Text(
                     text = title,
-                    fontSize = 20.sp
+                    fontSize = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.alegreya_sans_medium))
                 )
-                Text("$author, $year")
+                Text(
+                    text = "$author, $year",
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+                )
                 Row() {
                     Stars(rating)
                 }

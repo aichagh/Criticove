@@ -4,6 +4,7 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -59,6 +60,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Objects
 import kotlin.coroutines.CoroutineContext
+
+val profilePic = R.drawable.default_pic // later if profile pic is set, change it
 
 @Composable
 fun ProfilePageMainContent(navController: NavController, userModel: userModel) {
@@ -278,7 +281,6 @@ fun EditHeader() {
 fun EditMain(navController: NavController) {
     val user = FirebaseManager.getUsername()
     var username by remember { mutableStateOf(user) }
-    val profilePic = R.drawable.default_pic // later if profile pic is set, change it
 
     Column(
         modifier = Modifier
@@ -289,7 +291,7 @@ fun EditMain(navController: NavController) {
     ) {
 
         TextButton(
-            onClick = {},
+            onClick = { },
         ) {
             Image(
                 painter = painterResource(id = profilePic),
