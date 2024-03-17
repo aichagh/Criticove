@@ -90,6 +90,7 @@ val filled = mutableMapOf(
 
 var reviewScore = 1
 var submittedReview: MutableMap<String, String>? = null
+var shared: Boolean = false
 
 class ReviewForm : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -336,7 +337,7 @@ fun Submission(type: String, navController: NavController) {
                     "TV Show" -> submittedReview = filled["TV Show"]
                     "Movie" -> submittedReview = filled["Movie"]
                 }
-                submittedReview?.let { SubmittedReview(type, reviewScore, it)
+                submittedReview?.let { SubmittedReview(type, reviewScore, shareOption, it)
                     navController.navigate("Reviews")
                 }
                       },
