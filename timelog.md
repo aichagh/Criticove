@@ -54,4 +54,6 @@
 | 2024/03/16 |       |         |  4     |          |            |      | Backend for adding friends and obtaining users |
 | 2024/03/16 |       |         |        | 2      |            |      | Debugging errors while integrating fronted and backend |
 | 2024/03/15 | 4.5   |         |        |        |            |      | Updating the create review form UI |
+| 2024/03/16 | 5     |         |        |        |            |      | fixed review form UI + created friend review card UI + started dashboard real data update|
+
 
