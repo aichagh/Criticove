@@ -48,6 +48,7 @@ import androidx.navigation.compose.rememberNavController
 import com.criticove.backend.FirebaseManager
 import com.criticove.backend.userModel
 
+/*
 class Login : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +58,8 @@ class Login : ComponentActivity() {
         }
     }
 }
+
+ */
 
 @Composable
 fun LoginMainContent(navController: NavController, userModel: userModel) {
@@ -130,6 +133,7 @@ fun LoginMainContent(navController: NavController, userModel: userModel) {
                     FirebaseManager.login(email, password) { success ->
                         if (success) {
                             userModel.loginUser()
+                            userModel.getCurUser()
                             errorMessage = ""
                             navController.navigate("Dashboard")
                         } else {

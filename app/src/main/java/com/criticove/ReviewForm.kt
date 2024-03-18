@@ -116,7 +116,7 @@ class ReviewForm : ComponentActivity() {
                     //ReviewFormMainContent(navController)
                 }
                 composable("Reviews") {
-                   //ReviewPageMainContent(navController)
+                    //ReviewPageMainContent(navController)
                 }
             }
         }
@@ -271,43 +271,12 @@ fun Selection(navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateForm(type: String, navController: NavController, mediaViewModel: MediaViewModel) {
-    val context = LocalContext.current
-
-    // Use mutable states for dynamic form fields that might be populated from the API or edited by the user
-    var title by remember { mutableStateOf("") }
-    var directorOrAuthor by remember { mutableStateOf("") }
-    var dateReleasedOrPublished by remember { mutableStateOf("") }
-    var genre by remember { mutableStateOf("") }
-    var streamingServiceOrPublisher by remember { mutableStateOf("") }
-    var review by remember { mutableStateOf("") }
-
-    // Observe movie and TV show details
-    mediaViewModel.movieDetails.observeAsState().value?.let { movie ->
-        if (type == "Movie") {
-            title = movie.title
-            dateReleasedOrPublished = movie.release_date
-            genre = movie.genres.joinToString { it.name }
-        }
-    }
-
-    mediaViewModel.tvShowDetails.observeAsState().value?.let { tvShow ->
-        if (type == "TV Show") {
-            title = tvShow.name
-            dateReleasedOrPublished = tvShow.first_air_date
-            genre = tvShow.genres.joinToString { it.name }
-            directorOrAuthor = tvShow.created_by
-            streamingServiceOrPublisher = tvShow.networks.joinToString { it.name }
-        }
-    }
-//new
+fun CreateForm(type:String, navController: NavController) {
     var elements = mutableListOf<String>()
     var text by remember { mutableStateOf("") }
-
     when (type) {
         "Book" -> elements =
             listOf("Book Title", "Author", "Year Published", "Genre", "Book Type", "Date finished").toMutableList()
-
         "TV Show" -> elements = listOf(
             "TV Show Title",
             "Director",
@@ -316,7 +285,6 @@ fun CreateForm(type: String, navController: NavController, mediaViewModel: Media
             "Streaming Service",
             "Date finished"
         ).toMutableList()
-
         "Movie" -> elements = listOf(
             "Movie Title",
             "Director",
@@ -326,112 +294,23 @@ fun CreateForm(type: String, navController: NavController, mediaViewModel: Media
             "Date watched"
         ).toMutableList()
     }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
-            .background(colorResource(id = R.color.off_white))
-    verticalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        when (type) {
-            "Book" -> {
-                // Book form fields
-                listOf(
-                    "Book Title" to { title = it },
-                    "Author" to { directorOrAuthor = it },
-                    "Date Published" to { dateReleasedOrPublished = it },
-                    "Genre" to { genre = it },
-                    "Publisher" to { streamingServiceOrPublisher = it }
-                ).forEach { (label, onValueChange) ->
-                    OutlinedTextField(
-                        value = when (label) {
-                            "Book Title" -> title
-                            "Author" -> directorOrAuthor
-                            "Date Published" -> dateReleasedOrPublished
-                            "Genre" -> genre
-                            "Publisher" -> streamingServiceOrPublisher
-                            else -> ""
-                        },
-                        onValueChange = onValueChange,
-                        label = { Text(text = label) },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
-                }
-            }
-            "TV Show", "Movie" -> {
-                // Title field with autocomplete for TV Show or Movie
-                AutocompleteTextField(
-                    label = if (type == "Movie") "Movie Title" else "TV Show Title",
-                    viewModel = mediaViewModel,
-                    onSuggestionSelected = { id ->
-                        if (type == "Movie") {
-                            mediaViewModel.fetchMovieDetails(id)
-                        } else {
-                            mediaViewModel.fetchTvShowDetails(id)
-                        }
-                    }
-                )
-
-                // Additional fields for TV Show or Movie
-                if (type == "TV Show") {
-                    OutlinedTextField(
-                        value = directorOrAuthor,
-                        onValueChange = { directorOrAuthor = it },
-                        label = { Text(text = "Director") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
-                    OutlinedTextField(
-                        value = streamingServiceOrPublisher,
-                        onValueChange = { streamingServiceOrPublisher = it },
-                        label = { Text(text = "Streaming Service") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
-                }
-
-                // Common fields for both Movie and TV Show
-                listOf(
-                    "Date Released" to { dateReleasedOrPublished = it },
-                    "Genre" to { genre = it }
-                ).forEach { (label, onValueChange) ->
-                    OutlinedTextField(
-                        value = when (label) {
-                            "Date Released" -> dateReleasedOrPublished
-                            "Genre" -> genre
-                            else -> ""
-                        },
-                        onValueChange = onValueChange,
-                        label = { Text(text = label) },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
-                }
-            }
-        }
-
-        // Review field common for all types
-        OutlinedTextField(
-            value = review,
-            onValueChange = { review = it },
-            label = { Text(text = "Review") },
-            modifier = Modifier.fillMaxWidth(),
-            minLines = 3,
-            maxLines = 5
-        )
-
-        // Placeholder for StarRating and Submission components
-         StarRating(type)
-         Submission(type, navController)
-    }
-
+            .background(colorResource(id = R.color.off_white)),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    )
     {
         when (type) {
             "Book" -> { BookForm() }
             "TV Show" -> { TVShowForm() }
             "Movie" -> { MovieForm() }
+            "Book" -> { BookForm()
+                normalText(field = "Review", type = "Book")}
+            "TV Show" -> { TVShowForm()
+                normalText(field = "Review", type = "TV Show")}
+            "Movie" -> { MovieForm()
+                normalText(field = "Review", type = "Movie")}
         }
         OutlinedTextField(
             value = text,
@@ -458,6 +337,7 @@ fun CreateForm(type: String, navController: NavController, mediaViewModel: Media
     StarRating(type)
     Submission(type, navController)
 }
+
 
 
 @Composable
@@ -554,7 +434,7 @@ fun Submission(type: String, navController: NavController) {
                 submittedReview?.let { SubmittedReview(type, reviewScore, shareOption, it)
                     navController.navigate("Reviews")
                 }
-                      },
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.teal),
                 contentColor = colorResource(id = R.color.off_white)),
@@ -575,37 +455,24 @@ fun StarRating(type: String) {
     var tvScore by remember { mutableIntStateOf(1) }
     var movieScore by remember { mutableIntStateOf(1) }
     var id = R.drawable.star_empty
-        Column ( modifier = Modifier
-            .padding(10.dp)
-            .fillMaxWidth()) {
-            Text(
-                text = "Rating",
-                modifier= Modifier.fillMaxWidth(),
-                fontFamily = FontFamily(Font(R.font.alegreya_sans_medium)),
-                fontSize = 18.sp
-            )
-            Row() {
-                for (i in 1..5) {
-                    when (type) {
-                        "Book" -> {
-                            if (i <= bookScore) {
-                                id = R.drawable.star_full
-                            } else {
-                                id = R.drawable.star_empty
-                            }
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = id),
-                                contentDescription = "Star $i",
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .clickable(onClick = {
-                                        bookScore = i
-                                        reviewScore = bookScore
-                                    })
-                                    .size(32.dp)
-                            )
+    Column ( modifier = Modifier
+        .padding(10.dp)
+        .fillMaxWidth()) {
+        Text(
+            text = "Rating",
+            modifier= Modifier.fillMaxWidth(),
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_medium)),
+            fontSize = 18.sp
+        )
+        Row() {
+            for (i in 1..5) {
+                when (type) {
+                    "Book" -> {
+                        if (i <= bookScore) {
+                            id = R.drawable.star_full
+                        } else {
+                            id = R.drawable.star_empty
                         }
-
                         "TV Show" -> {
                             if (i <= tvScore) {
                                 id = R.drawable.star_full
@@ -624,7 +491,6 @@ fun StarRating(type: String) {
                                     .size(32.dp)
                             )
                         }
-
                         "Movie" -> {
                             if (i <= movieScore) {
                                 id = R.drawable.star_full
@@ -641,6 +507,57 @@ fun StarRating(type: String) {
                                         reviewScore = movieScore
                                     })
                                     .size(32.dp) ) }
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = id),
+                            contentDescription = "Star $i",
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .clickable(onClick = {
+                                    bookScore = i
+                                    reviewScore = bookScore
+                                })
+                                .size(32.dp)
+                        )
+                    }
+
+                    "TV Show" -> {
+                        if (i <= tvScore) {
+                            id = R.drawable.star_full
+                        } else {
+                            id = R.drawable.star_empty
+                        }
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = id),
+                            contentDescription = "Star $i",
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .clickable(onClick = {
+                                    tvScore = i
+                                    reviewScore = tvScore
+                                })
+                                .size(32.dp)
+                        )
+                    }
+
+                    "Movie" -> {
+                        if (i <= movieScore) {
+                            id = R.drawable.star_full
+                        } else {
+                            id = R.drawable.star_empty
+                        }
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = id),
+                            contentDescription = "Star $i",
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .clickable(onClick = {
+                                    movieScore = i
+                                    reviewScore = movieScore
+                                })
+                                .size(32.dp)
+                        )
+                    }
+
                 }
             }
         }

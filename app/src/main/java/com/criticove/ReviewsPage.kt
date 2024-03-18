@@ -100,7 +100,7 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                         .verticalScroll(rememberScrollState()),
                 ) {
                     print("after calling ${userModel.reviewList}")
-                    displayReviews(userModel.reviewList)
+                    displayReviews(navController, userModel.reviewList)
                     Spacer(modifier = Modifier.size(15.dp))
                 }
 
@@ -138,6 +138,7 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
 @Composable
 fun Stars(rating: Int) {
     var id = R.drawable.star_full
+    println("got id in stars() $id")
     for (i in 1..5) {
         if (i > rating) {
             id = R.drawable.star_empty
@@ -154,7 +155,9 @@ fun Stars(rating: Int) {
 fun Review(title: String = "Title",
            author: String = "Author",
            year: String = "1999",
-           rating: Int = 1) {
+           rating: Int = 1,
+           reviewID: String,
+           navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -191,7 +194,7 @@ fun Review(title: String = "Title",
             TextButton(
                 modifier = Modifier
                     .width(50.dp),
-                onClick = { }
+                onClick = { navController.navigate("ViewReview/$reviewID") }
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.bookmark_empty),
@@ -203,29 +206,31 @@ fun Review(title: String = "Title",
 }
 
 @Composable
-fun displayReviews(reviewList: StateFlow<MutableList<Review>>) {
+fun displayReviews(navController: NavController, reviewList: StateFlow<MutableList<Review>>) {
     val reviewsList by reviewList.collectAsState()
-    println("the review list in reviewspage is $reviewsList")
-    println(reviewList)
+    //println("the review list in reviewspage is $reviewsList")
+    //println(reviewList)
     for (review in reviewsList) {
         when (review) {
             is BookReview -> {
                 val bookReview: BookReview = review
-                println("here book review")
-                println("this is the review $review")
-                Review(bookReview.title, bookReview.author, bookReview.date, bookReview.rating)
+                //println("here book review")
+                //println("this is the review $review")
+                Review(bookReview.title, bookReview.author, bookReview.date, bookReview.rating, bookReview.reviewID, navController)
             }
             is TVShowReview -> {
                 val tvShowReview: TVShowReview = review
-                Review(tvShowReview.title, tvShowReview.director,tvShowReview.date, tvShowReview.rating)
+                Review(tvShowReview.title, tvShowReview.director,tvShowReview.date, tvShowReview.rating, tvShowReview.reviewID, navController)
             }
             is MovieReview -> {
                 val movieReview: MovieReview = review
-                Review(movieReview.title, movieReview.director, movieReview.date, movieReview.rating)
+                Review(movieReview.title, movieReview.director, movieReview.date, movieReview.rating, movieReview.reviewID, navController)
             }
         }
     }
 }
+
+/*
 @Composable
 fun ReviewsPagePreview(navController: NavController) {
     MainLayout(
@@ -254,3 +259,5 @@ fun ReviewsPagePreview(navController: NavController) {
         }
     }
 }
+
+ */

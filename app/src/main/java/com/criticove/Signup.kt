@@ -87,6 +87,12 @@ class Signup : ComponentActivity() {
                 composable("Friends") {
                     FriendsMainContent(navController, userModel)
                 }
+                composable("ViewReview/{reviewID}") {
+                    val reviewID = it.arguments?.getString("reviewID")!!
+                    println("In composable: " + reviewID)
+
+                    ReviewDetailsMainContent(navController, reviewID, userModel)
+                }
                 composable("AddFriends") {
                     AddFriends(navController, userModel)
                 }
@@ -194,6 +200,7 @@ fun SignupMainContent(navController: NavController, userModel: userModel) {
                     FirebaseManager.signup(username, email, password) { success ->
                         if (success) {
                             userModel.signupUser(username)
+                            userModel.getCurUser()
                             errorMessage = ""
                             scope.launch {
                                 // Allow 0.5s delay for username update in Firebase so fetching the
