@@ -271,7 +271,9 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
 
 
                             }
-                        } else {
+                        }
+                        /*
+                        else {
                             OutlinedTextField(
                                 value = curData,
                                 onValueChange = { curData = it },
@@ -287,10 +289,11 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                             println("new reviewData is $reviewData")
                         }
 
+                         */
+
                     }
                 }
             }
-            /*
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -302,14 +305,17 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                     OutlinedTextField(
                         value = revData,
                         onValueChange = { revData = it },
+                        minLines = 3,
+                        maxLines = 7,
                         label = {Text( text = "Review", color = colorResource(id = R.color.blue)) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState())
                     )
                     reviewData.set("Review", revData).toString()
 
                 }
             }
-            */
         }
     }
     SubmitUpdatedReview(type, reviewData, reviewID)
