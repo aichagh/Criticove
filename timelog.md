@@ -58,3 +58,4 @@
 | 2024/03/17 |       |         | 5       |        |            |     | backend for adding friends, setting visibility of reviews, viewing friends reviews|
 | 2024/03/17 |       |         |         | 5      |            |     | worked on displaying friends reviews in real time and adjusting the ui for that, and minor changes on the ui for hamburger |
 | 2024/03/18 |       |         | 2      |        |            |      | filtering reviews |
+| 2024/03/17 | 3.5   |         |        |        |            |      | finished dashboard top-genres widget + changed navbar to not have add review (created button within page) |
