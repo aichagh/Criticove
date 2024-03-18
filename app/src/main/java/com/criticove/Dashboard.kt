@@ -265,8 +265,6 @@ fun TopGenres(navController: NavController, userModel: userModel) {
         colorResource(id = R.color.blue),
         colorResource(id = R.color.darkTeal))
 
-    println(genres)
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -547,10 +545,10 @@ fun CalcTopGenres(reviewList: StateFlow<MutableList<Review>>): List<Pair<Int, St
     val distinctGenres: List<String> = allGenres.distinct()
 
     distinctGenres.forEach { el ->
-        temp.add(Pair(allGenres.count { it == el }, el))
+        temp.add(Pair(allGenres.count{ it == el }, el))
     }
 
-    temp.sortedByDescending{ it.first }
+    temp = temp.sortedByDescending{ it.first }.toMutableList()
     var other = allGenres.size
 
     for (i in 0..2) {
@@ -560,7 +558,9 @@ fun CalcTopGenres(reviewList: StateFlow<MutableList<Review>>): List<Pair<Int, St
         }
     }
 
-    finalList.add(Pair(other, "Other"))
+    if(temp.size > 3) {
+        finalList.add(Pair(other, "Other"))
+    }
 
     return finalList.sortedByDescending{ it.first }
 }
