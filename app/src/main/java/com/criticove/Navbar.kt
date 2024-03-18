@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -21,7 +22,8 @@ fun Navbar(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
-            .background(colorResource(id = R.color.blue)),
+            .background(colorResource(id = R.color.blue))
+            .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         TextButton(onClick = { navController.navigate("Dashboard") }) {
@@ -36,11 +38,6 @@ fun Navbar(navController: NavController) {
                 imageVector = ImageVector.vectorResource(id = R.drawable.list),
                 contentDescription = "all reviews", tint = colorResource(id = R.color.off_white)
             )
-        }
-
-        TextButton(onClick = { navController.navigate("ReviewForm") }) {
-            Icon(imageVector = ImageVector.vectorResource(id = R.drawable.write),
-                contentDescription = "new review", tint = colorResource(id = R.color.off_white) )
         }
 
         TextButton(onClick = { navController.navigate("FriendsReviews") }) {
