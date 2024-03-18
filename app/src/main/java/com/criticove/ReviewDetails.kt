@@ -95,16 +95,21 @@ fun ReviewDetailsMainContent(navController: NavController,
     val selReview by userModel.selReview.collectAsState()
     println(reviewID)
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .verticalScroll(rememberScrollState())
-            .background(colorResource(id = R.color.off_white))
-    ) {
-        Column {
-            //Topbar(selReview.title)
-            ReviewDetailsTable(reviewType, userModel.selReview, reviewID)
+    MainLayout(
+        title = selReview.title,
+        navController = navController
+    ) { _ ->
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState())
+                .background(colorResource(id = R.color.off_white))
+        ) {
+            Column {
+                Navbar(navController)
+                ReviewDetailsTable(reviewType, userModel.selReview, reviewID)
+            }
         }
     }
 }
