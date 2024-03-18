@@ -4,6 +4,7 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -46,6 +47,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.core.content.FileProvider
+import coil.compose.rememberAsyncImagePainter
 import com.criticove.backend.FirebaseManager
 
 import com.criticove.backend.userModel
@@ -62,6 +64,8 @@ import java.util.Objects
 import kotlin.coroutines.CoroutineContext
 
 val profilePic = R.drawable.default_pic // later if profile pic is set, change it
+
+
 
 @Composable
 fun ProfilePageMainContent(navController: NavController, userModel: userModel) {
@@ -281,6 +285,18 @@ fun EditHeader() {
 fun EditMain(navController: NavController) {
     val user = FirebaseManager.getUsername()
     var username by remember { mutableStateOf(user) }
+    var newPicture by remember {
+        mutableStateOf<Uri?>(null)
+    }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            uri?.let {
+                newPicture = it
+            }
+        }
+    )
 
     Column(
         modifier = Modifier
@@ -291,16 +307,27 @@ fun EditMain(navController: NavController) {
     ) {
 
         TextButton(
-            onClick = { },
+            onClick = { galleryLauncher.launch("image/*") },
         ) {
-            Image(
-                painter = painterResource(id = profilePic),
-                contentDescription = "profile picture",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(200.dp)
-                    .clip(CircleShape)
-            )
+            if (newPicture != null) {
+                Image(
+                    painter = rememberAsyncImagePainter(model = newPicture),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(200.dp)
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = profilePic),
+                    contentDescription = "profile picture",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(200.dp)
+                        .clip(CircleShape)
+                )
+            }
         }
 
         OutlinedTextField(
