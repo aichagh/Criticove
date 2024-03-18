@@ -240,12 +240,13 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                             ) {
                                 Text(
                                     text = "$label: ",
+                                    fontSize = 18.sp,
                                     fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
                                     textAlign = TextAlign.End,
                                     color = colorResource(id = R.color.teal),
                                     modifier = Modifier
                                         .padding(5.dp)
-                                        .width(100.dp)
+                                        .width(120.dp)
                                 )
                                 /*
                                 Text(
@@ -265,6 +266,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                                 } else {
                                     Text(
                                         text = "$curData",
+                                        fontSize = 18.sp,
                                         fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
                                         modifier = Modifier
                                             .padding(5.dp)
@@ -284,10 +286,11 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                                 enabled = false,
                                 minLines = 3,
                                 maxLines = 7,
-                                label = {Text( text = "Review", color = colorResource(id = R.color.blue)) },
+                                label = {Text( text = "Review", fontSize = 18.sp, color = colorResource(id = R.color.blue)) },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .horizontalScroll(rememberScrollState())
+                                    .padding(5.dp)
                             )
 
                             reviewData.set("Review", curData).toString()
@@ -359,7 +362,7 @@ fun SubmitUpdatedReview(type: String, reviewData: MutableMap<String, String>,
                     contentColor = colorResource(id = R.color.off_white)
                 ),
                 modifier = Modifier
-                    .width(200.dp)
+                    .width(150.dp)
             ) {
                 Text("Edit")
             }
