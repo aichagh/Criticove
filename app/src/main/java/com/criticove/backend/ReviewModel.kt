@@ -54,6 +54,11 @@ class userModel: ViewModel {
                     is Long -> rDB.toInt()
                     else -> 3
                 }
+                val sDB = review["shared"]
+                val s = when (sDB) {
+                    is Boolean -> sDB
+                    else -> false
+                }
                 println("this is rint $r")
 
                 when (review["type"]) {
@@ -62,7 +67,8 @@ class userModel: ViewModel {
                             "Book", review["title"].toString(), review["date"].toString(),
                             review["genre"].toString(), r , review["paragraph"].toString(),
                             review["reviewID"].toString(), review["author"].toString(),
-                            review["booktype"].toString()
+                            review["booktype"].toString(),
+                            review["datefinished"].toString(), s
                         )
                     }
 
@@ -76,16 +82,18 @@ class userModel: ViewModel {
                             review["paragraph"].toString(),
                             review["reviewID"].toString(),
                             review["director"].toString(),
-                            review["publicationcompany"].toString()
+                            review["streamingservice"].toString(),
+                            review["datewatched"].toString(), s
                         )
                     }
 
                     "TV Show" -> {
                         reviewPost = TVShowReview(
-                            "Book", review["title"].toString(), review["date"].toString(),
+                            "TV Show", review["title"].toString(), review["date"].toString(),
                             review["genre"].toString(), r, review["paragraph"].toString(),
                             review["reviewID"].toString(), review["director"].toString(),
-                            review["streamingservice"].toString()
+                            review["streamingservice"].toString(),
+                            review["datefinished"].toString(), s
                         )
                         }
                 }
@@ -203,7 +211,8 @@ class userModel: ViewModel {
                                 reviewPost = BookReview(
                                     "Book", review["title"].toString(), review["date"].toString(),
                                     review["genre"].toString(), r , review["paragraph"].toString(),
-                                    review["author"].toString(), review["booktype"].toString(),
+                                    review["reviewID"].toString(), review["author"].toString(),
+                                    review["booktype"].toString(),
                                     review["datefinished"].toString(), s
                                 )
                             }
@@ -216,6 +225,7 @@ class userModel: ViewModel {
                                     review["genre"].toString(),
                                     r,
                                     review["paragraph"].toString(),
+                                    review["reviewID"].toString(),
                                     review["director"].toString(),
                                     review["streamingservice"].toString(),
                                     review["datewatched"].toString(), s
@@ -226,7 +236,8 @@ class userModel: ViewModel {
                                 reviewPost = TVShowReview(
                                     "TV Show", review["title"].toString(), review["date"].toString(),
                                     review["genre"].toString(), r, review["paragraph"].toString(),
-                                    review["director"].toString(), review["streamingservice"].toString(),
+                                    review["reviewID"].toString(), review["director"].toString(),
+                                    review["streamingservice"].toString(),
                                     review["datefinished"].toString(), s
                                 )
                             }
@@ -281,15 +292,22 @@ class userModel: ViewModel {
                                             reviewPost = BookReview(
                                                 "Book", review["title"].toString(), review["date"].toString(),
                                                 review["genre"].toString(), r , review["paragraph"].toString(),
-                                                review["author"].toString(), review["booktype"].toString(),
+                                                review["reviewID"].toString(), review["author"].toString(),
+                                                review["booktype"].toString(),
                                                 review["datefinished"].toString(), s
                                             )
                                         }
                                         "Movie" -> {
                                             reviewPost = MovieReview(
-                                                "Movie", review["title"].toString(), review["date"].toString(),
-                                                review["genre"].toString(), r, review["paragraph"].toString(),
-                                                review["director"].toString(), review["streamingservice"].toString(),
+                                                "Movie",
+                                                review["title"].toString(),
+                                                review["date"].toString(),
+                                                review["genre"].toString(),
+                                                r,
+                                                review["paragraph"].toString(),
+                                                review["reviewID"].toString(),
+                                                review["director"].toString(),
+                                                review["streamingservice"].toString(),
                                                 review["datewatched"].toString(), s
                                             )
                                         }
@@ -297,7 +315,8 @@ class userModel: ViewModel {
                                             reviewPost = TVShowReview(
                                                 "TV Show", review["title"].toString(), review["date"].toString(),
                                                 review["genre"].toString(), r, review["paragraph"].toString(),
-                                                review["director"].toString(), review["streamingservice"].toString(),
+                                                review["reviewID"].toString(), review["director"].toString(),
+                                                review["streamingservice"].toString(),
                                                 review["datefinished"].toString(), s
                                             )
                                         }

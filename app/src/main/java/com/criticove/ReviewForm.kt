@@ -105,14 +105,12 @@ class ReviewForm : ComponentActivity() {
                     //ReviewFormMainContent(navController)
                 }
                 composable("Reviews") {
-                   //ReviewPageMainContent(navController)
+                    //ReviewPageMainContent(navController)
                 }
             }
         }
     }
 }
-
- */
 
 @Composable
 fun ReviewFormMainContent(navController: NavController, userModel: userModel) {
@@ -345,7 +343,7 @@ fun Submission(type: String, navController: NavController) {
                 submittedReview?.let { SubmittedReview(type, reviewScore, shareOption, it)
                     navController.navigate("Reviews")
                 }
-                      },
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.teal),
                 contentColor = colorResource(id = R.color.off_white)),
@@ -366,35 +364,23 @@ fun StarRating(type: String) {
     var tvScore by remember { mutableIntStateOf(1) }
     var movieScore by remember { mutableIntStateOf(1) }
     var id = R.drawable.star_empty
-        Column ( modifier = Modifier
-            .padding(10.dp)
-            .fillMaxWidth()) {
-            Text(
-                text = "Rating",
-                modifier= Modifier.fillMaxWidth(),
-                fontFamily = FontFamily(Font(R.font.alegreya_sans_medium)),
-                fontSize = 18.sp
-            )
-            Row() {
-                for (i in 1..5) {
-                    when (type) {
-                        "Book" -> {
-                            if (i <= bookScore) {
-                                id = R.drawable.star_full
-                            } else {
-                                id = R.drawable.star_empty
-                            }
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = id),
-                                contentDescription = "Star $i",
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .clickable(onClick = {
-                                        bookScore = i
-                                        reviewScore = bookScore
-                                    })
-                                    .size(32.dp)
-                            )
+    Column ( modifier = Modifier
+        .padding(10.dp)
+        .fillMaxWidth()) {
+        Text(
+            text = "Rating",
+            modifier= Modifier.fillMaxWidth(),
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_medium)),
+            fontSize = 18.sp
+        )
+        Row() {
+            for (i in 1..5) {
+                when (type) {
+                    "Book" -> {
+                        if (i <= bookScore) {
+                            id = R.drawable.star_full
+                        } else {
+                            id = R.drawable.star_empty
                         }
                         Icon(
                             imageVector = ImageVector.vectorResource(id = id),
@@ -451,16 +437,12 @@ fun StarRating(type: String) {
             }
         }
     }
-    }
-
-/*
+}
 @Preview
 @Composable
 fun PreviewCreateReview() {
 //    ReviewFormMainContent(navController = rememberNavController())
 }
-
- */
 
 
 @OptIn(ExperimentalMaterial3Api::class)

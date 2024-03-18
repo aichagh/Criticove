@@ -89,7 +89,7 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                     .verticalScroll(rememberScrollState()),
             ) {
                 print("after calling ${userModel.reviewList}")
-                displayReviews(userModel.reviewList)
+                displayReviews(navController, userModel.reviewList)
             }
 
             Navbar(navController)

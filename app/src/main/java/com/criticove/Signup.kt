@@ -4,7 +4,8 @@ import FriendsReviews
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -56,7 +57,6 @@ import com.criticove.backend.userModel
 class Signup : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val userModel: userModel by viewModels()
         setTheme(R.style.Theme_CritiCove)
         val userModel = userModel()
         setContent {

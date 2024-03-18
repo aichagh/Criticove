@@ -103,7 +103,7 @@ fun ReviewDetailsMainContent(navController: NavController,
             .background(colorResource(id = R.color.off_white))
     ) {
         Column {
-            Topbar(selReview.title)
+            //Topbar(selReview.title)
             ReviewDetailsTable(reviewType, userModel.selReview, reviewID)
         }
     }
@@ -201,7 +201,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
             reviewData["Director"] = movieReview.director
             reviewData["Date Released"] = movieReview.date
             reviewData["Genre"] = movieReview.genre
-            reviewData["Publication Company"] = movieReview.publicationcompany
+            reviewData["Publication Company"] = movieReview.streamingservice
             reviewData["Rating"] = movieReview.rating.toString()
             reviewData["Review"] = movieReview.paragraph
         }
@@ -223,6 +223,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                 ) {
                     Column() {
                         var curData = reviewData[label].toString()
+                        //var curData by remember {mutableStateOf(reviewData[label].toString())}
 
                         if (label != "Review") {
                             Row(
@@ -328,7 +329,7 @@ fun SubmitUpdatedReview(type: String, reviewData: MutableMap<String, String>,
                 onClick = {
                     updatedReview = reviewData
                     delSelectedReview(reviewID)
-                    updatedReview?.let { SubmittedReview(type, reviewData["Rating"]!!.toInt(), it) }
+                    //updatedReview?.let { SubmittedReview(type, reviewData["Rating"]!!.toInt(), it) }
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.teal),
@@ -354,7 +355,7 @@ fun PreviewReviewDetails() {
             .background(colorResource(id = R.color.off_white))
     ) {
         Column() {
-            Topbar()
+            //Topbar()
 
             Row(
                 modifier = Modifier
