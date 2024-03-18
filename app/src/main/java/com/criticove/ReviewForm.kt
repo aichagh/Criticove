@@ -46,16 +46,24 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.criticove.backend.SubmittedReview
-
+import androidx.compose.runtime.*
 import com.criticove.m3.ButtonStyles.PrimaryButton
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import com.criticove.backend.userModel
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
+import com.criticove.api.Movie
+import com.criticove.api.MovieDetails
+import com.criticove.api.TvShow
+import com.criticove.api.TvShowDetails
 
 val filled = mutableMapOf(
     "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Date Published" to "", "Genre" to "", "Book Type" to ""),
@@ -119,6 +127,81 @@ fun ReviewHeader() {
         )
     }
 }
+
+interface SuggestionItem {
+    val id: Int
+    val displayText: String // Combine 'title' or 'name' into one common field for simplicity
+    val displayDate: String // Combine 'release_date' or 'first_air_date' into one common field
+}
+
+val Movie.suggestionItem: SuggestionItem
+    get() = object : SuggestionItem {
+        override val id: Int = this@suggestionItem.id
+        override val displayText: String = this@suggestionItem.title
+        override val displayDate: String = this@suggestionItem.release_date
+    }
+
+// Extension properties for TvShow
+val TvShow.suggestionItem: SuggestionItem
+    get() = object : SuggestionItem {
+        override val id: Int = this@suggestionItem.id
+        override val displayText: String = this@suggestionItem.name
+        override val displayDate: String = this@suggestionItem.first_air_date
+    }
+
+@Composable
+fun AutocompleteTextField(
+    label: String,
+    viewModel: MediaViewModel,
+    onSuggestionSelected: (Int) -> Unit
+) {
+    var query by remember { mutableStateOf("") }
+    var isExpanded by remember { mutableStateOf(false) }
+
+    val movieSuggestions by viewModel.movieSuggestions.observeAsState()
+    val tvShowSuggestions by viewModel.tvShowSuggestions.observeAsState()
+
+    val suggestions: List<SuggestionItem> = if (label == "Movie Title")
+        movieSuggestions?.map { it.suggestionItem } ?: emptyList()
+    else
+        tvShowSuggestions?.map { it.suggestionItem } ?: emptyList()
+
+    OutlinedTextField(
+        value = query,
+        onValueChange = {
+            query = it
+            isExpanded = it.isNotEmpty()
+            if (label == "Movie Title") {
+                viewModel.searchMovieTitles(it)
+            } else {
+                viewModel.searchTvShowTitles(it)
+            }
+        },
+        label = { Text(text = label) },
+        modifier = Modifier.fillMaxWidth()
+    )
+
+    if (suggestions.isNotEmpty()) {
+        DropdownMenu(
+            expanded = isExpanded,
+            onDismissRequest = { isExpanded = false }
+        ) {
+            suggestions.take(5).forEach { suggestion ->
+                DropdownMenuItem(
+                    onClick = {
+                        query = suggestion.displayText
+                        isExpanded = false
+                        onSuggestionSelected(suggestion.id)
+                    },
+                    text = {
+                        Text("${suggestion.displayText} (${suggestion.displayDate})")
+                    }
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun Selection(navController: NavController) {
     var selectedType by remember { mutableStateOf("Book") }
@@ -154,99 +237,137 @@ fun Selection(navController: NavController) {
     }
     CreateForm(selectedType, navController)
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateForm(type:String, navController: NavController) {
-    var elements =  mutableListOf<String>()
-    var text by remember { mutableStateOf("") }
+fun CreateForm(type: String, navController: NavController, mediaViewModel: MediaViewModel) {
+    val context = LocalContext.current
 
-    when (type) {
-        "Book" -> elements = listOf("Book Title","Author", "Date Published", "Genre", "Book Type").toMutableList()
-        "TV Show" -> elements = listOf("TV Show Title", "Director", "Date Released", "Genre", "Streaming Service").toMutableList()
-        "Movie" -> elements = listOf("Movie Title", "Director", "Date Released", "Genre", "Publication Company").toMutableList()
+    // Use mutable states for dynamic form fields that might be populated from the API or edited by the user
+    var title by remember { mutableStateOf("") }
+    var directorOrAuthor by remember { mutableStateOf("") }
+    var dateReleasedOrPublished by remember { mutableStateOf("") }
+    var genre by remember { mutableStateOf("") }
+    var streamingServiceOrPublisher by remember { mutableStateOf("") }
+    var review by remember { mutableStateOf("") }
+
+    // Observe movie and TV show details
+    mediaViewModel.movieDetails.observeAsState().value?.let { movie ->
+        if (type == "Movie") {
+            title = movie.title
+            dateReleasedOrPublished = movie.release_date
+            genre = movie.genres.joinToString { it.name }
+        }
     }
+
+    mediaViewModel.tvShowDetails.observeAsState().value?.let { tvShow ->
+        if (type == "TV Show") {
+            title = tvShow.name
+            dateReleasedOrPublished = tvShow.first_air_date
+            genre = tvShow.genres.joinToString { it.name }
+            directorOrAuthor = tvShow.created_by
+            streamingServiceOrPublisher = tvShow.networks.joinToString { it.name }
+        }
+    }
+
     Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(colorResource(id = R.color.off_white)),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        )
-        {
-            elements.forEach { label ->
-                var bookData by remember {mutableStateOf("")}
-                var movieData by remember {mutableStateOf("")}
-                var tvData by remember {mutableStateOf("")}
-
-                when(type) {
-                    "Book" -> { OutlinedTextField(
-                        value = bookData,
-                        onValueChange = { bookData = it },
-                        singleLine = true,
-                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),
-                            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 10.dp),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = colorResource(id = R.color.blue),
-                            unfocusedBorderColor = colorResource(id = R.color.teal)
-                        ),
-                        shape = RoundedCornerShape(10.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        when (type) {
+            "Book" -> {
+                // Book form fields
+                listOf(
+                    "Book Title" to { title = it },
+                    "Author" to { directorOrAuthor = it },
+                    "Date Published" to { dateReleasedOrPublished = it },
+                    "Genre" to { genre = it },
+                    "Publisher" to { streamingServiceOrPublisher = it }
+                ).forEach { (label, onValueChange) ->
+                    OutlinedTextField(
+                        value = when (label) {
+                            "Book Title" -> title
+                            "Author" -> directorOrAuthor
+                            "Date Published" -> dateReleasedOrPublished
+                            "Genre" -> genre
+                            "Publisher" -> streamingServiceOrPublisher
+                            else -> ""
+                        },
+                        onValueChange = onValueChange,
+                        label = { Text(text = label) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
                     )
-                        filled["Book"]?.set(label, bookData).toString()}
-
-                    "TV Show" -> { OutlinedTextField(
-                        value = tvData,
-                        onValueChange = { tvData = it },
-                        singleLine = true,
-                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),
-                            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 10.dp),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = colorResource(id = R.color.blue),
-                            unfocusedBorderColor = colorResource(id = R.color.teal)
-                        ),
-                        shape = RoundedCornerShape(10.dp)
-                    )
-                        filled["TV Show"]?.set(label, tvData).toString()}
-
-                    "Movie" -> {OutlinedTextField(
-                        value = movieData,
-                        onValueChange = { movieData = it },
-                        singleLine = true,
-                        label = { Text( text = label, color = colorResource(id = R.color.coolGrey),fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 10.dp),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = colorResource(id = R.color.blue),
-                            unfocusedBorderColor = colorResource(id = R.color.teal)
-                        ),
-                        shape = RoundedCornerShape(10.dp)
-                    )
-                        filled["Movie"]?.set(label, movieData).toString()}
                 }
             }
-            OutlinedTextField(
-                value = text,
-                onValueChange = { text = it },
-                minLines = 7,
-                label = { Text( text = "Review", color = colorResource(id = R.color.coolGrey),fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = colorResource(id = R.color.blue),
-                    unfocusedBorderColor = colorResource(id = R.color.teal)
-                ),
-                shape = RoundedCornerShape(10.dp)
-            )
+            "TV Show", "Movie" -> {
+                // Title field with autocomplete for TV Show or Movie
+                AutocompleteTextField(
+                    label = if (type == "Movie") "Movie Title" else "TV Show Title",
+                    viewModel = mediaViewModel,
+                    onSuggestionSelected = { id ->
+                        if (type == "Movie") {
+                            mediaViewModel.fetchMovieDetails(id)
+                        } else {
+                            mediaViewModel.fetchTvShowDetails(id)
+                        }
+                    }
+                )
+
+                // Additional fields for TV Show or Movie
+                if (type == "TV Show") {
+                    OutlinedTextField(
+                        value = directorOrAuthor,
+                        onValueChange = { directorOrAuthor = it },
+                        label = { Text(text = "Director") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = streamingServiceOrPublisher,
+                        onValueChange = { streamingServiceOrPublisher = it },
+                        label = { Text(text = "Streaming Service") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                }
+
+                // Common fields for both Movie and TV Show
+                listOf(
+                    "Date Released" to { dateReleasedOrPublished = it },
+                    "Genre" to { genre = it }
+                ).forEach { (label, onValueChange) ->
+                    OutlinedTextField(
+                        value = when (label) {
+                            "Date Released" -> dateReleasedOrPublished
+                            "Genre" -> genre
+                            else -> ""
+                        },
+                        onValueChange = onValueChange,
+                        label = { Text(text = label) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                }
+            }
         }
-    println("this is filled $filled")
-    StarRating(type)
-    Submission(type, navController)
+
+        // Review field common for all types
+        OutlinedTextField(
+            value = review,
+            onValueChange = { review = it },
+            label = { Text(text = "Review") },
+            modifier = Modifier.fillMaxWidth(),
+            minLines = 3,
+            maxLines = 5
+        )
+
+        // Placeholder for StarRating and Submission components
+         StarRating(type)
+         Submission(type, navController)
+    }
 }
 
 @Composable
