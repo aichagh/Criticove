@@ -218,30 +218,13 @@ fun CreateForm(type:String, navController: NavController) {
     )
     {
         when (type) {
-            "Book" -> { BookForm() }
-            "TV Show" -> { TVShowForm() }
-            "Movie" -> { MovieForm() }
+            "Book" -> { BookForm()
+                normalText(field = "Review", type = "Book")}
+            "TV Show" -> { TVShowForm()
+                normalText(field = "Review", type = "TV Show")}
+            "Movie" -> { MovieForm()
+                normalText(field = "Review", type = "Movie")}
         }
-        OutlinedTextField(
-            value = text,
-            onValueChange = { text = it },
-            minLines = 7,
-            label = {
-                Text(
-                    text = "Review",
-                    color = colorResource(id = R.color.coolGrey),
-                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = colorResource(id = R.color.blue),
-                unfocusedBorderColor = colorResource(id = R.color.teal)
-            ),
-            shape = RoundedCornerShape(10.dp)
-        )
     }
     println("this is filled $filled")
     StarRating(type)
