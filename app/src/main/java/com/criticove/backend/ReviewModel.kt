@@ -42,6 +42,12 @@ class userModel: ViewModel {
             friendsRef.child("$friendID").setValue(friendusername)
         }
     }
+@Composable
+    fun filter(type: String):  List<Review> {
+        val reviewlist by  reviewList.collectAsState()
+        var filtered: List<Review> = reviewlist.filter {it.type == type}
+        return filtered
+    }
 
     fun getFriends() {
         var curuserID = this.userID
@@ -71,7 +77,7 @@ class userModel: ViewModel {
     }
 
     fun getUsers() {
-        //getfriendReviews()
+        getfriendReviews()
         //addFriend("bear")
         val usersRef = FirebaseDatabase.getInstance().getReference("Users")
         var curuserID = this.userID
@@ -149,7 +155,7 @@ class userModel: ViewModel {
 
                             "TV Show" -> {
                                 reviewPost = TVShowReview(
-                                    "Book", review["title"].toString(), review["date"].toString(),
+                                    "TV Show", review["title"].toString(), review["date"].toString(),
                                     review["genre"].toString(), r, review["paragraph"].toString(),
                                     review["director"].toString(), review["streamingservice"].toString(),
                                     review["datefinished"].toString(), s
@@ -220,7 +226,7 @@ class userModel: ViewModel {
                                         }
                                         "TV Show" -> {
                                             reviewPost = TVShowReview(
-                                                "Book", review["title"].toString(), review["date"].toString(),
+                                                "TV Show", review["title"].toString(), review["date"].toString(),
                                                 review["genre"].toString(), r, review["paragraph"].toString(),
                                                 review["director"].toString(), review["streamingservice"].toString(),
                                                 review["datefinished"].toString(), s
@@ -232,9 +238,8 @@ class userModel: ViewModel {
                                         newfriendMap[frienduserName] = newReviewList
                                         _friendReviews.update { newfriendMap }
                                         _friendReviews.value.forEach { (frienuserName, reviews) ->
-                                            println("in getfriendreviews Friend ID: $frienduserName")
                                             reviews.forEach { review ->
-                                                println("in getfriendreviews Title: ${review.title}")
+                                                println("in getfriendreviews Friend ID: $frienduserName and Title: ${review.title} ")
                                             }
                                         }
                                     }
