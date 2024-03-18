@@ -50,13 +50,42 @@ import androidx.compose.runtime.*
 import com.criticove.m3.ButtonStyles.PrimaryButton
 import android.content.Context
 import android.content.Intent
+import android.service.autofill.DateTransformation
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+<<<<<<< HEAD
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+=======
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MenuItemColors
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.text.AnnotatedString
+>>>>>>> origin/main
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.window.PopupProperties
+import com.criticove.m3.ButtonStyles.IconButton
 import com.criticove.backend.userModel
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
@@ -66,14 +95,16 @@ import com.criticove.api.TvShow
 import com.criticove.api.TvShowDetails
 
 val filled = mutableMapOf(
-    "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Date Published" to "", "Genre" to "", "Book Type" to ""),
-    "TV Show" to mutableMapOf("TV Show Title" to "", "Director" to "", "Date Released" to "", "Genre" to "", "Streaming Service" to ""),
-    "Movie" to mutableMapOf("Movie Title" to "", "Director" to "" , "Date Released" to "", "Genre" to "", "Publication Company" to ""))
+    "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Year Published" to "", "Genre" to "", "Book Type" to "", "Date finished" to ""),
+    "TV Show" to mutableMapOf("TV Show Title" to "", "Director" to "", "Year Released" to "", "Genre" to "", "Streaming Service" to "", "Date finished" to ""),
+    "Movie" to mutableMapOf("Movie Title" to "", "Director" to "" , "Year Released" to "", "Genre" to "", "Streaming Service" to "", "Date watched" to ""))
 
 var reviewScore = 1
 var submittedReview: MutableMap<String, String>? = null
+var shared: Boolean = false
 
-
+val genreList = listOf<String>("Romance", "Thriller", "Drama", "Autobiography", "Sci-fi")
+val serviceList = listOf<String>("Netflix", "Prime", "Hulu", "HBO", "Other")
 
 class ReviewForm : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -240,6 +271,7 @@ fun Selection(navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+<<<<<<< HEAD
 fun CreateForm(type: String, navController: NavController, mediaViewModel: MediaViewModel) {
     val context = LocalContext.current
 
@@ -269,12 +301,39 @@ fun CreateForm(type: String, navController: NavController, mediaViewModel: Media
             streamingServiceOrPublisher = tvShow.networks.joinToString { it.name }
         }
     }
+//new
+    var elements = mutableListOf<String>()
+    var text by remember { mutableStateOf("") }
+
+    when (type) {
+        "Book" -> elements =
+            listOf("Book Title", "Author", "Year Published", "Genre", "Book Type", "Date finished").toMutableList()
+
+        "TV Show" -> elements = listOf(
+            "TV Show Title",
+            "Director",
+            "Year Released",
+            "Genre",
+            "Streaming Service",
+            "Date finished"
+        ).toMutableList()
+
+        "Movie" -> elements = listOf(
+            "Movie Title",
+            "Director",
+            "Year Released",
+            "Genre",
+            "Streaming Service",
+            "Date watched"
+        ).toMutableList()
+    }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+            .background(colorResource(id = R.color.off_white))
+    verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         when (type) {
             "Book" -> {
@@ -368,7 +427,40 @@ fun CreateForm(type: String, navController: NavController, mediaViewModel: Media
          StarRating(type)
          Submission(type, navController)
     }
+
+    {
+        when (type) {
+            "Book" -> { BookForm() }
+            "TV Show" -> { TVShowForm() }
+            "Movie" -> { MovieForm() }
+        }
+        OutlinedTextField(
+            value = text,
+            onValueChange = { text = it },
+            minLines = 7,
+            label = {
+                Text(
+                    text = "Review",
+                    color = colorResource(id = R.color.coolGrey),
+                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = colorResource(id = R.color.blue),
+                unfocusedBorderColor = colorResource(id = R.color.teal)
+            ),
+            shape = RoundedCornerShape(10.dp)
+        )
+    }
+    println("this is filled $filled")
+    StarRating(type)
+    Submission(type, navController)
+>>>>>>> origin/main
 }
+
 
 @Composable
 fun Submission(type: String, navController: NavController) {
@@ -394,27 +486,8 @@ fun Submission(type: String, navController: NavController) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
-                    selected = shareOption == true,
-                    onClick = { shareOption = true},
-                    colors = RadioButtonDefaults.colors(
-                        selectedColor = colorResource(id = R.color.blue),
-                        unselectedColor = colorResource(id = R.color.blue),
-                    )
-                )
-
-                Text(
-                    text = "Share",
-                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-                    fontSize = 18.sp
-                )
-            }
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                RadioButton(
                     selected = shareOption == false,
-                    onClick = { shareOption = false},
+                    onClick = { shareOption = false },
                     colors = RadioButtonDefaults.colors(
                         selectedColor = colorResource(id = R.color.blue),
                         unselectedColor = colorResource(id = R.color.blue),
@@ -427,6 +500,25 @@ fun Submission(type: String, navController: NavController) {
                     fontSize = 18.sp
                 )
             }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = shareOption == true,
+                    onClick = { shareOption = true },
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = colorResource(id = R.color.blue),
+                        unselectedColor = colorResource(id = R.color.blue),
+                    )
+                )
+
+                Text(
+                    text = "Share with friends",
+                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                    fontSize = 18.sp
+                )
+            }
         }
     }
 
@@ -435,29 +527,6 @@ fun Submission(type: String, navController: NavController) {
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Button(
-            onClick = {
-                when (type) {
-                    "Book" -> submittedReview = filled["Book"]
-                    "TV Show" -> submittedReview = filled["TV Show"]
-                    "Movie" -> submittedReview = filled["Movie"]
-                }
-                submittedReview?.let { SubmittedReview(type, reviewScore, it)
-                    navController.navigate("Reviews")
-                }
-                      },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.teal),
-                contentColor = colorResource(id = R.color.off_white)),
-            modifier = Modifier
-                .weight(1F)
-                .padding(10.dp),
-        ) { Text(
-            text = "Share",
-            fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
-            fontSize = 20.sp
-        ) }
-
         Button(
             onClick = {
                 //TODO : CLEAR UP THE MAP VALUES/ALL FORM VALUES
@@ -473,6 +542,29 @@ fun Submission(type: String, navController: NavController) {
                 .padding(10.dp)
         ) { Text(
             text = "Cancel",
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
+            fontSize = 20.sp
+        ) }
+
+        Button(
+            onClick = {
+                when (type) {
+                    "Book" -> submittedReview = filled["Book"]
+                    "TV Show" -> submittedReview = filled["TV Show"]
+                    "Movie" -> submittedReview = filled["Movie"]
+                }
+                submittedReview?.let { SubmittedReview(type, reviewScore, shareOption, it)
+                    navController.navigate("Reviews")
+                }
+                      },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.teal),
+                contentColor = colorResource(id = R.color.off_white)),
+            modifier = Modifier
+                .weight(1F)
+                .padding(10.dp),
+        ) { Text(
+            text = "Share",
             fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
             fontSize = 20.sp
         ) }
@@ -550,20 +642,249 @@ fun StarRating(type: String) {
                                         movieScore = i
                                         reviewScore = movieScore
                                     })
-                                    .size(32.dp)
-                            )
-                        }
-
-                    }
+                                    .size(32.dp) ) }
                 }
             }
         }
     }
+}
+
 @Preview
 @Composable
 fun PreviewCreateReview() {
-
-    //ReviewFormMainContent(navController = rememberNavController())
+//    ReviewFormMainContent(navController = rememberNavController())
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BookForm() {
+    // Fields: "Book Title","Author", "Date Published", "Genre", "Book Type"
+    val genreList = listOf<String>("Romance", "Thriller", "Drama", "Autobiography", "Sci-fi")
+    val typeList = listOf<String>("Physical", "E-Book")
 
+    normalText(field = "Book Title", type = "Book")
+    normalText(field = "Author", type = "Book")
+    normalNumber(field = "Year Published", type = "Book")
+    Dropdown(type = "Book", field = "Genre", list = genreList)
+    Dropdown(type = "Book", field = "Book Type", list = typeList)
+    dateField(field = "Date finished", type = "Book")
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TVShowForm() {
+//    "TV Show Title", "Director", "Date Released", "Genre", "Streaming Service"
+
+    normalText(field = "TV Show Title", type = "TV Show")
+    normalText(field = "Director", type = "TV Show")
+    normalNumber(field = "Year Released", type = "TV Show")
+    Dropdown(type = "TV Show", field = "Genre", list = genreList)
+    Dropdown(type = "TV Show", field = "Streaming Service", list = serviceList)
+    dateField(field = "Date finished", type = "TV Show")
+
+}
+
+@Composable
+fun MovieForm() {
+    //"Movie Title", "Director", "Date Released", "Genre", "Publication Company"
+
+    normalText(field = "Movie Title", type = "Movie")
+    normalText(field = "Director", type = "Movie")
+    normalNumber(field = "Year Released", type = "Movie")
+    Dropdown(type = "Movie", field = "Genre", list = genreList)
+    Dropdown(type = "Movie", field = "Streaming Service", list = serviceList)
+    dateField(field = "Date watched", type = "Movie")
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun normalText(field: String, type: String) {
+    var entered by remember { mutableStateOf("") }
+
+    OutlinedTextField(
+        value = entered,
+        onValueChange = { entered = it },
+        singleLine = true,
+        label = {
+            Text(
+                text = field, color = colorResource(id = R.color.coolGrey),
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+            )
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = colorResource(id = R.color.blue),
+            unfocusedBorderColor = colorResource(id = R.color.teal)
+        ),
+        shape = RoundedCornerShape(10.dp)
+    )
+    filled[type]?.set(field, entered).toString()
+}
+
+@Suppress("ModifierParameter")
+@Composable
+fun Dropdown(type: String, field: String, list: List<String>) {
+    var expanded by remember { mutableStateOf(false) }
+    var entered by remember { mutableStateOf(field) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp, vertical = 5.dp)
+            .wrapContentSize(Alignment.TopCenter)
+    ) {
+        TextButton(
+            onClick = { expanded = true },
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = colorResource(id = R.color.teal),
+                    shape = RoundedCornerShape(10.dp)
+                )
+                .background(colorResource(id = R.color.off_white)),
+        ) {
+            var textColor = colorResource(id = R.color.black);
+            if(entered == field) {
+                textColor = colorResource(id = R.color.coolGrey)
+            }
+
+            Text(
+                text = entered,
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                fontSize = 18.sp,
+                color = textColor,
+                textAlign = TextAlign.Left,
+                modifier = Modifier.weight(1F)
+            )
+
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.right_arrow),
+                contentDescription = "drop", tint = colorResource(id = R.color.black),
+                modifier = Modifier
+                    .rotate(90F)
+                    .height(20.dp)
+            )
+
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .background(colorResource(id = R.color.off_white))
+                .fillMaxWidth()
+        ) {
+            list.forEach { el ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = el,
+                            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxSize()
+                        )},
+                    onClick = { entered = el; expanded = false},
+                    modifier = Modifier
+                        .background(colorResource(id = R.color.off_white))
+                        .fillMaxWidth(),
+                )
+            }
+        }
+    }
+
+    filled[type]?.set(field, entered).toString()
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun dateField(field: String, type: String) {
+    var entered by remember { mutableStateOf("") }
+
+    OutlinedTextField(
+        value = entered,
+        onValueChange = { if (it.length < 9) entered = it },
+        singleLine = true,
+        label = {
+            Text(
+                text = field, color = colorResource(id = R.color.coolGrey),
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+            )
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = colorResource(id = R.color.blue),
+            unfocusedBorderColor = colorResource(id = R.color.teal)
+        ),
+        shape = RoundedCornerShape(10.dp),
+        visualTransformation = DateTransformation(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+
+        )
+    filled[type]?.set(field, entered).toString()
+}
+
+// Adapted from :
+// https://stackoverflow.com/questions/69309829/how-to-mask-a-textfield-to-show-the-dd-mm-yyyy-date-format-in-jetpack-compose
+class DateTransformation : VisualTransformation {
+
+    // XX/XX/XXXX format
+    override fun filter(text: AnnotatedString): TransformedText {
+        var out = ""
+        text.text.forEachIndexed { index, char ->
+            when (index) {
+                2 -> out += "/$char"
+                4 -> out += "/$char"
+                else -> out += char
+            }
+        }
+        val numberOffsetTranslator = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int {
+                if (offset <= 2) return offset
+                if (offset <= 4) return offset + 1
+                return offset + 2
+            }
+
+            override fun transformedToOriginal(offset: Int): Int {
+                if (offset <= 2) return offset
+                if (offset <= 5) return offset - 1
+                return offset - 2
+            }
+        }
+        return TransformedText(AnnotatedString(out), numberOffsetTranslator)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun normalNumber(field: String, type: String) {
+    var entered by remember { mutableStateOf("") }
+
+    OutlinedTextField(
+        value = entered,
+        onValueChange = { if (it.length < 9) entered = it },
+        singleLine = true,
+        label = {
+            Text(
+                text = field, color = colorResource(id = R.color.coolGrey),
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+            )
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = colorResource(id = R.color.blue),
+            unfocusedBorderColor = colorResource(id = R.color.teal)
+        ),
+        shape = RoundedCornerShape(10.dp),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+
+        )
+    filled[type]?.set(field, entered).toString()
+}

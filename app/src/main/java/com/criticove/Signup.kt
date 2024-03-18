@@ -91,16 +91,16 @@ class Signup : ComponentActivity() {
                     AddFriends(navController, userModel)
                 }
                 composable("FriendsReviews") {
-                    FriendsReviews(navController)
+                    FriendsReviews(navController, userModel)
                 }
                 composable("Books") {
-                 /*     TODO() */
+                    FilterReviews(navController, userModel, "Book")
                 }
                 composable("Movies") {
-                    /*     TODO() */
+                    FilterReviews(navController, userModel, "Movie")
                 }
                 composable("TVShows") {
-                    /*     TODO() */
+                    FilterReviews(navController, userModel, "TV Show")
                 }
                 composable("ProfilePage") {
                     ProfilePageMainContent(navController, userModel)

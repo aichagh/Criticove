@@ -33,11 +33,13 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,28 +61,33 @@ import com.criticove.backend.userModel
 
 data class Friend(val username: String)
 
-var ogFriendsList = mutableStateListOf(
-Friend("Sara"),
-Friend("Reem"),
-Friend("Uma"),
-Friend("Sharmistha"),
-Friend("Ashmita"),
-    Friend("Aicha")
-)
+@SuppressLint("UnrememberedMutableState")
+@Composable
+fun createFriendsList(usermodel: userModel): SnapshotStateList<Friend> {
+    usermodel.getFriends()
+    var curFriendsList = mutableStateListOf<Friend>()
+    val friend_map by usermodel.friendMap.collectAsState()
+    for ((key, value) in friend_map) {
+        curFriendsList.add(Friend(value))
+    }
+    return curFriendsList
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FriendsMainContent(navController: NavController, userModel: userModel) {
+fun FriendsMainContent(navController: NavController, usermodel: userModel) {
     var searchText by remember { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
     var filteredFriends by remember { mutableStateOf(emptyList<Friend>()) }
-
+    var ogcurFriendsList = createFriendsList(usermodel)
+    println("the friend from the backend are $ogcurFriendsList")
     fun perform_search() {
         filteredFriends = if (isSearchActive) {
-            ogFriendsList.filter {
+            ogcurFriendsList.filter {
                 it.username.contains(searchText, ignoreCase = true)
             }
         } else {
-            ogFriendsList
+            ogcurFriendsList
         }
     }
 
@@ -213,7 +220,7 @@ fun Friends(friend: Friend) {
 }
 
 fun remove_friend(username: String) {
-    ogFriendsList.remove(Friend(username))
+//    ogFriendsList.remove(Friend(username))
 }
 
 //@Preview

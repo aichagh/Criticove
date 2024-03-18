@@ -35,9 +35,9 @@
 | 2024/03/02 |       | 4       |        |          |            |      | Navbar navigation setup |
 | 2024/03/03 |       |         |        |          | 0.5        |      | Navbar navigation complete |
 | 2024/03/03 |       |         |        |1         |            |      | Fixing padding and font for review form |
-| 2024/03/03 | 1.5   | 1.5     | 1.5    |          | 1.5        |      | Prepare for prototype demo |
-| 2024/03/04 | 1.5   | 1.25    | 1.5    |          | 1.5        |      | Prototype demo presentation and discussion  |
-| 2024/03/08 | 1.5   | 1.5     | 2.5    |          | 2          |      | Prototype document discussion and work | 
+| 2024/03/03 | 1.5   | 1.5     | 1.5    |1.5       | 1.5        |      | Prepare for prototype demo |
+| 2024/03/04 | 1.5   | 1.25    | 1.5    |1.5       | 1.5        |      | Prototype demo presentation and discussion  |
+| 2024/03/08 | 1.5   | 1.5     | 2.5    |2.5       | 2          |      | Prototype document discussion and work | 
 | 2024/03/09 |       | 10      |        |          |            |      | Setting hamburger menu and navigation |
 | 2024/03/11 |       |         |        |          | 1.5        |      | Auth error message on Signup & Login pages and show real username on Dashboard |
 | 2024/03/12 |       |         |        |          | 0.5        |      | Enable/Disable Signup & Login buttons |
@@ -53,3 +53,8 @@
 | 2024/03/15 |       |         |        | 2        |            |      | Worked on integrating the backend into the friends page to display in real time |
 | 2024/03/16 |       |         |  4     |          |            |      | Backend for adding friends and obtaining users |
 | 2024/03/16 |       |         |        | 2      |            |      | Debugging errors while integrating fronted and backend |
+| 2024/03/15 | 4.5   |         |        |        |            |      | Updating the create review form UI |
+| 2024/03/16 | 5     |         |        |        |            |      | fixed review form UI + created friend review card UI + started dashboard real data update|
+| 2024/03/17 |       |         | 5       |        |            |     | backend for adding friends, setting visibility of reviews, viewing friends reviews|
+| 2024/03/17 |       |         |         | 5      |            |     | worked on displaying friends reviews in real time and adjusting the ui for that, and minor changes on the ui for hamburger |
+| 2024/03/18 |       |         | 2      |        |            |      | filtering reviews |

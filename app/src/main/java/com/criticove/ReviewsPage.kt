@@ -9,25 +9,34 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -73,20 +82,52 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                 .padding(padding)
                 .background(colorResource(id = R.color.off_white))
                 .fillMaxHeight()
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             userModel.getReviews()
             println("in review page main content")
 
-            Column(
-                verticalArrangement = Arrangement.Top,
+            Box(
                 modifier = Modifier
                     .weight(1F)
+                    .fillMaxSize()
             ) {
-                print("after calling ${userModel.reviewList}")
-                displayReviews(userModel.reviewList)
+                Column(
+                    verticalArrangement = Arrangement.Top,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState()),
+                ) {
+                    print("after calling ${userModel.reviewList}")
+                    displayReviews(userModel.reviewList)
+                    Spacer(modifier = Modifier.size(15.dp))
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(15.dp),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    IconButton(
+                        onClick = { navController.navigate("ReviewForm") },
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .clip(CircleShape)
+//                            .size(30.dp)
+                            .background(colorResource(id = R.color.teal)),
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.plus),
+                            contentDescription = "friends", tint = colorResource(id = R.color.off_white),
+                            modifier = Modifier
+                                .height(25.dp)
+
+                        )
+                    }
+                }
             }
 
             Navbar(navController)
@@ -94,7 +135,6 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
     }
 }
 
-// This is a temporary function, later this would take the rating in account
 @Composable
 fun Stars(rating: Int) {
     var id = R.drawable.star_full
@@ -135,9 +175,14 @@ fun Review(title: String = "Title",
             ) {
                 Text(
                     text = title,
-                    fontSize = 20.sp
+                    fontSize = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.alegreya_sans_medium))
                 )
-                Text("$author, $year")
+                Text(
+                    text = "$author, $year",
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+                )
                 Row() {
                     Stars(rating)
                 }
