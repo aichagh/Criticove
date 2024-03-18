@@ -24,9 +24,11 @@ fun Navbar(navController: NavController) {
             .background(colorResource(id = R.color.blue)),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        TextButton(onClick = { navController.navigate("ReviewForm") }) {
-            Icon(imageVector = ImageVector.vectorResource(id = R.drawable.write),
-                contentDescription = "new review", tint = colorResource(id = R.color.off_white) )
+        TextButton(onClick = { navController.navigate("Dashboard") }) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.homepage),
+                contentDescription = "homepage", tint = colorResource(id = R.color.off_white)
+            )
         }
 
         TextButton(onClick = { navController.navigate("Reviews") }) {
@@ -36,18 +38,17 @@ fun Navbar(navController: NavController) {
             )
         }
 
-        TextButton(onClick = { navController.navigate("Dashboard") }) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.homepage),
-                contentDescription = "homepage", tint = colorResource(id = R.color.off_white)
-            )
+        TextButton(onClick = { navController.navigate("ReviewForm") }) {
+            Icon(imageVector = ImageVector.vectorResource(id = R.drawable.write),
+                contentDescription = "new review", tint = colorResource(id = R.color.off_white) )
         }
 
-        TextButton(onClick = { navController.navigate("Friends") }) {
+        TextButton(onClick = { navController.navigate("FriendsReviews") }) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.people_white),
                 contentDescription = "friends", tint = colorResource(id = R.color.off_white)
             )
         }
+
     }
 }

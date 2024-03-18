@@ -22,7 +22,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -42,7 +45,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.criticove.backend.BookReview
+
+import com.criticove.backend.FirebaseManager
+import com.criticove.backend.MovieReview
+import com.criticove.backend.Review
+import com.criticove.backend.TVShowReview
 import com.criticove.backend.userModel
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun DashboardMainContent(navController: NavController, userModel: userModel) {
@@ -51,7 +62,7 @@ fun DashboardMainContent(navController: NavController, userModel: userModel) {
             .fillMaxSize()
             .background(color = colorResource(id = R.color.off_white))
     ) {
-        DashboardHeader()
+        DashboardHeader(navController)
 
         Column(
             modifier = Modifier
@@ -61,15 +72,12 @@ fun DashboardMainContent(navController: NavController, userModel: userModel) {
                 .background(color = colorResource(id = R.color.off_white)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
+
         ) {
             WelcomeBanner()
-
             CallToActionExistingEntry(navController)
-
-            TopGenres(navController)
-
+            TopGenres(navController, userModel)
             ReviewsPerMediaType(navController)
-
             ProgressTracker(navController)
         }
 
@@ -78,22 +86,22 @@ fun DashboardMainContent(navController: NavController, userModel: userModel) {
 }
 
 @Composable
-fun DashboardHeader() {
+fun DashboardHeader(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
+            .height(50.dp)
             .background(colorResource(id = R.color.blue))
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(10.dp)
-            )
+            TextButton(onClick = { navController.navigate("ProfilePage") }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.default_profile),
+                    contentDescription = "profile", tint = colorResource(id = R.color.off_white)
+                )
+            }
 
             Spacer(modifier = Modifier.width(80.dp))
 
@@ -109,8 +117,7 @@ fun DashboardHeader() {
 
 @Composable
 fun WelcomeBanner() {
-    // TO DO: Get username from firebase - currently logged in user's displayName
-    val username = "happyBunny123"
+    val username = FirebaseManager.getUsername()
 
     Column(
         modifier = Modifier
@@ -120,7 +127,7 @@ fun WelcomeBanner() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Welcome, $username!",
+            text = "Welcome $username!",
             style = TextStyle(
                 brush = Brush.linearGradient(
                     colors = listOf(
@@ -250,11 +257,19 @@ fun CallToActionExistingEntry(navController: NavController) {
 }
 
 @Composable
-fun TopGenres(navController: NavController) {
+fun TopGenres(navController: NavController, userModel: userModel) {
+    userModel.getReviews()
+    val genres: List<Pair<Int, String>> = CalcTopGenres(userModel.reviewList)
+    val colors = listOf(colorResource(id = R.color.black),
+        colorResource(id = R.color.teal),
+        colorResource(id = R.color.blue),
+        colorResource(id = R.color.darkTeal))
+
+    println(genres)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(260.dp)
             .padding(top = 20.dp)
             .background(
                 colorResource(id = R.color.green),
@@ -264,46 +279,52 @@ fun TopGenres(navController: NavController) {
     ) {
         DashboardCardHeader("Your Top Genres", navController)
 
-        Spacer(modifier = Modifier.size(15.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
+        if(genres.isEmpty()) {
+            Text(
+                text = "You do not have any reviews yet.",
+                fontSize = 18.sp,
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
                 modifier = Modifier
-                    .size(150.dp)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp),
+                textAlign = TextAlign.Center
+            )
+
+        } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // TO DO: Get user's top 3 genres (number of entries in each genre)
-                val numbers = listOf(6f, 10f, 7f)
-                val colors = listOf(colorResource(id = R.color.black),
-                    colorResource(id = R.color.teal),
-                    colorResource(id = R.color.blue))
+                Box(
+                    modifier = Modifier
+                        .size(150.dp)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val numbers = mutableListOf<Float>()
 
-                PieChart(numbers, colors)
-            }
+                    for(i in 0..3) {
+                        if(i < genres.size) {
+                            numbers.add(genres[i].first.toFloat())
+                        }
+                    }
 
-            Column {
-                // TO DO: Get the user's top genres and calculate percentages
-                // TO DO: Also generate # of rows accordingly
-                PieChartLegendRow(
-                    color = colorResource(id = R.color.blue),
-                    str = "Romance (30.4%)"
-                )
+                    PieChart(numbers, colors)
+                }
 
-                PieChartLegendRow(
-                    modifier = Modifier.padding(top = 20.dp, bottom = 20.dp, start = 20.dp),
-                    color = colorResource(id = R.color.black),
-                    str = "Fantasy (26.1%)"
-                )
-
-                PieChartLegendRow(
-                    color = colorResource(id = R.color.teal),
-                    str = "Thriller (43.5%)"
-                )
+                Column {
+                    for(i in 0..3) {
+                        if(i < genres.size) {
+                            PieChartLegendRow(
+                                color = colors[i],
+                                str = genres[i].second
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -505,3 +526,43 @@ fun DashboardCardHeader(heading: String, navController: NavController) {
         )
     }
 }
+
+@Preview
+@Composable
+fun Preview_Display() {
+        //DashboardMainContent(rememberNavController())
+}
+
+@Composable
+fun CalcTopGenres(reviewList: StateFlow<MutableList<Review>>): List<Pair<Int, String>> {
+    val reviewsList by reviewList.collectAsState()
+    var temp = mutableListOf<Pair<Int, String>>()
+    var finalList = mutableListOf<Pair<Int, String>>()
+    var allGenres = mutableListOf<String>()
+
+    for (review in reviewsList) {
+        allGenres.add(review.genre)
+    }
+
+    val distinctGenres: List<String> = allGenres.distinct()
+
+    distinctGenres.forEach { el ->
+        temp.add(Pair(allGenres.count { it == el }, el))
+    }
+
+    temp.sortedByDescending{ it.first }
+    var other = allGenres.size
+
+    for (i in 0..2) {
+        if(i < temp.size) {
+            other -= temp[i].first
+            finalList.add(temp[i])
+        }
+    }
+
+    finalList.add(Pair(other, "Other"))
+
+    return finalList.sortedByDescending{ it.first }
+}
+
+

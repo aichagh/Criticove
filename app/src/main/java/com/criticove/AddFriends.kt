@@ -1,18 +1,13 @@
 package com.criticove
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,19 +15,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -45,13 +36,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,42 +47,52 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.criticove.backend.userModel
 
-data class Friend(val username: String)
 
+//var ognewFriendsList = mutableStateListOf(
+//    Friend("Aras"),
+//    Friend("Meer"),
+//    Friend("Amu"),
+//    Friend("Ahtsimrahs"),
+//    Friend("Atimhsa"),
+//    Friend("Ahcia")
+//)
+
+
+
+//@SuppressLint("UnrememberedMutableState")
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun createFriendsList(usermodel: userModel): SnapshotStateList<Friend> {
-    usermodel.getFriends()
-    var curFriendsList = mutableStateListOf<Friend>()
-    val friend_map by usermodel.friendMap.collectAsState()
-    for ((key, value) in friend_map) {
-        curFriendsList.add(Friend(value))
+fun createNewFriendsList(usermodel: userModel): SnapshotStateList<Friend> {
+    usermodel.getUsers()
+    var FriendsList = mutableStateListOf<Friend>()
+    val user_map by usermodel.userMap.collectAsState()
+    for ((key, value) in user_map) {
+        FriendsList.add(Friend(value))
     }
-    return curFriendsList
+    return FriendsList
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FriendsMainContent(navController: NavController, usermodel: userModel) {
+fun AddFriends(navController: NavController, usermodel: userModel) {
     var searchText by remember { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
     var filteredFriends by remember { mutableStateOf(emptyList<Friend>()) }
-    var ogcurFriendsList = createFriendsList(usermodel)
-    println("the friend from the backend are $ogcurFriendsList")
+    var ognewFriendsList = createNewFriendsList(usermodel)
+
     fun perform_search() {
         filteredFriends = if (isSearchActive) {
-            ogcurFriendsList.filter {
+            ognewFriendsList.filter {
                 it.username.contains(searchText, ignoreCase = true)
             }
         } else {
-            ogcurFriendsList
+            ognewFriendsList
         }
     }
 
     perform_search()
-
     MainLayout(
-        title = "Manage Friends",
+        title = "Add Friends",
         navController = navController
     ) { padding ->
         Column(
@@ -140,7 +138,7 @@ fun FriendsMainContent(navController: NavController, usermodel: userModel) {
                     leadingIcon = {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.search),
-                            contentDescription = "delete", tint = colorResource(id = R.color.black),
+                            contentDescription = "search", tint = colorResource(id = R.color.black),
                             modifier = Modifier
                                 .size(24.dp)
 
@@ -151,7 +149,7 @@ fun FriendsMainContent(navController: NavController, usermodel: userModel) {
 
                 LazyColumn {
                     items(filteredFriends) { friend ->
-                        Friends(friend)
+                        AddFriends(friend, ognewFriendsList, usermodel)
                     }
                 }
             }
@@ -161,9 +159,8 @@ fun FriendsMainContent(navController: NavController, usermodel: userModel) {
     }
 }
 
-
 @Composable
-fun Friends(friend: Friend) {
+fun AddFriends(friend: Friend, ognewFriendsList: SnapshotStateList<Friend>, usermodel: userModel) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -179,7 +176,9 @@ fun Friends(friend: Friend) {
             TextButton(
                 modifier = Modifier
                     .width(50.dp),
-                onClick = { TODO() }
+                onClick = {
+                    /* Nothing */
+                }
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.default_profile),
@@ -207,24 +206,20 @@ fun Friends(friend: Friend) {
                 modifier = Modifier
                     .width(50.dp),
                 onClick = {
-//                    ognewFriendsList.add(Friend(friend.username))
-                    remove_friend(friend.username)}
+//                    ogcurFriendsList.add(Friend(friend.username))
+                    usermodel.addFriend(friend.username)
+                    remove_new_friend(friend.username, ognewFriendsList)
+                    println("the new list of new friends is $ognewFriendsList")}
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.delete_user),
-                    contentDescription = "delete", tint = colorResource(id = R.color.black)
+                    imageVector = ImageVector.vectorResource(id = R.drawable.add_friend_svgrepo_com),
+                    contentDescription = "add", tint = colorResource(id = R.color.black)
                 )
             }
         }
     }
 }
 
-fun remove_friend(username: String) {
-//    ogFriendsList.remove(Friend(username))
+fun remove_new_friend(username: String, ognewFriendsList: SnapshotStateList<Friend>) {
+    ognewFriendsList.remove(Friend(username))
 }
-
-//@Preview
-//@Composable
-//fun Preview_friends(){
-//    FriendsMainContent(rememberNavController())
-//}

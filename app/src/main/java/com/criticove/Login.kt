@@ -54,7 +54,7 @@ class Login : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setTheme(R.style.Theme_CritiCove)
         setContent {
-            LoginMainContent(rememberNavController())
+            //LoginMainContent(rememberNavController())
         }
     }
 }
@@ -66,12 +66,12 @@ fun LoginMainContent(navController: NavController, userModel: userModel) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    var loginResult by remember { mutableStateOf(false) }
-    LaunchedEffect(key1 = loginResult) {
-        if (loginResult) {
-            navController.navigate("Dashboard")
-        }
+    var isLoginEnabled by remember { mutableStateOf(false) }
+    fun checkLoginEnabled() {
+        isLoginEnabled = email.isNotBlank() && password.isNotBlank()
     }
+
+    var errorMessage by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -110,27 +110,45 @@ fun LoginMainContent(navController: NavController, userModel: userModel) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            OutlinedTextFieldLogin("Email") { email = it }
+            Text(
+                modifier = Modifier.padding(top = 10.dp),
+                text = errorMessage,
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
+                color = colorResource(id = R.color.red),
+                fontSize = 18.sp
+            )
 
-            OutlinedTextFieldLogin("Password", true) { password = it }
+            OutlinedTextFieldLogin("Email") {
+                email = it
+                checkLoginEnabled()
+            }
+
+            OutlinedTextFieldLogin("Password", true) {
+                password = it
+                checkLoginEnabled()
+            }
 
             Button(
                 onClick = {
                     FirebaseManager.login(email, password) { success ->
                         if (success) {
+                            userModel.loginUser()
                             userModel.getCurUser()
+                            errorMessage = ""
                             navController.navigate("Dashboard")
+                        } else {
+                            errorMessage = "Login failed. Try again."
                         }
-                        loginResult = success
                     }
                 },
+                enabled = isLoginEnabled,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.teal),
                     contentColor = colorResource(id = R.color.yellow)
                 ),
                 modifier = Modifier
                     .width(150.dp)
-                    .padding(top = 20.dp, bottom = 20.dp),
+                    .padding(top = 20.dp, bottom = 30.dp),
             ) {
                 Text(
                     text = "Login",
@@ -172,11 +190,6 @@ fun OutlinedTextFieldLogin(
     onValueChanged: (String) -> Unit
 ) {
     var text by remember { mutableStateOf("") }
-    val paddingValues = if (isPassword) {
-        PaddingValues(10.dp)
-    } else {
-        PaddingValues(top = 30.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
-    }
 
     OutlinedTextField(
         value = text,
@@ -186,7 +199,7 @@ fun OutlinedTextFieldLogin(
         },
         modifier = Modifier
             .width(280.dp)
-            .padding(paddingValues)
+            .padding(10.dp)
             .background(colorResource(id = R.color.green), shape = RoundedCornerShape(10.dp)),
         singleLine = true,
         colors = TextFieldDefaults.outlinedTextFieldColors(

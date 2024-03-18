@@ -1,5 +1,6 @@
 package com.criticove
 
+import FriendsReviews
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,7 +10,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -25,10 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.colorResource
@@ -47,6 +47,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 import com.criticove.backend.FirebaseManager
 import com.criticove.backend.userModel
@@ -56,9 +58,17 @@ class Signup : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val userModel: userModel by viewModels()
         setTheme(R.style.Theme_CritiCove)
+        val userModel = userModel()
         setContent {
             val navController = rememberNavController()
-            NavHost(navController, startDestination = "Signup") {
+            NavHost(
+                navController,
+                startDestination = "Signup",
+
+                // removes the default crossfade animation when changing between pages
+                enterTransition = { EnterTransition.None },
+                exitTransition = { ExitTransition.None }
+            ) {
                 composable("Signup") {
                     SignupMainContent(navController, userModel)
                 }
@@ -83,6 +93,28 @@ class Signup : ComponentActivity() {
 
                     ReviewDetailsMainContent(navController, reviewID, userModel)
                 }
+                composable("AddFriends") {
+                    AddFriends(navController, userModel)
+                }
+                composable("FriendsReviews") {
+                    FriendsReviews(navController, userModel)
+                }
+                composable("Books") {
+                    FilterReviews(navController, userModel, "Book")
+                }
+                composable("Movies") {
+                    FilterReviews(navController, userModel, "Movie")
+                }
+                composable("TVShows") {
+                    FilterReviews(navController, userModel, "TV Show")
+                }
+                composable("ProfilePage") {
+                    ProfilePageMainContent(navController, userModel)
+                }
+                composable("EditProfile") {
+                    editProfile(navController, userModel)
+                }
+
             }
         }
     }
@@ -90,16 +122,19 @@ class Signup : ComponentActivity() {
 
 @Composable
 fun SignupMainContent(navController: NavController, userModel: userModel) {
+    val scope = rememberCoroutineScope()
+
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    var signupResult by remember { mutableStateOf(false) }
-    LaunchedEffect(key1 = signupResult) {
-        if (signupResult) {
-            navController.navigate("Dashboard")
-        }
+    var isSignupEnabled by remember { mutableStateOf(false) }
+    fun checkSignupEnabled() {
+        isSignupEnabled = username.isNotBlank() && email.isNotBlank()
+                && password.isNotBlank()
     }
+
+    var errorMessage by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -137,28 +172,55 @@ fun SignupMainContent(navController: NavController, userModel: userModel) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            OutlinedTextFieldSignup("Username", true) { username = it }
+            Text(
+                modifier = Modifier.padding(top = 10.dp),
+                text = errorMessage,
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
+                color = colorResource(id = R.color.red),
+                fontSize = 18.sp
+            )
 
-            OutlinedTextFieldSignup("Email") { email = it }
+            OutlinedTextFieldSignup("Username") {
+                username = it
+                checkSignupEnabled()
+            }
 
-            OutlinedTextFieldSignup("Password", false, true) { password = it }
+            OutlinedTextFieldSignup("Email") {
+                email = it
+                checkSignupEnabled()
+            }
+
+            OutlinedTextFieldSignup("Password", true) {
+                password = it
+                checkSignupEnabled()
+            }
 
             Button(
                 onClick = {
                     FirebaseManager.signup(username, email, password) { success ->
                         if (success) {
+                            userModel.signupUser(username)
                             userModel.getCurUser()
+                            errorMessage = ""
+                            scope.launch {
+                                // Allow 0.5s delay for username update in Firebase so fetching the
+                                // username on the Dashboard doesn't return null
+                                delay(500L)
+                                navController.navigate("Dashboard")
+                            }
+                        } else {
+                            errorMessage = "Sign up failed. Try again."
                         }
-                        signupResult = success
                     }
                 },
+                enabled = isSignupEnabled,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.teal),
                     contentColor = colorResource(id = R.color.yellow)
                 ),
                 modifier = Modifier
                     .width(150.dp)
-                    .padding(top = 20.dp, bottom = 20.dp),
+                    .padding(top = 20.dp, bottom = 30.dp),
             ) {
                 Text(
                     text = stringResource(id = R.string.signup),
@@ -196,16 +258,10 @@ fun SignupMainContent(navController: NavController, userModel: userModel) {
 @Composable
 fun OutlinedTextFieldSignup(
     placeholder: String,
-    isUsername: Boolean = false,
     isPassword: Boolean = false,
     onValueChanged: (String) -> Unit
 ) {
     var text by remember { mutableStateOf("") }
-    val paddingValues = if (isUsername) {
-        PaddingValues(top = 30.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
-    } else {
-        PaddingValues(10.dp)
-    }
 
     OutlinedTextField(
         value = text,
@@ -215,7 +271,7 @@ fun OutlinedTextFieldSignup(
         },
         modifier = Modifier
             .width(280.dp)
-            .padding(paddingValues)
+            .padding(10.dp)
             .background(colorResource(id = R.color.green), shape = RoundedCornerShape(10.dp)),
         singleLine = true,
         colors = TextFieldDefaults.outlinedTextFieldColors(
