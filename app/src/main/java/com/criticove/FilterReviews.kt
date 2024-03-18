@@ -43,7 +43,7 @@ fun FilterReviews(navController: NavController, userModel: userModel, type: Stri
                     .padding(bottom = 10.dp)
                     .verticalScroll(rememberScrollState()),
             ) {
-                displayFilteredReviews(userModel.filter(type))
+                displayFilteredReviews(userModel.filter(type), navController)
             }
 
             Navbar(navController)
@@ -51,22 +51,22 @@ fun FilterReviews(navController: NavController, userModel: userModel, type: Stri
     }
 }
 @Composable
-fun displayFilteredReviews(filteredReviews: List<Review>) {
+fun displayFilteredReviews(filteredReviews: List<Review>, navController: NavController) {
     for (review in filteredReviews) {
         when (review) {
             is BookReview -> {
                 val bookReview: BookReview = review
                 println("here book review")
                 println("this is the review $review")
-                Review(bookReview.title, bookReview.author, bookReview.date, bookReview.rating)
+                Review(bookReview.title, bookReview.author, bookReview.date, bookReview.rating, bookReview.reviewID, navController)
             }
             is TVShowReview -> {
                 val tvShowReview: TVShowReview = review
-                Review(tvShowReview.title, tvShowReview.director,tvShowReview.date, tvShowReview.rating)
+                Review(tvShowReview.title, tvShowReview.director,tvShowReview.date, tvShowReview.rating, tvShowReview.reviewID, navController)
             }
             is MovieReview -> {
                 val movieReview: MovieReview = review
-                Review(movieReview.title, movieReview.director, movieReview.date, movieReview.rating)
+                Review(movieReview.title, movieReview.director, movieReview.date, movieReview.rating, movieReview.reviewID, navController)
             }
         }
     }
