@@ -271,7 +271,6 @@ fun Selection(navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-<<<<<<< HEAD
 fun CreateForm(type: String, navController: NavController, mediaViewModel: MediaViewModel) {
     val context = LocalContext.current
 
@@ -458,7 +457,6 @@ fun CreateForm(type: String, navController: NavController, mediaViewModel: Media
     println("this is filled $filled")
     StarRating(type)
     Submission(type, navController)
->>>>>>> origin/main
 }
 
 
