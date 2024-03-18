@@ -153,7 +153,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
 
     elements = listOf(
         "Title", "Author", "Date Published", "Genre", "Book Type", "Started",
-        "Finished", "Rating"
+        "Finished", "Rating", "Review"
     ).toMutableList()
 
     when (selReview) {
@@ -162,7 +162,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
 
             elements = listOf(
                 "Title", "Author", "Date Published", "Genre", "Book Type", "Started",
-                "Finished", "Rating"
+                "Finished", "Rating", "Review"
             ).toMutableList()
 
             val bookReview: BookReview = selReview as BookReview
@@ -180,7 +180,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
             reviewData.clear()
             elements = listOf(
                 "Title", "Director", "Date Released", "Genre", "Streaming Service", "Started",
-                "Finished", "Rating"
+                "Finished", "Rating", "Review"
             ).toMutableList()
 
             val tvReview: TVShowReview = selReview as TVShowReview
@@ -197,7 +197,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
             reviewData.clear()
             elements = listOf(
                 "Title", "Director", "Date Released", "Genre", "Publication Company", "Started",
-                "Finished", "Rating"
+                "Finished", "Rating", "Review"
             ).toMutableList()
 
             val movieReview: MovieReview = selReview as MovieReview
@@ -211,7 +211,6 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
             reviewData["Review"] = movieReview.paragraph
         }
     }
-    elements.add("Review")
 
     Box(
         modifier = Modifier
@@ -246,37 +245,41 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                                         .padding(5.dp)
                                         .width(100.dp)
                                 )
+                                /*
                                 Text(
                                     text = "$curData",
                                     fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
                                     modifier = Modifier
                                         .padding(5.dp)
                                 )
+                                */
 
 
 
-                                /*
-                                if (label == "Rating" && !curData.isNullOrEmpty()) {
+
+                                if (label == "Rating" && curData != "null") {
                                     println("at rating point $label : $curData")
                                     Stars(curData.toInt())
                                 } else {
                                     Text(
                                         text = "$curData",
+                                        fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
                                         modifier = Modifier
                                             .padding(5.dp)
                                     )
                                 }
 
-                                 */
+
 
 
                             }
                         }
-                        /*
+
                         else {
                             OutlinedTextField(
                                 value = curData,
                                 onValueChange = { curData = it },
+                                enabled = false,
                                 minLines = 3,
                                 maxLines = 7,
                                 label = {Text( text = "Review", color = colorResource(id = R.color.blue)) },
@@ -289,11 +292,12 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                             println("new reviewData is $reviewData")
                         }
 
-                         */
+
 
                     }
                 }
             }
+            /*
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -316,6 +320,8 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
 
                 }
             }
+
+             */
         }
     }
     SubmitUpdatedReview(type, reviewData, reviewID)
@@ -334,21 +340,24 @@ fun SubmitUpdatedReview(type: String, reviewData: MutableMap<String, String>,
 
     ) {
         Row(
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
         ) {
             Button(
                 onClick = {
-                    updatedReview = reviewData
-                    delSelectedReview(reviewID)
+                          TODO()
+                    //updatedReview = reviewData
+                    //delSelectedReview(reviewID)
                     //updatedReview?.let { SubmittedReview(type, reviewData["Rating"]!!.toInt(), it) }
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.teal),
                     contentColor = colorResource(id = R.color.off_white)
                 ),
-                modifier = Modifier.weight(1F)
+                modifier = Modifier
+                    .width(200.dp)
             ) {
-                Text("Submit")
+                Text("Edit")
             }
         }
     }
@@ -358,6 +367,36 @@ fun SubmitUpdatedReview(type: String, reviewData: MutableMap<String, String>,
 @Preview
 @Composable
 fun PreviewReviewDetails() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(colorResource(id = R.color.off_white))
+            .padding(10.dp)
+
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Button(
+                onClick = {
+                    //updatedReview = reviewData
+                    //delSelectedReview(reviewID)
+                    //updatedReview?.let { SubmittedReview(type, reviewData["Rating"]!!.toInt(), it) }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(id = R.color.teal),
+                    contentColor = colorResource(id = R.color.off_white)
+                ),
+                modifier = Modifier
+                    .width(200.dp)
+            ) {
+                Text("Submit")
+            }
+        }
+    }
+    /*
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -409,4 +448,6 @@ fun PreviewReviewDetails() {
 
         }
     }
+
+     */
 }
