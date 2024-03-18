@@ -90,7 +90,9 @@ class ReviewDetails: ComponentActivity() {
 
 @Composable
 fun ReviewDetailsMainContent(navController: NavController,
-                             reviewID: String, userModel: userModel) {
+                             reviewID: String,
+                             isFriend: Boolean,
+                             userModel: userModel) {
     userModel.getSelReview(reviewID)
     val selReview by userModel.selReview.collectAsState()
     println(reviewID)
@@ -108,7 +110,7 @@ fun ReviewDetailsMainContent(navController: NavController,
         ) {
             Column {
                 Navbar(navController)
-                ReviewDetailsTable(reviewType, userModel.selReview, reviewID)
+                ReviewDetailsTable(reviewType, userModel.selReview, reviewID, isFriend)
             }
         }
     }
@@ -138,7 +140,7 @@ fun ReviewDetailsHeader() {
 
 @Composable
 fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
-                       reviewID: String) {
+                       reviewID: String, isFriend: Boolean) {
     val selReview by selReview.collectAsState()
 
     var elements =  mutableListOf<String>()
@@ -324,7 +326,9 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
              */
         }
     }
-    SubmitUpdatedReview(type, reviewData, reviewID)
+    if (!isFriend) {
+        SubmitUpdatedReview(type, reviewData, reviewID)
+    }
 }
 
 @Composable
