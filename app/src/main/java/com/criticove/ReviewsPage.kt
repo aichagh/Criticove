@@ -97,7 +97,6 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
     }
 }
 
-// This is a temporary function, later this would take the rating in account
 @Composable
 fun Stars(rating: Int) {
     var id = R.drawable.star_full
