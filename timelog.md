@@ -52,12 +52,12 @@
 | 2024/03/15 |       |         |        | 2        |            |      | Updated Friends UI page and hamburger menu |
 | 2024/03/15 |       |         |        | 2        |            |      | Worked on integrating the backend into the friends page to display in real time |
 | 2024/03/16 |       |         |  4     |          |            |      | Backend for adding friends and obtaining users |
-| 2024/03/16 |       |         |        | 2      |            |      | Debugging errors while integrating fronted and backend |
-| 2024/03/15 | 4.5   |         |        |        |            |      | Updating the create review form UI |
-| 2024/03/16 | 5     |         |        |        |            |      | fixed review form UI + created friend review card UI + started dashboard real data update|
-| 2024/03/17 |       |         | 5       |        |            |     | backend for adding friends, setting visibility of reviews, viewing friends reviews|
-| 2024/03/17 |       |         |         | 5      |            |     | worked on displaying friends reviews in real time and adjusting the ui for that, and minor changes on the ui for hamburger |
-| 2024/03/18 |       |         | 2      |        |            |      | filtering reviews |
-| 2024/03/17 | 3.5   |         |        |        |            |      | finished dashboard top-genres widget + changed navbar to not have add review (created button within page) |
-| 2024/03/18 | 1     |         |        |        |            |      | display images from phone gallery |
-
+| 2024/03/16 |       |         |        | 2        |            |      | Debugging errors while integrating fronted and backend |
+| 2024/03/15 | 4.5   |         |        |          |            |      | Updating the create review form UI |
+| 2024/03/16 | 5     |         |        |          |            |      | fixed review form UI + created friend review card UI + started dashboard real data update|
+| 2024/03/17 |       |         | 5      |          |            |     | backend for adding friends, setting visibility of reviews, viewing friends reviews|
+| 2024/03/17 |       |         |        | 5        |            |     | worked on displaying friends reviews in real time and adjusting the ui for that, and minor changes on the ui for hamburger |
+| 2024/03/18 |       |         | 2      |          |            |      | filtering reviews |
+| 2024/03/17 | 3.5   |         |        |          |            |      | finished dashboard top-genres widget + changed navbar to not have add review (created button within page) |
+| 2024/03/18 | 1     |         |        |          |            |      | display images from phone gallery |
+| 2024/03/18 | 2     |         |        |          |            |      | view / edit review page UI update |
