@@ -97,23 +97,17 @@ fun ReviewDetailsMainContent(navController: NavController,
     val selReview by userModel.selReview.collectAsState()
     println(reviewID)
 
-    MainLayout(
-        title = selReview.title,
-        navController = navController
-    ) { _ ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .verticalScroll(rememberScrollState())
                 .background(colorResource(id = R.color.off_white))
         ) {
-            Column {
-                Navbar(navController)
-                ReviewDetailsTable(reviewType, userModel.selReview, reviewID, isFriend)
-            }
+            ProfileHeader(navController, selReview.title, "Reviews")
+            ReviewDetailsTable(reviewType, userModel.selReview, reviewID, isFriend)
         }
-    }
+//    }
 }
 
 /**
@@ -229,6 +223,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                 ) {
                     Column() {
                         var curData = reviewData[label].toString()
+                        var edit by remember { mutableStateOf(false) }
                         //var curData by remember {mutableStateOf(reviewData[label].toString())}
 
                         if (label != "Review") {
@@ -283,7 +278,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                             OutlinedTextField(
                                 value = curData,
                                 onValueChange = { curData = it },
-                                enabled = false,
+                                enabled = edit,
                                 minLines = 3,
                                 maxLines = 7,
                                 label = {Text( text = "Review", fontSize = 18.sp, color = colorResource(id = R.color.blue)) },
@@ -292,9 +287,24 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                                     .horizontalScroll(rememberScrollState())
                                     .padding(5.dp)
                             )
-
-                            reviewData.set("Review", curData).toString()
-                            println("new reviewData is $reviewData")
+                            if (!isFriend) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    if (!edit) {
+                                        customButton("Edit", { edit = true })
+                                    } else {
+                                        customButton("Save", {
+                                            edit = false
+                                            reviewData.set("Review", curData).toString()
+                                        })
+                                        customButton("Cancel", { edit = false })
+                                    }
+                                }
+                            }
+//                            println("new reviewData is $reviewData")
                         }
 
 
@@ -329,9 +339,9 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
              */
         }
     }
-    if (!isFriend) {
-        SubmitUpdatedReview(type, reviewData, reviewID)
-    }
+//    if (!isFriend) {
+//        SubmitUpdatedReview(type, reviewData, reviewID)
+//    }
 }
 
 @Composable
