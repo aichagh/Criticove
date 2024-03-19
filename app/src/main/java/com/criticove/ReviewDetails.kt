@@ -119,24 +119,24 @@ fun ReviewDetailsMainContent(navController: NavController,
 /**
 @Composable
 fun ReviewDetailsHeader() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .background(colorResource(id = R.color.blue)),
-        contentAlignment = Alignment.Center
-    ) {
-        reviewData["Title"]?.let {
-            Text(
-                text = it,
-                color = colorResource(id = R.color.white),
-                fontSize = 20.sp
+Box(
+modifier = Modifier
+.fillMaxWidth()
+.height(50.dp)
+.background(colorResource(id = R.color.blue)),
+contentAlignment = Alignment.Center
+) {
+reviewData["Title"]?.let {
+Text(
+text = it,
+color = colorResource(id = R.color.white),
+fontSize = 20.sp
 
-            )
-        }
-    }
+)
 }
-**/
+}
+}
+ **/
 
 @Composable
 fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
@@ -352,7 +352,7 @@ fun SubmitUpdatedReview(type: String, reviewData: MutableMap<String, String>,
         ) {
             Button(
                 onClick = {
-                          TODO()
+                    TODO()
                     //updatedReview = reviewData
                     //delSelectedReview(reviewID)
                     //updatedReview?.let { SubmittedReview(type, reviewData["Rating"]!!.toInt(), it) }
