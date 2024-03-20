@@ -62,3 +62,4 @@
 | 2024/03/18 | 1     |         |        |          |            |      | display images from phone gallery |
 | 2024/03/18 | 2     |         |        |          |            |      | view / edit review page UI update |
 | 2024/03/19 |       |         |1       |          |            |      | review details page |
+| 2024/03/20 |       |         |        |          | 0.75       |      | D4 discussion and next steps for the app |
