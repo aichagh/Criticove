@@ -60,6 +60,7 @@ class MediaViewModel: ViewModel() {
         viewModelScope.launch {
             try {
                 val response = tmdbApiService.getMovieDetail(movieId, API_KEY)
+                // Post the detailed movie object to LiveData
                 movieDetails.postValue(response)
             } catch (e: Exception) {
                 Log.e("MediaViewModel", "Error fetching movie details", e)
@@ -71,6 +72,7 @@ class MediaViewModel: ViewModel() {
         viewModelScope.launch {
             try {
                 val response = tmdbApiService.getTVDetail(tvShowId, API_KEY)
+                // Post the detailed TV show object to LiveData
                 tvShowDetails.postValue(response)
             } catch (e: Exception) {
                 Log.e("MediaViewModel", "Error fetching TV show details", e)

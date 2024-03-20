@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.criticove
 
 
@@ -58,10 +60,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-<<<<<<< HEAD
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-=======
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Edit
@@ -75,7 +75,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.AnnotatedString
->>>>>>> origin/main
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
@@ -87,24 +86,28 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.window.PopupProperties
 import com.criticove.m3.ButtonStyles.IconButton
 import com.criticove.backend.userModel
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import com.criticove.api.Movie
-import com.criticove.api.MovieDetails
+import com.criticove.api.MovieDetail
 import com.criticove.api.TvShow
-import com.criticove.api.TvShowDetails
+import com.criticove.api.TvShowDetail
+import androidx.compose.runtime.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.livedata.observeAsState
+import java.time.LocalDate
+
 
 val filled = mutableMapOf(
     "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Year Published" to "", "Genre" to "", "Book Type" to "", "Date finished" to ""),
     "TV Show" to mutableMapOf("TV Show Title" to "", "Director" to "", "Year Released" to "", "Genre" to "", "Streaming Service" to "", "Date finished" to ""),
-    "Movie" to mutableMapOf("Movie Title" to "", "Director" to "" , "Year Released" to "", "Genre" to "", "Streaming Service" to "", "Date watched" to ""))
+    "Movie" to mutableMapOf("Movie Title" to "", "Year Released" to "", "Genre" to "", "Streaming Service" to "", "Date watched" to ""))
 
 var reviewScore = 1
 var submittedReview: MutableMap<String, String>? = null
 var shared: Boolean = false
 
 val genreList = listOf<String>("Romance", "Thriller", "Drama", "Autobiography", "Sci-fi")
-val serviceList = listOf<String>("Netflix", "Prime", "Hulu", "HBO", "Other")
+val serviceList = listOf<String>("Netflix", "Apple TV", "Prime", "Hulu", "HBO", "Other")
 
 class ReviewForm : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -169,7 +172,7 @@ val Movie.suggestionItem: SuggestionItem
     get() = object : SuggestionItem {
         override val id: Int = this@suggestionItem.id
         override val displayText: String = this@suggestionItem.title
-        override val displayDate: String = this@suggestionItem.release_date
+        override val displayDate: String = this@suggestionItem.release_date.substringBefore("-")
     }
 
 // Extension properties for TvShow
@@ -177,9 +180,10 @@ val TvShow.suggestionItem: SuggestionItem
     get() = object : SuggestionItem {
         override val id: Int = this@suggestionItem.id
         override val displayText: String = this@suggestionItem.name
-        override val displayDate: String = this@suggestionItem.first_air_date
+        override val displayDate: String = this@suggestionItem.first_air_date.substringBefore("-")
     }
 
+@ExperimentalMaterial3Api
 @Composable
 fun AutocompleteTextField(
     label: String,
@@ -208,14 +212,27 @@ fun AutocompleteTextField(
                 viewModel.searchTvShowTitles(it)
             }
         },
-        label = { Text(text = label) },
-        modifier = Modifier.fillMaxWidth()
+        label = { Text(text = label,
+            color = colorResource(id = R.color.coolGrey),
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+        ) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = colorResource(id = R.color.blue),
+            unfocusedBorderColor = colorResource(id = R.color.teal)
+        ),
+        shape = RoundedCornerShape(10.dp)
     )
 
     if (suggestions.isNotEmpty()) {
         DropdownMenu(
             expanded = isExpanded,
-            onDismissRequest = { isExpanded = false }
+            onDismissRequest = { isExpanded = false },
+            modifier = Modifier
+                .background(colorResource(id = R.color.off_white))
+                .fillMaxWidth()
         ) {
             suggestions.take(5).forEach { suggestion ->
                 DropdownMenuItem(
@@ -225,9 +242,15 @@ fun AutocompleteTextField(
                         onSuggestionSelected(suggestion.id)
                     },
                     text = {
-                        Text("${suggestion.displayText} (${suggestion.displayDate})")
-                    }
-                )
+                        Text("${suggestion.displayText} (${suggestion.displayDate})",
+                        fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxSize(),
+                        color = colorResource(id = R.color.black))
+                    },
+                    modifier = Modifier
+                        .background(colorResource(id = R.color.off_white)),
+                    )
             }
         }
     }
@@ -266,14 +289,18 @@ fun Selection(navController: NavController) {
             }
         }
     }
-    CreateForm(selectedType, navController)
+    val mediaViewModel: MediaViewModel = viewModel()
+    CreateForm(selectedType, navController, mediaViewModel)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateForm(type:String, navController: NavController) {
+fun CreateForm(type:String, navController: NavController, mediaViewModel: MediaViewModel) {
     var elements = mutableListOf<String>()
+    var review by remember { mutableStateOf("") }
     var text by remember { mutableStateOf("") }
+    val movieDetails by  mediaViewModel.movieDetails.observeAsState()
+
     when (type) {
         "Book" -> elements =
             listOf("Book Title", "Author", "Year Published", "Genre", "Book Type", "Date finished").toMutableList()
@@ -287,7 +314,6 @@ fun CreateForm(type:String, navController: NavController) {
         ).toMutableList()
         "Movie" -> elements = listOf(
             "Movie Title",
-            "Director",
             "Year Released",
             "Genre",
             "Streaming Service",
@@ -302,15 +328,16 @@ fun CreateForm(type:String, navController: NavController) {
     )
     {
         when (type) {
-            "Book" -> { BookForm() }
-            "TV Show" -> { TVShowForm() }
-            "Movie" -> { MovieForm() }
-            "Book" -> { BookForm()
-                normalText(field = "Review", type = "Book")}
-            "TV Show" -> { TVShowForm()
-                normalText(field = "Review", type = "TV Show")}
-            "Movie" -> { MovieForm()
-                normalText(field = "Review", type = "Movie")}
+            "Book" -> {
+                BookForm()
+            }
+            "TV Show" -> {
+                TVShowForm(mediaViewModel)
+
+            }
+            "Movie" -> {
+                MovieForm(mediaViewModel)
+            }
         }
         OutlinedTextField(
             value = text,
@@ -337,8 +364,6 @@ fun CreateForm(type:String, navController: NavController) {
     StarRating(type)
     Submission(type, navController)
 }
-
-
 
 @Composable
 fun Submission(type: String, navController: NavController) {
@@ -449,6 +474,7 @@ fun Submission(type: String, navController: NavController) {
     }
 }
 
+
 @Composable
 fun StarRating(type: String) {
     var bookScore by remember { mutableIntStateOf(1) }
@@ -473,40 +499,6 @@ fun StarRating(type: String) {
                         } else {
                             id = R.drawable.star_empty
                         }
-                        "TV Show" -> {
-                            if (i <= tvScore) {
-                                id = R.drawable.star_full
-                            } else {
-                                id = R.drawable.star_empty
-                            }
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = id),
-                                contentDescription = "Star $i",
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .clickable(onClick = {
-                                        tvScore = i
-                                        reviewScore = tvScore
-                                    })
-                                    .size(32.dp)
-                            )
-                        }
-                        "Movie" -> {
-                            if (i <= movieScore) {
-                                id = R.drawable.star_full
-                            } else {
-                                id = R.drawable.star_empty
-                            }
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = id),
-                                contentDescription = "Star $i",
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .clickable(onClick = {
-                                        movieScore = i
-                                        reviewScore = movieScore
-                                    })
-                                    .size(32.dp) ) }
                         Icon(
                             imageVector = ImageVector.vectorResource(id = id),
                             contentDescription = "Star $i",
@@ -576,50 +568,110 @@ fun BookForm() {
     // Fields: "Book Title","Author", "Date Published", "Genre", "Book Type"
     val genreList = listOf<String>("Romance", "Thriller", "Drama", "Autobiography", "Sci-fi")
     val typeList = listOf<String>("Physical", "E-Book")
+    var selectedService by remember { mutableStateOf(serviceList.first()) }
+    var selectedGenre by remember { mutableStateOf(genreList.first()) }
 
-    normalText(field = "Book Title", type = "Book")
-    normalText(field = "Author", type = "Book")
-    normalNumber(field = "Year Published", type = "Book")
-    Dropdown(type = "Book", field = "Genre", list = genreList)
-    Dropdown(type = "Book", field = "Book Type", list = typeList)
+    normalText(field = "Book Title", type = "Book", onValueChange = {})
+    normalText(field = "Author", type = "Book", onValueChange = {})
+    normalNumber(field = "Year Published", type = "Book", onValueChange = {})
+    Dropdown(type = "Book", field = "Genre", list = genreList, selectedGenre) { selectedGenre = it }
+    Dropdown(type = "Movie", field = "Streaming Service", list = serviceList, selectedService) { selectedService = it }
     dateField(field = "Date finished", type = "Book")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TVShowForm() {
+fun TVShowForm(mediaViewModel: MediaViewModel) {
+    val tvShowDetails by mediaViewModel.tvShowDetails.observeAsState()
+    var tvShowTitle by remember { mutableStateOf("") }
+    var director by remember { mutableStateOf("") }
+    var yearReleased by remember { mutableStateOf("") }
+    var selectedGenre by remember { mutableStateOf("") }
+    val genreList = listOf("Drama", "Comedy", "Action", "Fantasy", "Science Fiction")
+    val updatedGenreList = remember { mutableStateListOf(*genreList.toTypedArray()) }
+    var selectedService by remember { mutableStateOf(serviceList.first()) }
+    AutocompleteTextField(
+        label = "TV Show Title",
+        viewModel = mediaViewModel,
+        onSuggestionSelected = { tvShowId ->
+            mediaViewModel.fetchTvShowDetails(tvShowId)
+        }
+    )
+
+    LaunchedEffect(tvShowDetails) {
+        tvShowDetails?.let {
+            tvShowTitle = it.name
+            director = it.created_by
+            yearReleased = it.first_air_date.substringBefore("-") // Assuming YYYY-MM-DD format
+
+            // Update genre list if the first genre isn't in the static list
+            if (selectedGenre.isNotEmpty() && !updatedGenreList.contains(selectedGenre)) {
+                updatedGenreList.add(0, selectedGenre)
+            }
+        }
+    }
+
 //    "TV Show Title", "Director", "Date Released", "Genre", "Streaming Service"
-
-    normalText(field = "TV Show Title", type = "TV Show")
-    normalText(field = "Director", type = "TV Show")
-    normalNumber(field = "Year Released", type = "TV Show")
-    Dropdown(type = "TV Show", field = "Genre", list = genreList)
-    Dropdown(type = "TV Show", field = "Streaming Service", list = serviceList)
+//    normalText(field = "TV Show Title", type = "TV Show", initialValue = tvShowTitle, onValueChange = { tvShowTitle = it })
+    normalText(field = "Director", type = "TV Show", initialValue = director, onValueChange = { director = it })
+    normalNumber(field = "Year Released", type = "TV Show", initialValue = yearReleased, onValueChange = { yearReleased = it })
+    Dropdown(type = "TV Show", field = "Genre", list = updatedGenreList, selectedGenre) { selectedGenre = it }
+    Dropdown(type = "Movie", field = "Streaming Service", list = serviceList, selectedService) { selectedService = it }
     dateField(field = "Date finished", type = "TV Show")
-
 }
 
 @Composable
-fun MovieForm() {
+fun MovieForm(mediaViewModel: MediaViewModel) {
+    val movieDetails by mediaViewModel.movieDetails.observeAsState()
+    var movieTitle by remember { mutableStateOf("") }
+    var yearReleased by remember { mutableStateOf("") }
+    var selectedGenre by remember { mutableStateOf("") }
+    val genreList = listOf("Romance", "Thriller", "Drama", "Autobiography", "Sci-fi")
+    val updatedGenreList = remember { mutableStateListOf(*genreList.toTypedArray()) }
+    var selectedService by remember { mutableStateOf("") }
+
+    AutocompleteTextField(
+        label = "Movie Title",
+        viewModel = mediaViewModel,
+        onSuggestionSelected = { movieId ->
+            mediaViewModel.fetchTvShowDetails(movieId)
+        }
+    )
+
+    LaunchedEffect(movieDetails) {
+        movieDetails?.let {
+            movieTitle = it.title
+            yearReleased = it.release_date.substringBefore("-") // Assuming YYYY-MM-DD format
+
+            // Update genre list if the first genre isn't in the static list
+            if (it.genres.isNotEmpty()) {
+                updatedGenreList.clear()
+                updatedGenreList.addAll(genreList) // Reset to default and add fetched genre
+                updatedGenreList.add(0, it.genres.first().name)
+                selectedGenre = "Select a genre" // Reset to placeholder on new selection
+            }
+        }
+    }
+
     //"Movie Title", "Director", "Date Released", "Genre", "Publication Company"
-
-    normalText(field = "Movie Title", type = "Movie")
-    normalText(field = "Director", type = "Movie")
-    normalNumber(field = "Year Released", type = "Movie")
-    Dropdown(type = "Movie", field = "Genre", list = genreList)
-    Dropdown(type = "Movie", field = "Streaming Service", list = serviceList)
+//    normalText(field = "Movie Title", type = "Movie", initialValue = movieTitle, onValueChange = { movieTitle = it })
+    normalNumber(field = "Year Released", type = "Movie", initialValue = yearReleased, onValueChange = { yearReleased = it })
+    Dropdown(type = "Movie", field = "Genre", list = updatedGenreList, selectedGenre) { selectedGenre = it }
+    Dropdown(type = "Movie", field = "Streaming Service", list = serviceList, selectedService) { selectedService = it }
     dateField(field = "Date watched", type = "Movie")
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun normalText(field: String, type: String) {
-    var entered by remember { mutableStateOf("") }
+fun normalText(field: String, type: String, initialValue: String = "", onValueChange: (String) -> Unit) {
+    var entered by remember { mutableStateOf(initialValue)  }
 
     OutlinedTextField(
         value = entered,
-        onValueChange = { entered = it },
+        onValueChange = {
+                        entered = it
+                        onValueChange(it)
+                        },
         singleLine = true,
         label = {
             Text(
@@ -641,9 +693,16 @@ fun normalText(field: String, type: String) {
 
 @Suppress("ModifierParameter")
 @Composable
-fun Dropdown(type: String, field: String, list: List<String>) {
+fun Dropdown(
+    type: String,
+    field: String,
+    list: List<String>,
+    selected: String = "",
+    onSelectedChange: (String) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
-    var entered by remember { mutableStateOf(field) }
+    // Use the placeholder if 'selected' is empty, otherwise, show the selected value
+    var entered by remember { mutableStateOf(if (selected.isEmpty()) field else selected) }
 
     Box(
         modifier = Modifier
@@ -663,9 +722,8 @@ fun Dropdown(type: String, field: String, list: List<String>) {
                 .background(colorResource(id = R.color.off_white)),
         ) {
             var textColor = colorResource(id = R.color.black);
-            if(entered == field) {
-                textColor = colorResource(id = R.color.coolGrey)
-            }
+            // Adjust the condition to change text color if necessary
+            textColor = if (entered == field) colorResource(id = R.color.coolGrey) else colorResource(id = R.color.black)
 
             Text(
                 text = entered,
@@ -678,12 +736,12 @@ fun Dropdown(type: String, field: String, list: List<String>) {
 
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.right_arrow),
-                contentDescription = "drop", tint = colorResource(id = R.color.black),
+                contentDescription = "dropdown",
+                tint = colorResource(id = R.color.black),
                 modifier = Modifier
                     .rotate(90F)
                     .height(20.dp)
             )
-
         }
 
         DropdownMenu(
@@ -702,7 +760,13 @@ fun Dropdown(type: String, field: String, list: List<String>) {
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxSize()
                         )},
-                    onClick = { entered = el; expanded = false},
+                    onClick = {
+                        if (el != field) { // Ignore clicks on placeholder
+                        entered = el
+                        onSelectedChange(el)
+                    }
+                        expanded = false
+                    },
                     modifier = Modifier
                         .background(colorResource(id = R.color.off_white))
                         .fillMaxWidth(),
@@ -711,7 +775,9 @@ fun Dropdown(type: String, field: String, list: List<String>) {
         }
     }
 
-    filled[type]?.set(field, entered).toString()
+    if (entered != field) {
+        filled[type]?.set(field, entered)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -775,31 +841,53 @@ class DateTransformation : VisualTransformation {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun normalNumber(field: String, type: String) {
-    var entered by remember { mutableStateOf("") }
+fun normalNumber(field: String, type: String, initialValue: String = "", onValueChange: (String) -> Unit) {
+    var entered by remember { mutableStateOf(initialValue) }
+    // Initially validate the initialValue. If no initialValue is provided, assume no error.
+    var isError by remember(initialValue) { mutableStateOf(initialValue.isNotEmpty() && !isValidYear(initialValue)) }
 
     OutlinedTextField(
         value = entered,
-        onValueChange = { if (it.length < 9) entered = it },
+        onValueChange = { newValue ->
+            entered = newValue
+            isError = !isValidYear(newValue) && newValue.isNotEmpty()
+            onValueChange(newValue)
+        },
         singleLine = true,
         label = {
             Text(
-                text = field, color = colorResource(id = R.color.coolGrey),
+                text = field,
+                // Use MaterialTheme.colors to access current theme colors.
+                color = colorResource(id = R.color.coolGrey),
                 fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
             )
         },
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 10.dp),
+        // Update TextField colors based on isError state.
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = colorResource(id = R.color.blue),
-            unfocusedBorderColor = colorResource(id = R.color.teal)
+            focusedBorderColor = if (isError) colorResource(id = R.color.red) else colorResource(id = R.color.blue),
+            unfocusedBorderColor = if (isError) colorResource(id = R.color.red) else colorResource(id = R.color.teal),
+            errorBorderColor = colorResource(id = R.color.red),
         ),
         shape = RoundedCornerShape(10.dp),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        isError = isError, // Indicate error state.
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+    )
 
+    // Optionally display an error message
+    if (isError) {
+        Text(
+            "Enter a valid year (e.g., 2023)",
+            color = colorResource(id = R.color.red),
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+            modifier = Modifier.padding(start = 16.dp, top = 2.dp)
         )
-    filled[type]?.set(field, entered).toString()
+    }
+}
+
+fun isValidYear(year: String): Boolean {
+    return year.length == 4 && year.toIntOrNull()?.let { it in 1000..2099 } == true
 }
