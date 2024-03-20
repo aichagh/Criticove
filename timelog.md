@@ -61,3 +61,4 @@
 | 2024/03/17 | 3.5   |         |        |          |            |      | finished dashboard top-genres widget + changed navbar to not have add review (created button within page) |
 | 2024/03/18 | 1     |         |        |          |            |      | display images from phone gallery |
 | 2024/03/18 | 2     |         |        |          |            |      | view / edit review page UI update |
+| 2024/03/19 |       |         |1       |          |            |      | review details page |
