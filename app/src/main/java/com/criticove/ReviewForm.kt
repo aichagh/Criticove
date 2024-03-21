@@ -58,6 +58,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
@@ -94,6 +95,11 @@ import com.criticove.api.TvShowDetail
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 
@@ -191,8 +197,13 @@ fun AutocompleteTextField(
     onSuggestionSelected: (Int) -> Unit,
     type: String
 ) {
+    val focusRequester = remember { FocusRequester() }
+    val debouncePeriod = 300L
+    val coroutineScope = rememberCoroutineScope()
+
     var query by remember { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val movieSuggestions by viewModel.movieSuggestions.observeAsState()
     val tvShowSuggestions by viewModel.tvShowSuggestions.observeAsState()
@@ -207,10 +218,20 @@ fun AutocompleteTextField(
         onValueChange = {
             query = it
             isExpanded = it.isNotEmpty()
-            if (label == "Movie Title") {
-                viewModel.searchMovieTitles(it)
-            } else {
-                viewModel.searchTvShowTitles(it)
+            coroutineScope.launch {
+                try {
+                    delay(debouncePeriod) // Debounce delay
+                    if (query == it) { // Check if the query hasn't changed
+                        if (type == "Movie") {
+                            viewModel.searchMovieTitles(it)
+                        } else {
+                            viewModel.searchTvShowTitles(it)
+                        }
+                    }
+                }
+            catch (e: Exception) {
+                println("error couroutine")
+            }
             }
         },
         label = { Text(text = label,
@@ -224,10 +245,18 @@ fun AutocompleteTextField(
             focusedBorderColor = colorResource(id = R.color.blue),
             unfocusedBorderColor = colorResource(id = R.color.teal)
         ),
+        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = {
+            keyboardController?.hide()
+        }),
         shape = RoundedCornerShape(10.dp)
     )
 
-    if (suggestions.isNotEmpty()) {
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
+    if (suggestions.isNotEmpty() && isExpanded) {
         DropdownMenu(
             expanded = isExpanded,
             onDismissRequest = { isExpanded = false },
