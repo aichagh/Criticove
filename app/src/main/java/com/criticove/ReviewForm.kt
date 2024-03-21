@@ -188,7 +188,8 @@ val TvShow.suggestionItem: SuggestionItem
 fun AutocompleteTextField(
     label: String,
     viewModel: MediaViewModel,
-    onSuggestionSelected: (Int) -> Unit
+    onSuggestionSelected: (Int) -> Unit,
+    type: String
 ) {
     var query by remember { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
@@ -196,7 +197,7 @@ fun AutocompleteTextField(
     val movieSuggestions by viewModel.movieSuggestions.observeAsState()
     val tvShowSuggestions by viewModel.tvShowSuggestions.observeAsState()
 
-    val suggestions: List<SuggestionItem> = if (label == "Movie Title")
+    val suggestions: List<SuggestionItem> = if (type == "Movie")
         movieSuggestions?.map { it.suggestionItem } ?: emptyList()
     else
         tvShowSuggestions?.map { it.suggestionItem } ?: emptyList()
@@ -254,6 +255,8 @@ fun AutocompleteTextField(
             }
         }
     }
+
+    filled[type]?.set(label, query).toString()
 }
 
 @Composable
@@ -568,14 +571,14 @@ fun BookForm() {
     // Fields: "Book Title","Author", "Date Published", "Genre", "Book Type"
     val genreList = listOf<String>("Romance", "Thriller", "Drama", "Autobiography", "Sci-fi")
     val typeList = listOf<String>("Physical", "E-Book")
-    var selectedService by remember { mutableStateOf(serviceList.first()) }
+//    var selectedService by remember { mutableStateOf(serviceList.first()) }
     var selectedGenre by remember { mutableStateOf(genreList.first()) }
 
     normalText(field = "Book Title", type = "Book", onValueChange = {})
     normalText(field = "Author", type = "Book", onValueChange = {})
     normalNumber(field = "Year Published", type = "Book", onValueChange = {})
     Dropdown(type = "Book", field = "Genre", list = genreList, selectedGenre) { selectedGenre = it }
-    Dropdown(type = "Movie", field = "Streaming Service", list = serviceList, selectedService) { selectedService = it }
+    Dropdown(type = "Book", field = "Book Type", list = typeList) { /* TODO */ }
     dateField(field = "Date finished", type = "Book")
 }
 
@@ -590,12 +593,14 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
     val genreList = listOf("Drama", "Comedy", "Action", "Fantasy", "Science Fiction")
     val updatedGenreList = remember { mutableStateListOf(*genreList.toTypedArray()) }
     var selectedService by remember { mutableStateOf(serviceList.first()) }
+
     AutocompleteTextField(
         label = "TV Show Title",
         viewModel = mediaViewModel,
         onSuggestionSelected = { tvShowId ->
             mediaViewModel.fetchTvShowDetails(tvShowId)
-        }
+        },
+        type = "TV Show"
     )
 
     LaunchedEffect(tvShowDetails) {
@@ -629,16 +634,19 @@ fun MovieForm(mediaViewModel: MediaViewModel) {
     val genreList = listOf("Romance", "Thriller", "Drama", "Autobiography", "Sci-fi")
     val updatedGenreList = remember { mutableStateListOf(*genreList.toTypedArray()) }
     var selectedService by remember { mutableStateOf("") }
+    var auto by remember { mutableStateOf("false") }
 
     AutocompleteTextField(
         label = "Movie Title",
         viewModel = mediaViewModel,
         onSuggestionSelected = { movieId ->
             mediaViewModel.fetchTvShowDetails(movieId)
-        }
+        },
+        type = "Movie"
     )
 
     LaunchedEffect(movieDetails) {
+        println("In function")
         movieDetails?.let {
             movieTitle = it.title
             yearReleased = it.release_date.substringBefore("-") // Assuming YYYY-MM-DD format
@@ -652,6 +660,7 @@ fun MovieForm(mediaViewModel: MediaViewModel) {
             }
         }
     }
+
 
     //"Movie Title", "Director", "Date Released", "Genre", "Publication Company"
 //    normalText(field = "Movie Title", type = "Movie", initialValue = movieTitle, onValueChange = { movieTitle = it })
@@ -670,7 +679,7 @@ fun normalText(field: String, type: String, initialValue: String = "", onValueCh
         value = entered,
         onValueChange = {
                         entered = it
-                        onValueChange(it)
+//                        onValueChange(it)
                         },
         singleLine = true,
         label = {
@@ -776,7 +785,7 @@ fun Dropdown(
     }
 
     if (entered != field) {
-        filled[type]?.set(field, entered)
+        filled[type]?.set(field, entered).toString()
     }
 }
 
@@ -886,6 +895,8 @@ fun normalNumber(field: String, type: String, initialValue: String = "", onValue
             modifier = Modifier.padding(start = 16.dp, top = 2.dp)
         )
     }
+
+    filled[type]?.set(field, entered).toString()
 }
 
 fun isValidYear(year: String): Boolean {
