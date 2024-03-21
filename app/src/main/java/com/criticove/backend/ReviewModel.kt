@@ -1,39 +1,42 @@
 package com.criticove.backend
 
-import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class userModel: ViewModel {
     //private val _userID: MutableStateFlow<String> = MutableStateFlow("ZFZrCVjIR0P76TqT5lxX0W3dUI93")
     var userID: String = "ZFZrCVjIR0P76TqT5lxX0W3dUI93"
+
     private val _reviewList: MutableStateFlow<MutableList<Review>> = MutableStateFlow(mutableListOf())
     val reviewList: StateFlow<MutableList<Review>> = _reviewList
+
+    var totalMovieReviews = 0
+    var totalBookReviews = 0
+    var totalTVShowReviews = 0
+    var totalReviews = 0
+
     private val _selReview: MutableStateFlow<Review> = MutableStateFlow(Review("Book",
         "test", "test", "test", 4, "test", "test"))
     val selReview: StateFlow<Review> = _selReview
+
     private val _friendMap: MutableStateFlow<MutableMap<String, String>> = MutableStateFlow(mutableMapOf<String, String>())
     val friendMap: StateFlow<MutableMap<String, String>> = _friendMap
+
     private val _userMap: MutableStateFlow<MutableMap<String, String>> = MutableStateFlow(mutableMapOf<String, String>())
     val userMap: StateFlow<MutableMap<String, String>> = _userMap
+
     private val _friendReviews: MutableStateFlow<MutableMap<String, List<Review>>> = MutableStateFlow(mutableMapOf())
     val friendReviews: StateFlow<MutableMap<String, List<Review>>> = _friendReviews
 
@@ -204,7 +207,12 @@ class userModel: ViewModel {
                             is Boolean -> sDB
                             else -> false
                         }
-                        println("this is rint $r")
+                        val bmDB = review["bookmarked"]
+                        val bm = when (bmDB) {
+                            is Boolean -> bmDB
+                            else -> false
+                        }
+                        println("this is bookmarked $bm")
 
                         when (review["type"]) {
                             "Book" -> {
@@ -213,7 +221,7 @@ class userModel: ViewModel {
                                     review["genre"].toString(), r , review["paragraph"].toString(),
                                     review["reviewID"].toString(), review["author"].toString(),
                                     review["booktype"].toString(),
-                                    review["datefinished"].toString(), s
+                                    review["datefinished"].toString(), s, bm
                                 )
                             }
 
@@ -228,7 +236,7 @@ class userModel: ViewModel {
                                     review["reviewID"].toString(),
                                     review["director"].toString(),
                                     review["streamingservice"].toString(),
-                                    review["datewatched"].toString(), s
+                                    review["datewatched"].toString(), s, bm
                                 )
                             }
 
@@ -238,7 +246,7 @@ class userModel: ViewModel {
                                     review["genre"].toString(), r, review["paragraph"].toString(),
                                     review["reviewID"].toString(), review["director"].toString(),
                                     review["streamingservice"].toString(),
-                                    review["datefinished"].toString(), s
+                                    review["datefinished"].toString(), s, bm
                                 )
                             }
                         }
@@ -248,7 +256,7 @@ class userModel: ViewModel {
                         println("this is the review back to a structure $reviewPost")
                         println("this is the reviews title ${reviewPost.title}")
                         println("this is the reviews date ${reviewPost.date}")
-                        println("this is the reviews par ${reviewPost.paragraph}")
+                        println("this is the reviews bookmarked ${reviewPost.bookmarked}")
                     }
                 }
 
@@ -378,26 +386,23 @@ class userModel: ViewModel {
 
 }
 
-fun getUserID(username: String) {
-
-
-}
 open class Review(val type: String, val title: String, val date: String, val genre: String, val rating: Int, val paragraph: String, val reviewID: String,
-    val shared: Boolean = false) {
+    val shared: Boolean = false, val bookmarked: Boolean = false) {
 }
 
 class BookReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String, reviewID: String,
-                 val author: String, val booktype: String, val datefinished: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, reviewID, shared) {
+                 val author: String, val booktype: String, val datefinished: String, shared: Boolean = false, bookmarked: Boolean = false): Review(type, title, date, genre, rating, paragraph, reviewID, shared, bookmarked) {
 }
 class TVShowReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String, reviewID: String,
-                 val director: String, val streamingservice: String, val datefinished: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, reviewID, shared) {
+                 val director: String, val streamingservice: String, val datefinished: String, shared: Boolean = false, bookmarked: Boolean = false): Review(type, title, date, genre, rating, paragraph, reviewID, shared, bookmarked) {
 }
 
 class MovieReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String, reviewID: String,
-                   val director: String, val streamingservice: String, val datewatched: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, reviewID, shared) {
+                   val director: String, val streamingservice: String, val datewatched: String, shared: Boolean = false, bookmarked: Boolean = false): Review(type, title, date, genre, rating, paragraph, reviewID, shared, bookmarked) {
 }
 
-fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableMap<String, String>) {
+fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableMap<String, String>, userModel: userModel, bookmarked: Boolean = false) {
+
     val user = Firebase.auth.currentUser
     lateinit var userID : String
     if (user != null) {
@@ -415,21 +420,27 @@ fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableM
         "Book" -> {
             reviewPost = BookReview("Book", review["Book Title"].toString(), review["Year Published"].toString(),
                 review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
-                review["Author"].toString(), review["Book Type"].toString(), review["Date finished"].toString(), shared)
+                review["Author"].toString(), review["Book Type"].toString(), review["Date finished"].toString(), shared, bookmarked)
+            ++userModel.totalBookReviews
         }
         "TV Show" -> {
             reviewPost = TVShowReview("TV Show", review["TV Show Title"].toString(), review["Year Released"].toString(),
             review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
-            review["Director"].toString(), review["Streaming Service"].toString(), review["Date finished"].toString(), shared)
+            review["Director"].toString(), review["Streaming Service"].toString(), review["Date finished"].toString(), shared, bookmarked)
+     
+            ++userModel.totalTVShowReviews
     }
         "Movie" -> {
             reviewPost = MovieReview("Movie", review["Movie Title"].toString(), review["Year Released"].toString(),
                 review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
-                review["Director"].toString(), review["Streaming Service"].toString(), review["Date watched"].toString(), shared)
+                review["Director"].toString(), review["Streaming Service"].toString(), review["Date watched"].toString(), shared, bookmarked)
+      
+            ++userModel.totalMovieReviews
         }
     }
+    ++userModel.totalReviews
 
-    println("this si the review i just shared${reviewPost.title}")
+    println("this is the review i just shared${reviewPost.title}")
     newReview.setValue(reviewPost)
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -502,10 +513,10 @@ fun getSelectedReview(reviewID: String): MutableMap<String, String> {
                 }
                 "Movie" -> {
                     var author = it.child("director").value.toString()
-                    var typeType = it.child("publicationCompany").value.toString()
+                    var typeType = it.child("streamingService").value.toString()
 
                     reviewData = mutableMapOf("Title" to title, "Director" to author,
-                        "Date Published" to date, "Genre" to genre, "Publication Company" to typeType,
+                        "Date Published" to date, "Genre" to genre, "Streaming Service" to typeType,
                         "Started" to "01/01/2024", "Finished" to "20/01/2024", "Rating" to rating,
                         "Review" to review, "type" to type)
                 }
@@ -521,4 +532,23 @@ fun getSelectedReview(reviewID: String): MutableMap<String, String> {
     }
 
     return reviewData
+}
+
+fun changeBookmark(reviewID: String, bm: Boolean) {
+    val user = Firebase.auth.currentUser
+    lateinit var userID: String
+    if (user != null) {
+        userID = user.uid
+        println("the user id is $userID, and reviewId is $reviewID")
+    }
+    var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/$userID/Reviews")
+    val reviewRef = reviewsRef.child(reviewID)
+    val bookmarkVal = mapOf<String, Any>("bookmarked" to bm)
+    reviewRef.updateChildren(bookmarkVal)
+        .addOnSuccessListener {
+        println("Bookmark value is $bm")
+        }
+        .addOnFailureListener { error ->
+            println("bookmark didnt work with error $error")
+        }
 }

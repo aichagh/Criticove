@@ -156,7 +156,10 @@ fun FriendReview(
             TextButton(
                 modifier = Modifier
                     .width(50.dp),
-                onClick = { }
+                onClick = {
+                    TODO()
+                    //navController.navigate("ViewReview/$reviewID/false")
+                }
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.bookmark_empty),

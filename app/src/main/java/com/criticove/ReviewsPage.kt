@@ -29,6 +29,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,6 +52,8 @@ import com.criticove.backend.BookReview
 import com.criticove.backend.MovieReview
 import com.criticove.backend.Review
 import com.criticove.backend.TVShowReview
+import com.criticove.backend.changeBookmark
+import com.criticove.backend.delSelectedReview
 import com.criticove.backend.userModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -114,16 +120,16 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                     IconButton(
                         onClick = { navController.navigate("ReviewForm") },
                         modifier = Modifier
+                            .size(80.dp)
                             .padding(10.dp)
                             .clip(CircleShape)
-//                            .size(30.dp)
                             .background(colorResource(id = R.color.teal)),
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.plus),
                             contentDescription = "friends", tint = colorResource(id = R.color.off_white),
                             modifier = Modifier
-                                .height(25.dp)
+                                .height(40.dp)
 
                         )
                     }
@@ -157,7 +163,9 @@ fun Review(title: String = "Title",
            year: String = "1999",
            rating: Int = 1,
            reviewID: String,
-           navController: NavController) {
+           navController: NavController,
+           bookmarked: Boolean = false) {
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -191,15 +199,34 @@ fun Review(title: String = "Title",
                 }
             }
 
-            TextButton(
-                modifier = Modifier
-                    .width(50.dp),
-                onClick = { navController.navigate("ViewReview/$reviewID") }
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.bookmark_empty),
-                    contentDescription = "bookmark", tint = colorResource(id = R.color.black)
-                )
+            Row {
+                TextButton(
+                    modifier = Modifier.width(50.dp),
+                    onClick = { navController.navigate("ViewReview/$reviewID/false") }
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.view),
+                        contentDescription = "view", tint = colorResource(id = R.color.black)
+                    )
+                }
+                var bm by remember { mutableStateOf(bookmarked) }
+                TextButton(
+                    modifier = Modifier.width(50.dp),
+                    onClick = {
+                        bm = !bm
+                        changeBookmark(reviewID, bm)
+                    }
+                ) {
+
+                    var id = R.drawable.bookmark_empty
+                    if (bm) {
+                        id = R.drawable.bookmark_full
+                    }
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = id),
+                        contentDescription = "bookmark", tint = colorResource(id = R.color.black)
+                    )
+                }
             }
         }
     }
@@ -215,16 +242,16 @@ fun displayReviews(navController: NavController, reviewList: StateFlow<MutableLi
             is BookReview -> {
                 val bookReview: BookReview = review
                 //println("here book review")
-                //println("this is the review $review")
-                Review(bookReview.title, bookReview.author, bookReview.date, bookReview.rating, bookReview.reviewID, navController)
+                println("this is the reviews  bookmarked ${bookReview.bookmarked}")
+                Review(bookReview.title, bookReview.author, bookReview.date, bookReview.rating, bookReview.reviewID, navController, bookReview.bookmarked)
             }
             is TVShowReview -> {
                 val tvShowReview: TVShowReview = review
-                Review(tvShowReview.title, tvShowReview.director,tvShowReview.date, tvShowReview.rating, tvShowReview.reviewID, navController)
+                Review(tvShowReview.title, tvShowReview.director,tvShowReview.date, tvShowReview.rating, tvShowReview.reviewID, navController, tvShowReview.bookmarked)
             }
             is MovieReview -> {
                 val movieReview: MovieReview = review
-                Review(movieReview.title, movieReview.director, movieReview.date, movieReview.rating, movieReview.reviewID, navController)
+                Review(movieReview.title, movieReview.director, movieReview.date, movieReview.rating, movieReview.reviewID, navController, movieReview.bookmarked)
             }
         }
     }

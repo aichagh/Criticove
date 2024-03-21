@@ -145,7 +145,7 @@ fun ReviewFormMainContent(navController: NavController, userModel: userModel) {
     ) {
         ReviewHeader()
         Column (modifier = Modifier.verticalScroll(rememberScrollState())) {
-            Selection(navController)
+            Selection(userModel, navController)
         }
         println("this is filled $filled")
     }
@@ -298,7 +298,7 @@ fun AutocompleteTextField(
 }
 
 @Composable
-fun Selection(navController: NavController) {
+fun Selection(userModel: userModel, navController: NavController) {
     var selectedType by remember { mutableStateOf("Book") }
     Row(
         modifier = Modifier
@@ -331,12 +331,12 @@ fun Selection(navController: NavController) {
         }
     }
     val mediaViewModel: MediaViewModel = viewModel()
-    CreateForm(selectedType, navController, mediaViewModel)
+    CreateForm(selectedType, userModel, navController, mediaViewModel)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateForm(type:String, navController: NavController, mediaViewModel: MediaViewModel) {
+fun CreateForm(type:String, userModel: userModel, navController: NavController, mediaViewModel: MediaViewModel) {
     var elements = mutableListOf<String>()
     var review by remember { mutableStateOf("") }
     var text by remember { mutableStateOf("") }
@@ -403,11 +403,11 @@ fun CreateForm(type:String, navController: NavController, mediaViewModel: MediaV
     }
     println("this is filled $filled")
     StarRating(type)
-    Submission(type, navController)
+    Submission(type, userModel, navController)
 }
 
 @Composable
-fun Submission(type: String, navController: NavController) {
+fun Submission(type: String, userModel: userModel, navController: NavController) {
     var shareOption by remember { mutableStateOf(false) }
 
     Column(
@@ -497,7 +497,7 @@ fun Submission(type: String, navController: NavController) {
                     "TV Show" -> submittedReview = filled["TV Show"]
                     "Movie" -> submittedReview = filled["Movie"]
                 }
-                submittedReview?.let { SubmittedReview(type, reviewScore, shareOption, it)
+                submittedReview?.let { SubmittedReview(type, reviewScore, shareOption, it, userModel)
                     navController.navigate("Reviews")
                 }
             },

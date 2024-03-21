@@ -90,55 +90,51 @@ class ReviewDetails: ComponentActivity() {
 
 @Composable
 fun ReviewDetailsMainContent(navController: NavController,
-                             reviewID: String, userModel: userModel) {
+                             reviewID: String,
+                             isFriend: Boolean,
+                             userModel: userModel) {
     userModel.getSelReview(reviewID)
     val selReview by userModel.selReview.collectAsState()
     println(reviewID)
 
-    MainLayout(
-        title = selReview.title,
-        navController = navController
-    ) { _ ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .verticalScroll(rememberScrollState())
                 .background(colorResource(id = R.color.off_white))
         ) {
-            Column {
-                Navbar(navController)
-                ReviewDetailsTable(reviewType, userModel.selReview, reviewID)
-            }
+            ProfileHeader(navController, selReview.title, "Reviews")
+            ReviewDetailsTable(reviewType, userModel.selReview, reviewID, isFriend)
         }
-    }
+//    }
 }
 
 /**
 @Composable
 fun ReviewDetailsHeader() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .background(colorResource(id = R.color.blue)),
-        contentAlignment = Alignment.Center
-    ) {
-        reviewData["Title"]?.let {
-            Text(
-                text = it,
-                color = colorResource(id = R.color.white),
-                fontSize = 20.sp
+Box(
+modifier = Modifier
+.fillMaxWidth()
+.height(50.dp)
+.background(colorResource(id = R.color.blue)),
+contentAlignment = Alignment.Center
+) {
+reviewData["Title"]?.let {
+Text(
+text = it,
+color = colorResource(id = R.color.white),
+fontSize = 20.sp
 
-            )
-        }
-    }
+)
 }
-**/
+}
+}
+ **/
 
 @Composable
 fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
-                       reviewID: String) {
+                       reviewID: String, isFriend: Boolean) {
     val selReview by selReview.collectAsState()
 
     var elements =  mutableListOf<String>()
@@ -196,7 +192,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
         is MovieReview -> {
             reviewData.clear()
             elements = listOf(
-                "Title", "Director", "Date Released", "Genre", "Publication Company", "Started",
+                "Title", "Director", "Date Released", "Genre", "Streaming Service", "Started",
                 "Finished", "Rating", "Review"
             ).toMutableList()
 
@@ -206,7 +202,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
             reviewData["Director"] = movieReview.director
             reviewData["Date Released"] = movieReview.date
             reviewData["Genre"] = movieReview.genre
-            reviewData["Publication Company"] = movieReview.streamingservice
+            reviewData["Streaming Service"] = movieReview.streamingservice
             reviewData["Rating"] = movieReview.rating.toString()
             reviewData["Review"] = movieReview.paragraph
         }
@@ -227,6 +223,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                 ) {
                     Column() {
                         var curData = reviewData[label].toString()
+                        var edit by remember { mutableStateOf(false) }
                         //var curData by remember {mutableStateOf(reviewData[label].toString())}
 
                         if (label != "Review") {
@@ -238,12 +235,13 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                             ) {
                                 Text(
                                     text = "$label: ",
+                                    fontSize = 18.sp,
                                     fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
                                     textAlign = TextAlign.End,
                                     color = colorResource(id = R.color.teal),
                                     modifier = Modifier
                                         .padding(5.dp)
-                                        .width(100.dp)
+                                        .width(120.dp)
                                 )
                                 /*
                                 Text(
@@ -263,6 +261,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                                 } else {
                                     Text(
                                         text = "$curData",
+                                        fontSize = 18.sp,
                                         fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
                                         modifier = Modifier
                                             .padding(5.dp)
@@ -279,17 +278,33 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                             OutlinedTextField(
                                 value = curData,
                                 onValueChange = { curData = it },
-                                enabled = false,
+                                enabled = edit,
                                 minLines = 3,
                                 maxLines = 7,
-                                label = {Text( text = "Review", color = colorResource(id = R.color.blue)) },
+                                label = {Text( text = "Review", fontSize = 18.sp, color = colorResource(id = R.color.blue)) },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .horizontalScroll(rememberScrollState())
+                                    .padding(5.dp)
                             )
-
-                            reviewData.set("Review", curData).toString()
-                            println("new reviewData is $reviewData")
+                            if (!isFriend) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    if (!edit) {
+                                        CustomButton("Edit", { edit = true })
+                                    } else {
+                                        CustomButton("Save") {
+                                            edit = false
+                                            reviewData.set("Review", curData).toString()
+                                        }
+                                        CustomButton("Cancel", { edit = false })
+                                    }
+                                }
+                            }
+//                            println("new reviewData is $reviewData")
                         }
 
 
@@ -324,7 +339,9 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
              */
         }
     }
-    SubmitUpdatedReview(type, reviewData, reviewID)
+//    if (!isFriend) {
+//        SubmitUpdatedReview(type, reviewData, reviewID)
+//    }
 }
 
 @Composable
@@ -345,7 +362,7 @@ fun SubmitUpdatedReview(type: String, reviewData: MutableMap<String, String>,
         ) {
             Button(
                 onClick = {
-                          TODO()
+                    TODO()
                     //updatedReview = reviewData
                     //delSelectedReview(reviewID)
                     //updatedReview?.let { SubmittedReview(type, reviewData["Rating"]!!.toInt(), it) }
@@ -355,7 +372,7 @@ fun SubmitUpdatedReview(type: String, reviewData: MutableMap<String, String>,
                     contentColor = colorResource(id = R.color.off_white)
                 ),
                 modifier = Modifier
-                    .width(200.dp)
+                    .width(150.dp)
             ) {
                 Text("Edit")
             }
