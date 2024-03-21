@@ -256,10 +256,10 @@ fun AutocompleteTextField(
         shape = RoundedCornerShape(10.dp)
     )
 
-    DisposableEffect(Unit) {
-        focusRequester.requestFocus()
-        onDispose { }
-    }
+//    DisposableEffect(Unit) {
+//        focusRequester.requestFocus()
+//        onDispose { }
+//    }
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -631,6 +631,8 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
     val genreList = listOf("Drama", "Comedy", "Action", "Fantasy", "Science Fiction")
     val updatedGenreList = remember { mutableStateListOf(*genreList.toTypedArray()) }
     var selectedService by remember { mutableStateOf("") }
+    var auto by remember { mutableStateOf("false")
+    }
 
     AutocompleteTextField(
         label = "TV Show Title",
@@ -646,8 +648,9 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
             tvShowTitle = it.name
             director = it.created_by
             yearReleased = it.first_air_date.substringBefore("-") // Assuming YYYY-MM-DD format
-
+            println("the director $director and the year $yearReleased and show is $tvShowTitle")
             // Update genre list if the first genre isn't in the static list
+
             if (selectedGenre.isNotEmpty() && !updatedGenreList.contains(selectedGenre)) {
                 updatedGenreList.add(0, selectedGenre)
             }
@@ -684,17 +687,22 @@ fun MovieForm(mediaViewModel: MediaViewModel) {
     )
 
     LaunchedEffect(movieDetails) {
-        println("In function")
+        println("In function: $movieDetails")
         movieDetails?.let {
             movieTitle = it.title
             yearReleased = it.release_date.substringBefore("-") // Assuming YYYY-MM-DD format
-
+            println("the year added is $yearReleased")
             // Update genre list if the first genre isn't in the static list
             if (it.genres.isNotEmpty()) {
-                updatedGenreList.clear()
-                updatedGenreList.addAll(genreList) // Reset to default and add fetched genre
-                updatedGenreList.add(0, it.genres.first().name)
-                selectedGenre = "Select a genre" // Reset to placeholder on new selection
+                val firstgenre = it.genres.first().name
+                if (firstgenre !in genreList) {
+                    updatedGenreList.clear()
+                    updatedGenreList.addAll(genreList) // Reset to default and add fetched genre
+                    updatedGenreList.add(0, firstgenre)
+                    selectedGenre = "Select a genre" // Reset to placeholder on new selection
+                }
+                selectedGenre = firstgenre
+                println("the dropdown $selectedGenre")
             }
         }
     }
@@ -751,6 +759,9 @@ fun Dropdown(
     // Use the placeholder if 'selected' is empty, otherwise, show the selected value
     var entered by remember { mutableStateOf(if (selected.isEmpty()) field else selected) }
 
+    LaunchedEffect(selected) {
+        entered = if(selected.isNotEmpty()) selected else field
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -894,6 +905,10 @@ fun normalNumber(field: String, type: String, initialValue: String = "", onValue
     // Initially validate the initialValue. If no initialValue is provided, assume no error.
     var isError by remember(initialValue) { mutableStateOf(initialValue.isNotEmpty() && !isValidYear(initialValue)) }
 
+    LaunchedEffect(initialValue) {
+        entered = initialValue
+        isError = !isValidYear(initialValue) && initialValue.isNotEmpty()
+    }
     OutlinedTextField(
         value = entered,
         onValueChange = { newValue ->

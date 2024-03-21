@@ -60,6 +60,7 @@ class MediaViewModel: ViewModel() {
         viewModelScope.launch {
             try {
                 val response = tmdbApiService.getMovieDetail(movieId, API_KEY)
+                println("the response for $movieId is $response")
                 // Post the detailed movie object to LiveData
                 movieDetails.postValue(response)
             } catch (e: Exception) {
