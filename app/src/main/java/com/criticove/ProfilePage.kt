@@ -1,10 +1,5 @@
 package com.criticove
 
-import android.content.ContentValues.TAG
-import android.content.Context
-import android.net.Uri
-import android.util.Log
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,21 +40,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.core.content.FileProvider
+
 import com.criticove.backend.FirebaseManager
-
 import com.criticove.backend.userModel
-
-import com.google.firebase.Firebase
-
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
-import com.google.firebase.auth.userProfileChangeRequest
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Objects
-import kotlin.coroutines.CoroutineContext
 
 val profilePic = R.drawable.default_pic // later if profile pic is set, change it
 
@@ -128,7 +111,8 @@ fun ProfileMain(navController: NavController) {
 
     Column(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(top = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
@@ -155,14 +139,12 @@ fun ProfileMain(navController: NavController) {
 
 
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            customButton("Edit Profile",  { navController.navigate("EditProfile") })
-            customButton("Logout") {
-                showDialog = true
-            }
-            customButton("Delete Account")
-            {showDeleteDialog = true}
+            CustomButton("Edit Profile") { navController.navigate("EditProfile") }
+            CustomButton("Logout") { showDialog = true }
+            CustomButton("Delete Account") { showDeleteDialog = true }
         }
     }
     // Dialog
@@ -178,13 +160,14 @@ fun ProfileMain(navController: NavController) {
                 Text(text = "Are you sure?", fontSize = 20.sp, fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)))
             },
             confirmButton = {
-                customButton("Logout", {
+                CustomButton("Logout") {
                     showDialog = false
-                    FirebaseAuth.getInstance().signOut()
-                    navController.navigate("Login")})
+                    FirebaseManager.signOut()
+                    navController.navigate("Login")
+                }
             },
             dismissButton = {
-                customButton("Cancel",{showDialog = false})
+                CustomButton("Cancel") { showDialog = false }
             },
         )
     }
@@ -200,13 +183,14 @@ fun ProfileMain(navController: NavController) {
                 Text("Are you sure?", fontSize = 20.sp, fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)))
             },
             confirmButton = {
-                customButton("Delete", {
+                CustomButton("Delete") {
                     showDeleteDialog = false
-                    FirebaseAuth.getInstance().getCurrentUser()?.delete()
-                    navController.navigate("Login")})
+                    FirebaseManager.deleteAccount()
+                    navController.navigate("Signup")
+                }
             },
             dismissButton = {
-                customButton("Cancel",{showDeleteDialog = false})
+                CustomButton("Cancel") { showDeleteDialog = false }
             }
         )
     }
@@ -214,7 +198,7 @@ fun ProfileMain(navController: NavController) {
 
 
 @Composable
-fun customButton(text: String = "Default",
+fun CustomButton(text: String = "Default",
                  clicked: () -> Unit) {
     Button(
         onClick = clicked,
@@ -230,7 +214,7 @@ fun customButton(text: String = "Default",
 }
 
 @Composable
-fun editProfile(navController: NavController, userModel: userModel) {
+fun EditProfile(navController: NavController, userModel: userModel) {
     Column(
         modifier = Modifier
             .background(colorResource(id = R.color.off_white))
@@ -282,6 +266,8 @@ fun EditMain(navController: NavController) {
     val user = FirebaseManager.getUsername()
     var username by remember { mutableStateOf(user) }
 
+    var statusMessage by remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -291,7 +277,8 @@ fun EditMain(navController: NavController) {
     ) {
 
         TextButton(
-            onClick = { },
+            modifier = Modifier.padding(top = 20.dp),
+            onClick = { }
         ) {
             Image(
                 painter = painterResource(id = profilePic),
@@ -303,34 +290,36 @@ fun EditMain(navController: NavController) {
             )
         }
 
+        Text(
+            text = statusMessage,
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
+            color = colorResource(id = R.color.red),
+            fontSize = 18.sp
+        )
+
         OutlinedTextField(
             value = username,
             onValueChange = {
                 username = it
+                statusMessage = ""
             }
         )
 
         Row(
+            modifier = Modifier.padding(top = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-            customButton("Save changes", { changed(username) })
-            customButton("Back", { navController.navigate("ProfilePage") })
-        }
-
-    }
-}
-
-fun changed(newUsername: String) {
-    val user = Firebase.auth.currentUser
-    val profileUpdates = userProfileChangeRequest {
-        displayName = newUsername
-//        photoUri = Uri.parse("https://example.com/jane-q-user/profile.jpg")
-    }
-
-    user!!.updateProfile(profileUpdates)
-        .addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                Log.d(TAG, "User profile updated.")
+            CustomButton("Save changes") {
+                FirebaseManager.updateUsername(username) { success ->
+                    statusMessage = if (success) {
+                        "Username updated."
+                    } else {
+                        "Username update failed. Try again."
+                    }
+                }
             }
+            CustomButton("Back") { navController.navigate("ProfilePage") }
         }
+
+    }
 }

@@ -9,24 +9,30 @@ import com.google.firebase.auth.userProfileChangeRequest
 object FirebaseManager {
     private val auth = FirebaseAuth.getInstance()
 
+    fun updateUsername(username: String, callback: (Boolean) -> Unit) {
+        val user = auth.currentUser!!
+        val profileUpdate = userProfileChangeRequest {
+            displayName = username
+        }
+        user.updateProfile(profileUpdate)
+            .addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.e("FirebaseManager", "Profile update failed", task.exception)
+                    callback(false)
+                }
+            }
+        callback(true)
+    }
+
     fun signup(username: String, email: String, password: String, callback: (Boolean) -> Unit) {
         auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task1 ->
-                if (task1.isSuccessful) {
-                    val user = auth.currentUser!!
-                    val profileUpdate = userProfileChangeRequest {
-                        displayName = username
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    updateUsername(username) { success ->
+                        callback(success)
                     }
-                    user.updateProfile(profileUpdate)
-                        .addOnCompleteListener { task2 ->
-                            if (!task2.isSuccessful) {
-                                Log.e("FirebaseManager", "Profile update failed", task2.exception)
-                                callback(false)
-                            }
-                        }
-                    callback(true)
                 } else {
-                    Log.e("FirebaseManager", "Signup failed", task1.exception)
+                    Log.e("FirebaseManager", "Signup failed", task.exception)
                     callback(false)
                 }
             }
@@ -42,6 +48,14 @@ object FirebaseManager {
                     callback(false)
                 }
             }
+    }
+
+    fun signOut() {
+        auth.signOut()
+    }
+
+    fun deleteAccount() {
+        auth.currentUser?.delete()
     }
 
     fun getUsername(): String {

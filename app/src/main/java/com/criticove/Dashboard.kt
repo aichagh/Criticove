@@ -1,7 +1,6 @@
 package com.criticove
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -35,7 +33,6 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -45,15 +42,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.criticove.backend.BookReview
 
 import com.criticove.backend.FirebaseManager
-import com.criticove.backend.MovieReview
 import com.criticove.backend.Review
-import com.criticove.backend.TVShowReview
 import com.criticove.backend.userModel
 import kotlinx.coroutines.flow.StateFlow
+import java.text.DecimalFormat
 
 @Composable
 fun DashboardMainContent(navController: NavController, userModel: userModel) {
@@ -68,16 +62,18 @@ fun DashboardMainContent(navController: NavController, userModel: userModel) {
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
-                .padding(top = 10.dp, bottom = 20.dp, start = 20.dp, end = 20.dp)
+                .padding(bottom = 20.dp, start = 20.dp, end = 20.dp)
                 .background(color = colorResource(id = R.color.off_white)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
 
         ) {
             WelcomeBanner()
-            CallToActionExistingEntry(navController)
+            if (userModel.totalReviews == 0) {
+                CallToAction(navController)
+            }
             TopGenres(navController, userModel)
-            ReviewsPerMediaType(navController)
+            ReviewsPerMediaType(userModel, navController)
             ProgressTracker(navController)
         }
 
@@ -145,141 +141,88 @@ fun WelcomeBanner() {
 }
 
 @Composable
-fun CallToActionExistingEntry(navController: NavController) {
+fun CallToAction(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(150.dp),
+            .height(150.dp)
+            .padding(bottom = 20.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            modifier = Modifier.padding(bottom = 5.dp, start = 5.dp),
-            text = "Continue editing your last entry",
-            color = colorResource(id = R.color.blue),
-            fontSize = 18.sp,
-            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
-        )
-
-        // TO DO: Retrieve user's latest entry details from firebase
-        val title = "Stitching Snow"
-        val author = "R.C. Lewis"
-        val year = "2014"
-        val rating = 3
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    brush = Brush.horizontalGradient(
+                    brush = Brush.verticalGradient(
                         colors = listOf(
-                            colorResource(id = R.color.green),
-                            colorResource(id = R.color.teal)
+                            colorResource(id = R.color.teal),
+                            colorResource(id = R.color.blue)
                         )
                     ),
                     shape = RoundedCornerShape(10.dp)
                 )
-                // TO DO: Navigate to corresponding edit review page
-                .clickable { navController.navigate("Signup") },
+                .clickable { navController.navigate("Reviews") },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
                 modifier = Modifier.width(300.dp)
             ) {
-                Text(
-                    modifier = Modifier.padding(top = 20.dp, start = 20.dp),
-                    text = title,
-                    color = colorResource(id = R.color.blue),
-                    fontSize = 24.sp,
-                    fontFamily = FontFamily(Font(R.font.alegreya_sans_bold))
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        modifier = Modifier.padding(top = 5.dp, start = 20.dp),
-                        text = author,
-                        color = colorResource(id = R.color.blue),
-                        fontSize = 20.sp,
-                        fontFamily = FontFamily(Font(R.font.alegreya_sans_italic))
-                    )
-
-                    Spacer(modifier = Modifier.size(10.dp))
-
-                    Column {
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Box(
-                            modifier = Modifier
-                                .size(6.dp)
-                                .background(colorResource(id = R.color.blue), shape = CircleShape)
-                        )
-                    }
-
-                    Text(
-                        modifier = Modifier.padding(top = 5.dp, start = 10.dp),
-                        text = year,
-                        color = colorResource(id = R.color.blue),
-                        fontSize = 20.sp,
-                        fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp)
-                        .padding(top = 10.dp, bottom = 20.dp, start = 18.dp)
-                ) {
-                    for (i in 1..5) {
-                        if (i <= rating) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = R.drawable.star_full),
-                                contentDescription = "Filled Star",
-                                tint = colorResource(id = R.color.blue)
-                            )
-                        } else {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = R.drawable.star_empty),
-                                contentDescription = "Outlined Star",
-                                tint = colorResource(id = R.color.blue)
-                            )
-                        }
-                    }
-                }
+                CallToActionText("This is your cove of media critiques and reflections.", true)
+                CallToActionText("Get started now.")
             }
 
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.right_arrow),
-                contentDescription = "Open Entry",
-                tint = colorResource(id = R.color.blue)
+                contentDescription = "Open Review Page",
+                tint = colorResource(id = R.color.off_white)
             )
         }
     }
 }
 
 @Composable
+fun CallToActionText(str: String, italicize: Boolean = false) {
+    Text(
+        modifier = if (italicize) {
+            Modifier.padding(top = 20.dp, start = 20.dp)
+        } else {
+            Modifier.padding(top = 20.dp, start = 20.dp, bottom = 20.dp)
+               },
+        text = str,
+        color = colorResource(id = R.color.off_white),
+        fontSize = 24.sp,
+        fontFamily = if (italicize) {
+            FontFamily(Font(R.font.alegreya_sans_bold_italic))
+        } else {
+            FontFamily(Font(R.font.alegreya_sans_bold))
+        }
+    )
+}
+
+@Composable
 fun TopGenres(navController: NavController, userModel: userModel) {
     userModel.getReviews()
-    val genres: List<Pair<Int, String>> = CalcTopGenres(userModel.reviewList)
-    val colors = listOf(colorResource(id = R.color.black),
-        colorResource(id = R.color.teal),
-        colorResource(id = R.color.blue),
-        colorResource(id = R.color.darkTeal))
+    val genres: List<Pair<Double, String>> = calcTopGenres(userModel.reviewList)
+    val colors = listOf(colorResource(id = R.color.blue),
+        colorResource(id = R.color.black),
+        colorResource(id = R.color.coolGrey),
+        colorResource(id = R.color.teal))
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 20.dp)
             .background(
                 colorResource(id = R.color.green),
                 shape = RoundedCornerShape(10.dp)
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        DashboardCardHeader("Your Top Genres", navController)
+        DashboardCardHeader("Your Top Genres")
 
-        if(genres.isEmpty()) {
+        if (genres.isEmpty()) {
             Text(
                 text = "You do not have any reviews yet.",
+                color = colorResource(id = R.color.blue),
                 fontSize = 18.sp,
                 fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
                 modifier = Modifier
@@ -304,8 +247,8 @@ fun TopGenres(navController: NavController, userModel: userModel) {
                 ) {
                     val numbers = mutableListOf<Float>()
 
-                    for(i in 0..3) {
-                        if(i < genres.size) {
+                    for (i in 0..3) {
+                        if (i < genres.size) {
                             numbers.add(genres[i].first.toFloat())
                         }
                     }
@@ -313,12 +256,15 @@ fun TopGenres(navController: NavController, userModel: userModel) {
                     PieChart(numbers, colors)
                 }
 
-                Column {
-                    for(i in 0..3) {
-                        if(i < genres.size) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    for (i in 0..3) {
+                        if (i < genres.size) {
                             PieChartLegendRow(
                                 color = colors[i],
-                                str = genres[i].second
+                                str = genres[i].second,
+                                num = genres[i].first
                             )
                         }
                     }
@@ -349,9 +295,8 @@ fun PieChart(numbers: List<Float>, colors: List<Color>) {
 }
 
 @Composable
-fun PieChartLegendRow(modifier: Modifier = Modifier, color: Color, str: String) {
+fun PieChartLegendRow(color: Color, str: String, num: Double) {
     Row(
-        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -363,7 +308,7 @@ fun PieChartLegendRow(modifier: Modifier = Modifier, color: Color, str: String) 
 
         Text(
             modifier = Modifier.padding(start = 10.dp),
-            text = str,
+            text = "$str ($num%)",
             color = color,
             fontSize = 18.sp,
             fontFamily = FontFamily(Font(R.font.alegreya_sans_bold))
@@ -372,7 +317,7 @@ fun PieChartLegendRow(modifier: Modifier = Modifier, color: Color, str: String) 
 }
 
 @Composable
-fun ReviewsPerMediaType(navController: NavController) {
+fun ReviewsPerMediaType(userModel: userModel, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -384,36 +329,41 @@ fun ReviewsPerMediaType(navController: NavController) {
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        DashboardCardHeader("This month you...", navController)
+        DashboardCardHeader("So far, you have reviewed...")
 
         Spacer(modifier = Modifier.size(15.dp))
 
-        // TO DO: Get user's stats on # of reviews per media type
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
             MediaTypeStatsColumn(
-                imageVector = ImageVector.vectorResource(id = R.drawable.movie_black),
-                str = "Watched 3 movies"
+                imageVector = ImageVector.vectorResource(id = R.drawable.book_black),
+                num = userModel.totalBookReviews,
+                str = "book"
             )
 
             MediaTypeStatsColumn(
-                imageVector = ImageVector.vectorResource(id = R.drawable.book_black),
-                str = "Read 10 books"
+                imageVector = ImageVector.vectorResource(id = R.drawable.movie_black),
+                num = userModel.totalMovieReviews,
+                str = "movie"
             )
 
             MediaTypeStatsColumn(
                 imageVector = ImageVector.vectorResource(id = R.drawable.tv_black),
-                str = "Watched 5 shows"
+                num = userModel.totalTVShowReviews,
+                str = "show"
             )
         }
     }
 }
 
 @Composable
-fun MediaTypeStatsColumn(imageVector: ImageVector, str: String) {
+fun MediaTypeStatsColumn(imageVector: ImageVector, num: Int, str: String) {
+    var mediaType = str
+    if (num != 1) { mediaType += "s"}
+
     Column(
         modifier = Modifier
             .height(150.dp)
@@ -438,15 +388,22 @@ fun MediaTypeStatsColumn(imageVector: ImageVector, str: String) {
             tint = colorResource(id = R.color.off_white)
         )
 
-        Text(
-            modifier = Modifier.width(80.dp),
-            text = str,
-            color = colorResource(id = R.color.off_white),
-            fontSize = 20.sp,
-            fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
-            textAlign = TextAlign.Center,
-        )
+        MediaTypeStatsColumnText("$num")
+
+        MediaTypeStatsColumnText(mediaType)
     }
+}
+
+@Composable
+fun MediaTypeStatsColumnText(str: String) {
+    Text(
+        modifier = Modifier.width(80.dp),
+        text = str,
+        color = colorResource(id = R.color.off_white),
+        fontSize = 20.sp,
+        fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
+        textAlign = TextAlign.Center,
+    )
 }
 
 @Composable
@@ -464,7 +421,7 @@ fun ProgressTracker(navController: NavController) {
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        DashboardCardHeader("Progress Tracker", navController)
+        DashboardCardHeader("Progress Tracker")
 
         Spacer(modifier = Modifier.size(15.dp))
 
@@ -497,30 +454,19 @@ fun ProgressTracker(navController: NavController) {
 }
 
 @Composable
-fun DashboardCardHeader(heading: String, navController: NavController) {
-    Row(
+fun DashboardCardHeader(heading: String) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
-            .padding(top = 10.dp, start = 105.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(top = 15.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            modifier = Modifier.padding(end = 60.dp),
             text = heading,
             color = colorResource(id = R.color.blue),
             fontSize = 24.sp,
             fontFamily = FontFamily(Font(R.font.alegreya_sans_bold))
-        )
-
-        Icon(
-            // TO DO: Navigate to discussion page with stats as keyboard input
-            modifier = Modifier
-                .clickable { navController.navigate("Signup") }
-                .size(30.dp),
-            imageVector = ImageVector.vectorResource(id = R.drawable.share),
-            contentDescription = "Share",
-            tint = colorResource(id = R.color.blue)
         )
     }
 }
@@ -532,37 +478,39 @@ fun Preview_Display() {
 }
 
 @Composable
-fun CalcTopGenres(reviewList: StateFlow<MutableList<Review>>): List<Pair<Int, String>> {
+fun calcTopGenres(reviewList: StateFlow<MutableList<Review>>): List<Pair<Double, String>> {
     val reviewsList by reviewList.collectAsState()
-    var temp = mutableListOf<Pair<Int, String>>()
-    var finalList = mutableListOf<Pair<Int, String>>()
-    var allGenres = mutableListOf<String>()
+    var temp = mutableListOf<Pair<Double, String>>()
+    val finalList = mutableListOf<Pair<Double, String>>()
+    val allGenres = mutableListOf<String>()
 
     for (review in reviewsList) {
         allGenres.add(review.genre)
     }
 
+    val totalReviews = reviewsList.size.toDouble()
+
     val distinctGenres: List<String> = allGenres.distinct()
 
     distinctGenres.forEach { el ->
-        temp.add(Pair(allGenres.count{ it == el }, el))
+        val genreCount = allGenres.count { it == el }
+        val percentage = (genreCount / totalReviews) * 100
+        temp.add(Pair(DecimalFormat("#.#").format(percentage).toDouble(), el))
     }
 
     temp = temp.sortedByDescending{ it.first }.toMutableList()
-    var other = allGenres.size
+    var other = 100.0
 
     for (i in 0..2) {
-        if(i < temp.size) {
+        if (i < temp.size) {
             other -= temp[i].first
             finalList.add(temp[i])
         }
     }
 
-    if(temp.size > 3) {
-        finalList.add(Pair(other, "Other"))
+    if (temp.size > 3) {
+        finalList.add(Pair(DecimalFormat("#.#").format(other).toDouble(), "Other"))
     }
 
     return finalList.sortedByDescending{ it.first }
 }
-
-

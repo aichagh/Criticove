@@ -123,7 +123,7 @@ fun ReviewFormMainContent(navController: NavController, userModel: userModel) {
     ) {
         ReviewHeader()
         Column (modifier = Modifier.verticalScroll(rememberScrollState())) {
-            Selection(navController)
+            Selection(userModel, navController)
         }
         println("this is filled $filled")
     }
@@ -148,7 +148,7 @@ fun ReviewHeader() {
     }
 }
 @Composable
-fun Selection(navController: NavController) {
+fun Selection(userModel: userModel, navController: NavController) {
     var selectedType by remember { mutableStateOf("Book") }
     Row(
         modifier = Modifier
@@ -180,11 +180,11 @@ fun Selection(navController: NavController) {
             }
         }
     }
-    CreateForm(selectedType, navController)
+    CreateForm(selectedType, userModel, navController)
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateForm(type:String, navController: NavController) {
+fun CreateForm(type:String, userModel: userModel, navController: NavController) {
     var elements = mutableListOf<String>()
     var text by remember { mutableStateOf("") }
 
@@ -228,12 +228,12 @@ fun CreateForm(type:String, navController: NavController) {
     }
     println("this is filled $filled")
     StarRating(type)
-    Submission(type, navController)
+    Submission(type, userModel, navController)
 }
 
 
 @Composable
-fun Submission(type: String, navController: NavController) {
+fun Submission(type: String, userModel: userModel, navController: NavController) {
     var shareOption by remember { mutableStateOf(false) }
 
     Column(
@@ -323,7 +323,7 @@ fun Submission(type: String, navController: NavController) {
                     "TV Show" -> submittedReview = filled["TV Show"]
                     "Movie" -> submittedReview = filled["Movie"]
                 }
-                submittedReview?.let { SubmittedReview(type, reviewScore, shareOption, it)
+                submittedReview?.let { SubmittedReview(type, reviewScore, shareOption, it, userModel)
                     navController.navigate("Reviews")
                 }
             },
