@@ -202,7 +202,12 @@ class userModel: ViewModel {
                             is Boolean -> sDB
                             else -> false
                         }
-                        println("this is rint $r")
+                        val bmDB = review["bookmarked"]
+                        val bm = when (bmDB) {
+                            is Boolean -> bmDB
+                            else -> false
+                        }
+                        println("this is bookmarked $bm")
 
                         when (review["type"]) {
                             "Book" -> {
@@ -211,7 +216,7 @@ class userModel: ViewModel {
                                     review["genre"].toString(), r , review["paragraph"].toString(),
                                     review["reviewID"].toString(), review["author"].toString(),
                                     review["booktype"].toString(),
-                                    review["datefinished"].toString(), s
+                                    review["datefinished"].toString(), s, bm
                                 )
                             }
 
@@ -226,7 +231,7 @@ class userModel: ViewModel {
                                     review["reviewID"].toString(),
                                     review["director"].toString(),
                                     review["streamingservice"].toString(),
-                                    review["datewatched"].toString(), s
+                                    review["datewatched"].toString(), s, bm
                                 )
                             }
 
@@ -236,7 +241,7 @@ class userModel: ViewModel {
                                     review["genre"].toString(), r, review["paragraph"].toString(),
                                     review["reviewID"].toString(), review["director"].toString(),
                                     review["streamingservice"].toString(),
-                                    review["datefinished"].toString(), s
+                                    review["datefinished"].toString(), s, bm
                                 )
                             }
                         }
@@ -246,7 +251,7 @@ class userModel: ViewModel {
                         println("this is the review back to a structure $reviewPost")
                         println("this is the reviews title ${reviewPost.title}")
                         println("this is the reviews date ${reviewPost.date}")
-                        println("this is the reviews par ${reviewPost.paragraph}")
+                        println("this is the reviews bookmarked ${reviewPost.bookmarked}")
                     }
                 }
 
@@ -377,21 +382,21 @@ class userModel: ViewModel {
 }
 
 open class Review(val type: String, val title: String, val date: String, val genre: String, val rating: Int, val paragraph: String, val reviewID: String,
-    val shared: Boolean = false) {
+    val shared: Boolean = false, val bookmarked: Boolean = false) {
 }
 
 class BookReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String, reviewID: String,
-                 val author: String, val booktype: String, val datefinished: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, reviewID, shared) {
+                 val author: String, val booktype: String, val datefinished: String, shared: Boolean = false, bookmarked: Boolean = false): Review(type, title, date, genre, rating, paragraph, reviewID, shared, bookmarked) {
 }
 class TVShowReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String, reviewID: String,
-                 val director: String, val streamingservice: String, val datefinished: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, reviewID, shared) {
+                 val director: String, val streamingservice: String, val datefinished: String, shared: Boolean = false, bookmarked: Boolean = false): Review(type, title, date, genre, rating, paragraph, reviewID, shared, bookmarked) {
 }
 
 class MovieReview(type: String, title:String, date:String, genre: String, rating: Int, paragraph: String, reviewID: String,
-                   val director: String, val streamingservice: String, val datewatched: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, reviewID, shared) {
+                   val director: String, val streamingservice: String, val datewatched: String, shared: Boolean = false, bookmarked: Boolean = false): Review(type, title, date, genre, rating, paragraph, reviewID, shared, bookmarked) {
 }
 
-fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableMap<String, String>) {
+fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableMap<String, String>, userModel: userModel, bookmarked: Boolean = false) {
     val user = Firebase.auth.currentUser
     lateinit var userID : String
     if (user != null) {
@@ -409,17 +414,17 @@ fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableM
         "Book" -> {
             reviewPost = BookReview("Book", review["Book Title"].toString(), review["Year Published"].toString(),
                 review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
-                review["Author"].toString(), review["Book Type"].toString(), review["Date finished"].toString(), shared)
+                review["Author"].toString(), review["Book Type"].toString(), review["Date finished"].toString(), shared, bookmarked)
         }
         "TV Show" -> {
             reviewPost = TVShowReview("TV Show", review["TV Show Title"].toString(), review["Year Released"].toString(),
             review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
-            review["Director"].toString(), review["Streaming Service"].toString(), review["Date finished"].toString(), shared)
+            review["Director"].toString(), review["Streaming Service"].toString(), review["Date finished"].toString(), shared, bookmarked)
     }
         "Movie" -> {
             reviewPost = MovieReview("Movie", review["Movie Title"].toString(), review["Year Released"].toString(),
                 review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
-                review["Director"].toString(), review["Streaming Service"].toString(), review["Date watched"].toString(), shared)
+                review["Director"].toString(), review["Streaming Service"].toString(), review["Date watched"].toString(), shared, bookmarked)
         }
     }
 
@@ -515,4 +520,23 @@ fun getSelectedReview(reviewID: String): MutableMap<String, String> {
     }
 
     return reviewData
+}
+
+fun changeBookmark(reviewID: String, bm: Boolean) {
+    val user = Firebase.auth.currentUser
+    lateinit var userID: String
+    if (user != null) {
+        userID = user.uid
+        println("the user id is $userID, and reviewId is $reviewID")
+    }
+    var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/$userID/Reviews")
+    val reviewRef = reviewsRef.child(reviewID)
+    val bookmarkVal = mapOf<String, Any>("bookmarked" to bm)
+    reviewRef.updateChildren(bookmarkVal)
+        .addOnSuccessListener {
+        println("Bookmark value is $bm")
+        }
+        .addOnFailureListener { error ->
+            println("bookmark didnt work with error $error")
+        }
 }

@@ -59,9 +59,13 @@
 | 2024/03/17 |       |         |        | 5        |            |     | worked on displaying friends reviews in real time and adjusting the ui for that, and minor changes on the ui for hamburger |
 | 2024/03/18 |       |         | 2      |          |            |      | filtering reviews |
 | 2024/03/17 | 3.5   |         |        |          |            |      | finished dashboard top-genres widget + changed navbar to not have add review (created button within page) |
+| 2024/03/17 |       | 10      |        |          |            |      | added api integration calls with TMBD and set mediaviewmodel file for the api   |
+| 2024/03/18 |       | 10      |        |          |            |      | added api integration for movies and tv shows in the reviewform to get the details from the database |
 | 2024/03/18 | 1     |         |        |          |            |      | display images from phone gallery |
 | 2024/03/18 | 2     |         |        |          |            |      | view / edit review page UI update |
 | 2024/03/19 |       |         |1       |          |            |      | review details page |
-| 2024/03/20 | 0.75  |         |        |0.75      | 0.75       |      | D4 discussion and next steps for the app |
-| 2024/03/20 | 2.5   |         |        |          |            |      | Debug autofill |
+| 2024/03/20 | 0.75  |         | 0.75   |0.75      | 0.75       |      | D4 discussion and next steps for the app |
+| 2024/03/20 | 2.5   |         |        |2.5         |            |      | Debug autofill |
 | 2024/03/20 |       |         |        |          | 7          |      | Integrate Profile with FirebaseManager, Success/Fail message after profile username update, New Call to Action (CTA) button for new user with 0 reviews, Percentages shown in pie chart legend, Removed Dashboard share symbols (no more discussion board), Changed monthly reviews to all reviews so far on Dashboard, Real time updates for Reviews Per Media Type on Dashboard, Added reviews per media type and total # of reviews in userModel, UI enhancements throughout the pages above |
+| 2024/03/20 |       |         |2        |          |            |      | Bookmark Reviews Functionality|
+| 2024/03/20 |       | 5     |        |          |            |         | testing and debugging for the api database for the movie and tv show to autofill and autosuggest forms   |
