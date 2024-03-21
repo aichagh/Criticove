@@ -1,39 +1,42 @@
 package com.criticove.backend
 
-import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class userModel: ViewModel {
     //private val _userID: MutableStateFlow<String> = MutableStateFlow("ZFZrCVjIR0P76TqT5lxX0W3dUI93")
     var userID: String = "ZFZrCVjIR0P76TqT5lxX0W3dUI93"
+
     private val _reviewList: MutableStateFlow<MutableList<Review>> = MutableStateFlow(mutableListOf())
     val reviewList: StateFlow<MutableList<Review>> = _reviewList
+
+    var totalMovieReviews = 0
+    var totalBookReviews = 0
+    var totalTVShowReviews = 0
+    var totalReviews = 0
+
     private val _selReview: MutableStateFlow<Review> = MutableStateFlow(Review("Book",
         "test", "test", "test", 4, "test", "test"))
     val selReview: StateFlow<Review> = _selReview
+
     private val _friendMap: MutableStateFlow<MutableMap<String, String>> = MutableStateFlow(mutableMapOf<String, String>())
     val friendMap: StateFlow<MutableMap<String, String>> = _friendMap
+
     private val _userMap: MutableStateFlow<MutableMap<String, String>> = MutableStateFlow(mutableMapOf<String, String>())
     val userMap: StateFlow<MutableMap<String, String>> = _userMap
+
     private val _friendReviews: MutableStateFlow<MutableMap<String, List<Review>>> = MutableStateFlow(mutableMapOf())
     val friendReviews: StateFlow<MutableMap<String, List<Review>>> = _friendReviews
 
@@ -378,10 +381,6 @@ class userModel: ViewModel {
 
 }
 
-fun getUserID(username: String) {
-
-
-}
 open class Review(val type: String, val title: String, val date: String, val genre: String, val rating: Int, val paragraph: String, val reviewID: String,
     val shared: Boolean = false) {
 }
@@ -397,7 +396,7 @@ class MovieReview(type: String, title:String, date:String, genre: String, rating
                    val director: String, val streamingservice: String, val datewatched: String, shared: Boolean = false): Review(type, title, date, genre, rating, paragraph, reviewID, shared) {
 }
 
-fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableMap<String, String>) {
+fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableMap<String, String>, userModel: userModel) {
     val user = Firebase.auth.currentUser
     lateinit var userID : String
     if (user != null) {
@@ -416,20 +415,24 @@ fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableM
             reviewPost = BookReview("Book", review["Book Title"].toString(), review["Year Published"].toString(),
                 review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
                 review["Author"].toString(), review["Book Type"].toString(), review["Date finished"].toString(), shared)
+            ++userModel.totalBookReviews
         }
         "TV Show" -> {
             reviewPost = TVShowReview("TV Show", review["TV Show Title"].toString(), review["Year Released"].toString(),
             review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
             review["Director"].toString(), review["Streaming Service"].toString(), review["Date finished"].toString(), shared)
+            ++userModel.totalTVShowReviews
     }
         "Movie" -> {
             reviewPost = MovieReview("Movie", review["Movie Title"].toString(), review["Year Released"].toString(),
                 review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
                 review["Director"].toString(), review["Streaming Service"].toString(), review["Date watched"].toString(), shared)
+            ++userModel.totalMovieReviews
         }
     }
+    ++userModel.totalReviews
 
-    println("this si the review i just shared${reviewPost.title}")
+    println("this is the review i just shared${reviewPost.title}")
     newReview.setValue(reviewPost)
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
