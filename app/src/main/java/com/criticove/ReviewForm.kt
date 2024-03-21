@@ -96,8 +96,10 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -241,7 +243,8 @@ fun AutocompleteTextField(
         ) },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp),
+            .padding(horizontal = 10.dp)
+            .focusRequester(focusRequester),
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = colorResource(id = R.color.blue),
             unfocusedBorderColor = colorResource(id = R.color.teal)
@@ -256,6 +259,10 @@ fun AutocompleteTextField(
     DisposableEffect(Unit) {
         focusRequester.requestFocus()
         onDispose { }
+    }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
     }
 
     if (suggestions.isNotEmpty() && isExpanded) {
