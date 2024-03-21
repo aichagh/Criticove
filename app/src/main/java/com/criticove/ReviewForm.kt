@@ -200,6 +200,7 @@ fun AutocompleteTextField(
     val focusRequester = remember { FocusRequester() }
     val debouncePeriod = 300L
     val coroutineScope = rememberCoroutineScope()
+    var searchJob by remember { mutableStateOf<Job?>(null) }
 
     var query by remember { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
@@ -215,22 +216,22 @@ fun AutocompleteTextField(
 
     OutlinedTextField(
         value = query,
-        onValueChange = {
-            query = it
-            isExpanded = it.isNotEmpty()
-            coroutineScope.launch {
+        onValueChange = {newValue ->
+            query = newValue
+            isExpanded = newValue.isNotEmpty()
+            searchJob?.cancel()
+            searchJob = coroutineScope.launch {
                 try {
                     delay(debouncePeriod) // Debounce delay
-                    if (query == it) { // Check if the query hasn't changed
+                    if (query == newValue) { // Check if the query hasn't changed
                         if (type == "Movie") {
-                            viewModel.searchMovieTitles(it)
+                            viewModel.searchMovieTitles(newValue)
                         } else {
-                            viewModel.searchTvShowTitles(it)
+                            viewModel.searchTvShowTitles(newValue)
                         }
                     }
-                }
-            catch (e: Exception) {
-                println("error couroutine")
+                } catch (e: Exception) {
+                println("Error in coroutine: ${e.message}")
             }
             }
         },
@@ -252,8 +253,9 @@ fun AutocompleteTextField(
         shape = RoundedCornerShape(10.dp)
     )
 
-    LaunchedEffect(Unit) {
+    DisposableEffect(Unit) {
         focusRequester.requestFocus()
+        onDispose { }
     }
 
     if (suggestions.isNotEmpty() && isExpanded) {
