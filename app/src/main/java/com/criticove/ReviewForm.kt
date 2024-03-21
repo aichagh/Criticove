@@ -592,7 +592,7 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
     var selectedGenre by remember { mutableStateOf("") }
     val genreList = listOf("Drama", "Comedy", "Action", "Fantasy", "Science Fiction")
     val updatedGenreList = remember { mutableStateListOf(*genreList.toTypedArray()) }
-    var selectedService by remember { mutableStateOf(serviceList.first()) }
+    var selectedService by remember { mutableStateOf("") }
 
     AutocompleteTextField(
         label = "TV Show Title",
@@ -621,7 +621,7 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
     normalText(field = "Director", type = "TV Show", initialValue = director, onValueChange = { director = it })
     normalNumber(field = "Year Released", type = "TV Show", initialValue = yearReleased, onValueChange = { yearReleased = it })
     Dropdown(type = "TV Show", field = "Genre", list = updatedGenreList, selectedGenre) { selectedGenre = it }
-    Dropdown(type = "Movie", field = "Streaming Service", list = serviceList, selectedService) { selectedService = it }
+    Dropdown(type = "TV Show", field = "Streaming Service", list = serviceList, selectedService) { selectedService = it }
     dateField(field = "Date finished", type = "TV Show")
 }
 
@@ -640,7 +640,7 @@ fun MovieForm(mediaViewModel: MediaViewModel) {
         label = "Movie Title",
         viewModel = mediaViewModel,
         onSuggestionSelected = { movieId ->
-            mediaViewModel.fetchTvShowDetails(movieId)
+            mediaViewModel.fetchMovieDetails(movieId)
         },
         type = "Movie"
     )
