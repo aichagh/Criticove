@@ -158,6 +158,7 @@ fun Review(title: String = "Title",
            rating: Int = 1,
            reviewID: String,
            navController: NavController) {
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -191,15 +192,26 @@ fun Review(title: String = "Title",
                 }
             }
 
-            TextButton(
-                modifier = Modifier
-                    .width(50.dp),
-                onClick = { navController.navigate("ViewReview/$reviewID/false") }
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.bookmark_empty),
-                    contentDescription = "bookmark", tint = colorResource(id = R.color.black)
-                )
+            Row {
+                TextButton(
+                    modifier = Modifier.width(50.dp),
+                    onClick = { navController.navigate("ViewReview/$reviewID/false") }
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.view),
+                        contentDescription = "bookmark", tint = colorResource(id = R.color.black)
+                    )
+                }
+
+                TextButton(
+                    modifier = Modifier.width(50.dp),
+                    onClick = { }
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.bookmark_empty),
+                        contentDescription = "bookmark", tint = colorResource(id = R.color.black)
+                    )
+                }
             }
         }
     }
