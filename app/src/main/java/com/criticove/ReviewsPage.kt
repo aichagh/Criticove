@@ -120,16 +120,16 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                     IconButton(
                         onClick = { navController.navigate("ReviewForm") },
                         modifier = Modifier
+                            .size(80.dp)
                             .padding(10.dp)
                             .clip(CircleShape)
-//                            .size(30.dp)
                             .background(colorResource(id = R.color.teal)),
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.plus),
                             contentDescription = "friends", tint = colorResource(id = R.color.off_white),
                             modifier = Modifier
-                                .height(25.dp)
+                                .height(40.dp)
 
                         )
                     }

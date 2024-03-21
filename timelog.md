@@ -62,6 +62,7 @@
 | 2024/03/18 | 1     |         |        |          |            |      | display images from phone gallery |
 | 2024/03/18 | 2     |         |        |          |            |      | view / edit review page UI update |
 | 2024/03/19 |       |         |1       |          |            |      | review details page |
-| 2024/03/20 | 0.75  |         |        |          | 0.75       |      | D4 discussion and next steps for the app |
+| 2024/03/20 | 0.75  |         | 0.75   |0.75      | 0.75       |      | D4 discussion and next steps for the app |
 | 2024/03/20 | 2.5   |         |        |          |            |      | Debug autofill |
-
+| 2024/03/20 |       |         |        |          | 7          |      | Integrate Profile with FirebaseManager, Success/Fail message after profile username update, New Call to Action (CTA) button for new user with 0 reviews, Percentages shown in pie chart legend, Removed Dashboard share symbols (no more discussion board), Changed monthly reviews to all reviews so far on Dashboard, Real time updates for Reviews Per Media Type on Dashboard, Added reviews per media type and total # of reviews in userModel, UI enhancements throughout the pages above |
+| 2024/03/20 |       |         |2        |          |            |      | Bookmark Reviews Functionality|

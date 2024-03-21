@@ -294,13 +294,13 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                                     horizontalArrangement = Arrangement.SpaceEvenly
                                 ) {
                                     if (!edit) {
-                                        customButton("Edit", { edit = true })
+                                        CustomButton("Edit", { edit = true })
                                     } else {
-                                        customButton("Save", {
+                                        CustomButton("Save") {
                                             edit = false
                                             reviewData.set("Review", curData).toString()
-                                        })
-                                        customButton("Cancel", { edit = false })
+                                        }
+                                        CustomButton("Cancel", { edit = false })
                                     }
                                 }
                             }
