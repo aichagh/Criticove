@@ -107,7 +107,7 @@ import java.time.LocalDate
 
 val filled = mutableMapOf(
     "Book" to mutableMapOf("Book Title" to "", "Author" to "", "Year Published" to "", "Genre" to "", "Book Type" to "", "Date finished" to ""),
-    "TV Show" to mutableMapOf("TV Show Title" to "", "Director" to "", "Year Released" to "", "Genre" to "", "Streaming Service" to "", "Date finished" to ""),
+    "TV Show" to mutableMapOf("TV Show Title" to "", "Year Released" to "", "Genre" to "", "Streaming Service" to "", "Date finished" to ""),
     "Movie" to mutableMapOf("Movie Title" to "", "Year Released" to "", "Genre" to "", "Streaming Service" to "", "Date watched" to ""))
 
 var reviewScore = 1
@@ -625,7 +625,6 @@ fun BookForm() {
 fun TVShowForm(mediaViewModel: MediaViewModel) {
     val tvShowDetails by mediaViewModel.tvShowDetails.observeAsState()
     var tvShowTitle by remember { mutableStateOf("") }
-    var director by remember { mutableStateOf("") }
     var yearReleased by remember { mutableStateOf("") }
     var selectedGenre by remember { mutableStateOf("") }
     val genreList = listOf("Drama", "Comedy", "Action", "Fantasy", "Science Fiction")
@@ -646,20 +645,24 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
     LaunchedEffect(tvShowDetails) {
         tvShowDetails?.let {
             tvShowTitle = it.name
-            director = it.created_by
-            yearReleased = it.first_air_date.substringBefore("-") // Assuming YYYY-MM-DD format
-            println("the director $director and the year $yearReleased and show is $tvShowTitle")
+            yearReleased = it.first_air_date.substringBefore("-")
+            println("the director the year $yearReleased and show is $tvShowTitle")
             // Update genre list if the first genre isn't in the static list
-
-            if (selectedGenre.isNotEmpty() && !updatedGenreList.contains(selectedGenre)) {
-                updatedGenreList.add(0, selectedGenre)
+            if (it.genres.isNotEmpty()) {
+                val firstgenre = it.genres.first().name
+                if (firstgenre !in genreList) {
+                    updatedGenreList.clear()
+                    updatedGenreList.addAll(genreList) // Reset to default and add fetched genre
+                    updatedGenreList.add(0, firstgenre)
+                    selectedGenre = "Select a genre" // Reset to placeholder on new selection
+                }
+                selectedGenre = firstgenre
+                println("the dropdown $selectedGenre")
             }
         }
     }
 
 //    "TV Show Title", "Director", "Date Released", "Genre", "Streaming Service"
-//    normalText(field = "TV Show Title", type = "TV Show", initialValue = tvShowTitle, onValueChange = { tvShowTitle = it })
-    normalText(field = "Director", type = "TV Show", initialValue = director, onValueChange = { director = it })
     normalNumber(field = "Year Released", type = "TV Show", initialValue = yearReleased, onValueChange = { yearReleased = it })
     Dropdown(type = "TV Show", field = "Genre", list = updatedGenreList, selectedGenre) { selectedGenre = it }
     Dropdown(type = "TV Show", field = "Streaming Service", list = serviceList, selectedService) { selectedService = it }
@@ -720,7 +723,9 @@ fun MovieForm(mediaViewModel: MediaViewModel) {
 @Composable
 fun normalText(field: String, type: String, initialValue: String = "", onValueChange: (String) -> Unit) {
     var entered by remember { mutableStateOf(initialValue)  }
-
+    LaunchedEffect(initialValue) {
+        entered = initialValue
+    }
     OutlinedTextField(
         value = entered,
         onValueChange = {
