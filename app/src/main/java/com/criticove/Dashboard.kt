@@ -51,6 +51,9 @@ import java.text.DecimalFormat
 
 @Composable
 fun DashboardMainContent(navController: NavController, userModel: userModel) {
+    userModel.getReviews()
+    val totalReviews = getTotalReviews(userModel.reviewList)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -69,11 +72,11 @@ fun DashboardMainContent(navController: NavController, userModel: userModel) {
 
         ) {
             WelcomeBanner()
-            if (userModel.totalReviews == 0) {
+            if (totalReviews == 0) {
                 CallToAction(navController)
             }
-            TopGenres(navController, userModel)
-            ReviewsPerMediaType(userModel, navController)
+            TopGenres(userModel)
+            ReviewsPerMediaType(userModel)
             ProgressTracker(navController)
         }
 
@@ -200,8 +203,7 @@ fun CallToActionText(str: String, italicize: Boolean = false) {
 }
 
 @Composable
-fun TopGenres(navController: NavController, userModel: userModel) {
-    userModel.getReviews()
+fun TopGenres(userModel: userModel) {
     val genres: List<Pair<Double, String>> = calcTopGenres(userModel.reviewList)
     val colors = listOf(colorResource(id = R.color.blue),
         colorResource(id = R.color.black),
@@ -317,7 +319,9 @@ fun PieChartLegendRow(color: Color, str: String, num: Double) {
 }
 
 @Composable
-fun ReviewsPerMediaType(userModel: userModel, navController: NavController) {
+fun ReviewsPerMediaType(userModel: userModel) {
+    val mediaTypeCounts = calcReviewsPerMediaType(userModel.reviewList)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -340,19 +344,19 @@ fun ReviewsPerMediaType(userModel: userModel, navController: NavController) {
         ) {
             MediaTypeStatsColumn(
                 imageVector = ImageVector.vectorResource(id = R.drawable.book_black),
-                num = userModel.totalBookReviews,
+                num = mediaTypeCounts.getOrDefault("Book", 0),
                 str = "book"
             )
 
             MediaTypeStatsColumn(
                 imageVector = ImageVector.vectorResource(id = R.drawable.movie_black),
-                num = userModel.totalMovieReviews,
+                num = mediaTypeCounts.getOrDefault("Movie", 0),
                 str = "movie"
             )
 
             MediaTypeStatsColumn(
                 imageVector = ImageVector.vectorResource(id = R.drawable.tv_black),
-                num = userModel.totalTVShowReviews,
+                num = mediaTypeCounts.getOrDefault("TV Show", 0),
                 str = "show"
             )
         }
@@ -513,4 +517,28 @@ fun calcTopGenres(reviewList: StateFlow<MutableList<Review>>): List<Pair<Double,
     }
 
     return finalList.sortedByDescending{ it.first }
+}
+
+@Composable
+fun calcReviewsPerMediaType(reviewList: StateFlow<MutableList<Review>>): Map<String, Int> {
+    val reviewsList by reviewList.collectAsState()
+
+    val mediaTypeCounts = mutableMapOf<String, Int>()
+    for (review in reviewsList) {
+        mediaTypeCounts[review.type] = mediaTypeCounts.getOrDefault(review.type, 0) + 1
+    }
+
+    return mediaTypeCounts
+}
+
+@Composable
+fun getTotalReviews(reviewList: StateFlow<MutableList<Review>>): Int {
+    val mediaTypeCounts = calcReviewsPerMediaType(reviewList)
+
+    var totalReviews = 0
+    for (value in mediaTypeCounts.values) {
+        totalReviews += value
+    }
+
+    return totalReviews
 }
