@@ -69,3 +69,4 @@
 | 2024/03/20 |       |         |        |          | 7          |      | Integrate Profile with FirebaseManager, Success/Fail message after profile username update, New Call to Action (CTA) button for new user with 0 reviews, Percentages shown in pie chart legend, Removed Dashboard share symbols (no more discussion board), Changed monthly reviews to all reviews so far on Dashboard, Real time updates for Reviews Per Media Type on Dashboard, Added reviews per media type and total # of reviews in userModel, UI enhancements throughout the pages above |
 | 2024/03/20 |       |         |2        |          |            |      | Bookmark Reviews Functionality|
 | 2024/03/20 |       | 5     |        |          |            |         | testing and debugging for the api database for the movie and tv show to autofill and autosuggest forms   |
+| 2024/03/21 |       |         |        |          | 1.5        |      | Fixed reviews per media type on dashboard |
