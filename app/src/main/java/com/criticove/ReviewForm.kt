@@ -403,11 +403,11 @@ fun CreateForm(type:String, userModel: userModel, navController: NavController, 
     }
     println("this is filled $filled")
     StarRating(type)
-    Submission(type, userModel, navController)
+    Submission(type, navController)
 }
 
 @Composable
-fun Submission(type: String, userModel: userModel, navController: NavController) {
+fun Submission(type: String, navController: NavController) {
     var shareOption by remember { mutableStateOf(false) }
 
     Column(
@@ -497,7 +497,7 @@ fun Submission(type: String, userModel: userModel, navController: NavController)
                     "TV Show" -> submittedReview = filled["TV Show"]
                     "Movie" -> submittedReview = filled["Movie"]
                 }
-                submittedReview?.let { SubmittedReview(type, reviewScore, shareOption, it, userModel)
+                submittedReview?.let { SubmittedReview(type, reviewScore, shareOption, it)
                     navController.navigate("Reviews")
                 }
             },

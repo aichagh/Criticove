@@ -22,11 +22,6 @@ class userModel: ViewModel {
     private val _reviewList: MutableStateFlow<MutableList<Review>> = MutableStateFlow(mutableListOf())
     val reviewList: StateFlow<MutableList<Review>> = _reviewList
 
-    var totalMovieReviews = 0
-    var totalBookReviews = 0
-    var totalTVShowReviews = 0
-    var totalReviews = 0
-
     private val _selReview: MutableStateFlow<Review> = MutableStateFlow(Review("Book",
         "test", "test", "test", 4, "test", "test"))
     val selReview: StateFlow<Review> = _selReview
@@ -401,8 +396,7 @@ class MovieReview(type: String, title:String, date:String, genre: String, rating
                    val director: String, val streamingservice: String, val datewatched: String, shared: Boolean = false, bookmarked: Boolean = false): Review(type, title, date, genre, rating, paragraph, reviewID, shared, bookmarked) {
 }
 
-fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableMap<String, String>, userModel: userModel, bookmarked: Boolean = false) {
-
+fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableMap<String, String>, bookmarked: Boolean = false) {
     val user = Firebase.auth.currentUser
     lateinit var userID : String
     if (user != null) {
@@ -421,24 +415,18 @@ fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableM
             reviewPost = BookReview("Book", review["Book Title"].toString(), review["Year Published"].toString(),
                 review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
                 review["Author"].toString(), review["Book Type"].toString(), review["Date finished"].toString(), shared, bookmarked)
-            ++userModel.totalBookReviews
         }
         "TV Show" -> {
             reviewPost = TVShowReview("TV Show", review["TV Show Title"].toString(), review["Year Released"].toString(),
             review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
             review["Director"].toString(), review["Streaming Service"].toString(), review["Date finished"].toString(), shared, bookmarked)
-     
-            ++userModel.totalTVShowReviews
     }
         "Movie" -> {
             reviewPost = MovieReview("Movie", review["Movie Title"].toString(), review["Year Released"].toString(),
                 review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
                 review["Director"].toString(), review["Streaming Service"].toString(), review["Date watched"].toString(), shared, bookmarked)
-      
-            ++userModel.totalMovieReviews
         }
     }
-    ++userModel.totalReviews
 
     println("this is the review i just shared${reviewPost.title}")
     newReview.setValue(reviewPost)
