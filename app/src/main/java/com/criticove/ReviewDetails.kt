@@ -198,7 +198,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
         is MovieReview -> {
             reviewData.clear()
             elements = listOf(
-                "Title", "Director", "Date Released", "Genre", "Publication Company", "Started",
+                "Title", "Director", "Date Released", "Genre", "Streaming Service", "Started",
                 "Finished", "Rating", "Review"
             ).toMutableList()
 
@@ -208,7 +208,7 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
             reviewData["Director"] = movieReview.director
             reviewData["Date Released"] = movieReview.date
             reviewData["Genre"] = movieReview.genre
-            reviewData["Publication Company"] = movieReview.streamingservice
+            reviewData["Streaming Service"] = movieReview.streamingservice
             reviewData["Rating"] = movieReview.rating.toString()
             reviewData["Review"] = movieReview.paragraph
         }

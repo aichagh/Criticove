@@ -502,10 +502,10 @@ fun getSelectedReview(reviewID: String): MutableMap<String, String> {
                 }
                 "Movie" -> {
                     var author = it.child("director").value.toString()
-                    var typeType = it.child("publicationCompany").value.toString()
+                    var typeType = it.child("streamingService").value.toString()
 
                     reviewData = mutableMapOf("Title" to title, "Director" to author,
-                        "Date Published" to date, "Genre" to genre, "Publication Company" to typeType,
+                        "Date Published" to date, "Genre" to genre, "Streaming Service" to typeType,
                         "Started" to "01/01/2024", "Finished" to "20/01/2024", "Rating" to rating,
                         "Review" to review, "type" to type)
                 }
