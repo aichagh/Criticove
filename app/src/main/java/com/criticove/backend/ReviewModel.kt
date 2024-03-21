@@ -396,7 +396,7 @@ class MovieReview(type: String, title:String, date:String, genre: String, rating
                    val director: String, val streamingservice: String, val datewatched: String, shared: Boolean = false, bookmarked: Boolean = false): Review(type, title, date, genre, rating, paragraph, reviewID, shared, bookmarked) {
 }
 
-fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableMap<String, String>, userModel: userModel, bookmarked: Boolean = false) {
+fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableMap<String, String>, bookmarked: Boolean = false) {
     val user = Firebase.auth.currentUser
     lateinit var userID : String
     if (user != null) {

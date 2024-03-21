@@ -145,7 +145,7 @@ fun ReviewFormMainContent(navController: NavController, userModel: userModel) {
     ) {
         ReviewHeader()
         Column (modifier = Modifier.verticalScroll(rememberScrollState())) {
-            Selection(navController)
+            Selection(userModel, navController)
         }
         println("this is filled $filled")
     }
@@ -298,7 +298,7 @@ fun AutocompleteTextField(
 }
 
 @Composable
-fun Selection(navController: NavController) {
+fun Selection(userModel: userModel, navController: NavController) {
     var selectedType by remember { mutableStateOf("Book") }
     Row(
         modifier = Modifier
