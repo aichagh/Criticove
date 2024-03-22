@@ -115,6 +115,9 @@ class Signup : ComponentActivity() {
                 composable("TVShows") {
                     FilterReviews(navController, userModel, "TV Show")
                 }
+                composable("Bookmarks") {
+                    FilterReviews(navController, userModel, "", true)
+                }
                 composable("ProfilePage") {
                     ProfilePageMainContent(navController, userModel)
                 }

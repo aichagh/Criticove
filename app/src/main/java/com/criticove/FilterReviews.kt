@@ -20,9 +20,13 @@ import com.criticove.backend.TVShowReview
 import com.criticove.backend.userModel
 
 @Composable
-fun FilterReviews(navController: NavController, userModel: userModel, type: String) {
+fun FilterReviews(navController: NavController, userModel: userModel, type: String, bookmarks: Boolean = false) {
+    var title = type
+    if (bookmarks) {
+        title = "Bookmarked"
+    }
     MainLayout(
-        title = "$type Reviews",
+        title = "$title Reviews",
         navController = navController
     ) { padding ->
         Column(
@@ -43,7 +47,7 @@ fun FilterReviews(navController: NavController, userModel: userModel, type: Stri
                     .padding(bottom = 10.dp)
                     .verticalScroll(rememberScrollState()),
             ) {
-                displayFilteredReviews(userModel.filter(type), navController)
+                displayFilteredReviews(userModel.filter(type, bookmarks), navController)
             }
 
             Navbar(navController)
@@ -58,15 +62,15 @@ fun displayFilteredReviews(filteredReviews: List<Review>, navController: NavCont
                 val bookReview: BookReview = review
                 println("here book review")
                 println("this is the review $review")
-                Review(bookReview.title, bookReview.author, bookReview.date, bookReview.rating, bookReview.reviewID, navController)
+                Review(bookReview.title, bookReview.author, bookReview.date, bookReview.rating, bookReview.reviewID, navController, bookReview.bookmarked)
             }
             is TVShowReview -> {
                 val tvShowReview: TVShowReview = review
-                Review(tvShowReview.title, tvShowReview.director,tvShowReview.date, tvShowReview.rating, tvShowReview.reviewID, navController)
+                Review(tvShowReview.title, tvShowReview.director,tvShowReview.date, tvShowReview.rating, tvShowReview.reviewID, navController, tvShowReview.bookmarked)
             }
             is MovieReview -> {
                 val movieReview: MovieReview = review
-                Review(movieReview.title, movieReview.director, movieReview.date, movieReview.rating, movieReview.reviewID, navController)
+                Review(movieReview.title, movieReview.director, movieReview.date, movieReview.rating, movieReview.reviewID, navController, movieReview.bookmarked)
             }
         }
     }

@@ -118,10 +118,13 @@ class userModel: ViewModel {
         }
     }
 @Composable
-    fun filter(type: String):  List<Review> {
-        val reviewlist by  reviewList.collectAsState()
-        var filtered: List<Review> = reviewlist.filter {it.type == type}
-        return filtered
+    fun filter(type: String, bookmarks: Boolean = false):  List<Review> {
+        val reviewlist by reviewList.collectAsState()
+        if (!bookmarks) {
+            return reviewlist.filter { it.type == type }
+        } else {
+            return reviewlist.filter { it.bookmarked }
+        }
     }
 
     fun getFriends() {
