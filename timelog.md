@@ -70,3 +70,4 @@
 | 2024/03/20 |       |         |2        |          |            |      | Bookmark Reviews Functionality|
 | 2024/03/20 |       | 5     |        |          |            |         | testing and debugging for the api database for the movie and tv show to autofill and autosuggest forms   |
 | 2024/03/21 |       |         |        |          | 1.5        |      | Fixed reviews per media type on dashboard |
+| 2024/03/21 |       |         |        |          | 3          |      | Worked on D4 |
