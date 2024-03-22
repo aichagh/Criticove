@@ -55,7 +55,7 @@ fun ProfilePageMainContent(navController: NavController, userModel: userModel) {
             .fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        ProfileHeader(navController, "Profile", "Dashboard")
+        CommonHeader(navController, "Profile", "Dashboard")
 
         Column(
             modifier = Modifier
@@ -70,7 +70,7 @@ fun ProfilePageMainContent(navController: NavController, userModel: userModel) {
 }
 
 @Composable
-fun ProfileHeader(navController: NavController, title: String, route: String) {
+fun CommonHeader(navController: NavController, title: String, route: String) {
     Box(
         modifier = Modifier
             .height(50.dp)
@@ -199,8 +199,10 @@ fun ProfileMain(navController: NavController) {
 
 @Composable
 fun CustomButton(text: String = "Default",
+                 isBtnEnabled: Boolean = true,
                  clicked: () -> Unit) {
     Button(
+        enabled = isBtnEnabled,
         onClick = clicked,
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(id = R.color.teal),

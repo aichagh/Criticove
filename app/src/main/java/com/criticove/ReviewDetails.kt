@@ -104,7 +104,7 @@ fun ReviewDetailsMainContent(navController: NavController,
                 .verticalScroll(rememberScrollState())
                 .background(colorResource(id = R.color.off_white))
         ) {
-            ProfileHeader(navController, selReview.title, "Reviews")
+            CommonHeader(navController, selReview.title, "Reviews")
             ReviewDetailsTable(reviewType, userModel.selReview, reviewID, isFriend)
         }
 //    }
@@ -294,13 +294,13 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                                     horizontalArrangement = Arrangement.SpaceEvenly
                                 ) {
                                     if (!edit) {
-                                        CustomButton("Edit", { edit = true })
+                                        CustomButton("Edit") { edit = true }
                                     } else {
                                         CustomButton("Save") {
                                             edit = false
                                             reviewData.set("Review", curData).toString()
                                         }
-                                        CustomButton("Cancel", { edit = false })
+                                        CustomButton("Cancel") { edit = false }
                                     }
                                 }
                             }

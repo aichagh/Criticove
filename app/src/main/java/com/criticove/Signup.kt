@@ -124,7 +124,9 @@ class Signup : ComponentActivity() {
                 composable("EditProfile") {
                     EditProfile(navController, userModel)
                 }
-
+                composable("ReviewGoal") {
+                    ReviewGoalMainContent(navController, userModel)
+                }
             }
         }
     }
