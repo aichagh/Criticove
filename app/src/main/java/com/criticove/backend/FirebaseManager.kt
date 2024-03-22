@@ -3,6 +3,7 @@ package com.criticove.backend
 import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.google.firebase.auth.userProfileChangeRequest
 
@@ -56,6 +57,10 @@ object FirebaseManager {
 
     fun deleteAccount() {
         auth.currentUser?.delete()
+    }
+
+    fun getUser(): FirebaseUser? {
+        return Firebase.auth.currentUser
     }
 
     fun getUsername(): String {

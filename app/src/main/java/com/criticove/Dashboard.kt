@@ -24,6 +24,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -38,7 +41,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -46,13 +48,20 @@ import androidx.navigation.NavController
 import com.criticove.backend.FirebaseManager
 import com.criticove.backend.Review
 import com.criticove.backend.userModel
+import com.google.firebase.database.*
 import kotlinx.coroutines.flow.StateFlow
+import java.lang.Float.min
 import java.text.DecimalFormat
 
 @Composable
 fun DashboardMainContent(navController: NavController, userModel: userModel) {
     userModel.getReviews()
     val totalReviews = getTotalReviews(userModel.reviewList)
+
+    var reviewGoal by remember { mutableStateOf<Int?>(null) }
+    checkReviewGoal { retrievedGoal ->
+        reviewGoal = retrievedGoal
+    }
 
     Column(
         modifier = Modifier
@@ -72,12 +81,32 @@ fun DashboardMainContent(navController: NavController, userModel: userModel) {
 
         ) {
             WelcomeBanner()
+
             if (totalReviews == 0) {
-                CallToAction(navController)
+                CallToAction(
+                    "Reviews",
+                    "This is your cove of media critiques and reflections.",
+                    "Get started now.",
+                    true,
+                    navController
+                )
             }
+
             TopGenres(userModel)
+
             ReviewsPerMediaType(userModel)
-            ProgressTracker(navController)
+
+            if (reviewGoal == null) {
+                CallToAction(
+                    "ReviewGoal",
+                    "Level up your reviewing game!",
+                    "Set a review goal now.",
+                    false,
+                    navController
+                )
+            } else {
+                ProgressTracker(totalReviews, reviewGoal!!, navController)
+            }
         }
 
         Navbar(navController)
@@ -144,12 +173,13 @@ fun WelcomeBanner() {
 }
 
 @Composable
-fun CallToAction(navController: NavController) {
+fun CallToAction(navRouteString: String, text1: String, text2: String,
+                 bottomPadding: Boolean, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(150.dp)
-            .padding(bottom = 20.dp),
+            .padding(bottom = if (bottomPadding) 20.dp else 0.dp),
         verticalArrangement = Arrangement.Center
     ) {
         Row(
@@ -164,19 +194,19 @@ fun CallToAction(navController: NavController) {
                     ),
                     shape = RoundedCornerShape(10.dp)
                 )
-                .clickable { navController.navigate("Reviews") },
+                .clickable { navController.navigate(navRouteString) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
                 modifier = Modifier.width(300.dp)
             ) {
-                CallToActionText("This is your cove of media critiques and reflections.", true)
-                CallToActionText("Get started now.")
+                CallToActionText(text1, true)
+                CallToActionText(text2)
             }
 
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.right_arrow),
-                contentDescription = "Open Review Page",
+                contentDescription = "Navigate",
                 tint = colorResource(id = R.color.off_white)
             )
         }
@@ -225,7 +255,7 @@ fun TopGenres(userModel: userModel) {
             Text(
                 text = "You do not have any reviews yet.",
                 color = colorResource(id = R.color.blue),
-                fontSize = 18.sp,
+                fontSize = 20.sp,
                 fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -411,13 +441,13 @@ fun MediaTypeStatsColumnText(str: String) {
 }
 
 @Composable
-fun ProgressTracker(navController: NavController) {
-    // TO DO: Get user's progress stats
-    // TO DO: Add edit option (popup..?)
+fun ProgressTracker(totalReviews: Int, reviewGoal: Int, navController: NavController) {
+    val progress = totalReviews.toFloat() / reviewGoal.toFloat()
+    val percentage = min(progress * 100, 100f)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
             .padding(top = 20.dp)
             .background(
                 colorResource(id = R.color.green),
@@ -430,15 +460,16 @@ fun ProgressTracker(navController: NavController) {
         Spacer(modifier = Modifier.size(15.dp))
 
         LinearProgressIndicator(
-            progress = { 0.5f },
-            modifier = Modifier.height(30.dp),
+            progress = { progress },
+            modifier = Modifier.height(20.dp),
             color = colorResource(id = R.color.teal),
             trackColor = colorResource(id = R.color.off_white),
             strokeCap = StrokeCap.Round
         )
 
         Text(
-            text = "50%",
+            modifier = Modifier.padding(top = 5.dp),
+            text = "${DecimalFormat("#.#").format(percentage)} %",
             color = colorResource(id = R.color.blue),
             fontSize = 18.sp,
             fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
@@ -448,12 +479,48 @@ fun ProgressTracker(navController: NavController) {
         Spacer(modifier = Modifier.size(15.dp))
 
         Text(
-            text = "25/50 reviews",
+            text = "$totalReviews/$reviewGoal reviews",
             color = colorResource(id = R.color.blue),
             fontSize = 24.sp,
             fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
             textAlign = TextAlign.Center,
         )
+
+        Spacer(modifier = Modifier.size(15.dp))
+
+        Row(
+            modifier = Modifier
+                .width(300.dp)
+                .padding(bottom = 25.dp)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            colorResource(id = R.color.teal),
+                            colorResource(id = R.color.blue)
+                        )
+                    ),
+                    shape = RoundedCornerShape(10.dp)
+                ),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(15.dp),
+                text = getProgressMessage(percentage),
+                color = colorResource(id = R.color.off_white),
+                fontSize = 20.sp,
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
+                textAlign = TextAlign.Center,
+                lineHeight = 25.sp
+            )
+        }
+
+        CustomButton("Update Goal", true) {
+            navController.navigate("ReviewGoal")
+        }
+
+        Spacer(modifier = Modifier.size(15.dp))
     }
 }
 
@@ -473,12 +540,6 @@ fun DashboardCardHeader(heading: String) {
             fontFamily = FontFamily(Font(R.font.alegreya_sans_bold))
         )
     }
-}
-
-@Preview
-@Composable
-fun Preview_Display() {
-        //DashboardMainContent(rememberNavController())
 }
 
 @Composable
@@ -541,4 +602,39 @@ fun getTotalReviews(reviewList: StateFlow<MutableList<Review>>): Int {
     }
 
     return totalReviews
+}
+
+fun checkReviewGoal(onResult: (Int?) -> Unit) {
+    val database = FirebaseDatabase.getInstance()
+    val userID = FirebaseManager.getUser()?.uid
+    val userRef = database.getReference("Users/$userID/reviewGoal")
+
+    userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            val reviewGoal = snapshot.getValue(Int::class.java)
+            onResult(reviewGoal)
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            onResult(null)
+        }
+    })
+}
+
+fun getProgressMessage(percentage: Float): String {
+    return if (percentage == 0f) {
+        "Write a review to get started!"
+    } else if (percentage > 0f && percentage < 25f) {
+        "You're just getting started! Keep pushing towards your goal."
+    } else if (percentage >= 25f && percentage < 50f) {
+        "You're making progress! Keep up the momentum."
+    } else if (percentage >= 50f && percentage < 75f) {
+        "Halfway there! Keep up the great work."
+    } else if (percentage >= 75f && percentage < 100f) {
+        "Almost there! Don't stop now."
+    } else if (percentage == 100f) {
+        "Congratulations! You've reached your goal."
+    } else {
+        ""
+    }
 }
