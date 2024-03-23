@@ -41,7 +41,7 @@ class userModel: ViewModel {
         // var selReviewQuery = reviewsRef.orderByChild("title").equalTo(reviewTitle)
 
         println("the users ${this.userID} reviews keys and their corresponding values: ,")
-        reviewsRef.addValueEventListener(object : ValueEventListener {
+        reviewsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(reviewSnapshot: DataSnapshot) {
                 val reviewKey = reviewSnapshot.key
                 val review = reviewSnapshot.value as Map<String, Any>
@@ -442,6 +442,20 @@ fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableM
         }
 }
 
+fun updateSelReview(reviewID: String, review: String) {
+    val user = Firebase.auth.currentUser
+    lateinit var userID : String
+    if (user != null) {
+        userID = user.uid
+        println("the user id is $userID, and reviewId is $reviewID")
+    }
+
+    var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/$userID/Reviews/$reviewID")
+    reviewsRef.child("paragraph").setValue(review)
+    println("successfully updated review to $review")
+
+}
+
 fun delSelectedReview(reviewID: String) {
     val user = Firebase.auth.currentUser
     lateinit var userID : String
@@ -452,6 +466,7 @@ fun delSelectedReview(reviewID: String) {
 
     var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/$userID/Reviews")
     reviewsRef.child(reviewID).removeValue()
+    println("successfully deleted")
 
 }
 
