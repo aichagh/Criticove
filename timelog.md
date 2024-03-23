@@ -72,4 +72,5 @@
 | 2024/03/21 |       |         |        |          | 1.5        |      | Fixed reviews per media type on dashboard |
 | 2024/03/21 |       |         |        |          | 3          |      | Worked on D4 |
 | 2024/03/21 |       |         | 1      |          |            |      | Filter Bookmarked reviews |
+| 2024/03/21 |       |         |        |1         |            |      | Discussion on D4 |
 | 2024/03/22 |       |         |        |          | 7          |      | CTA button for review goal on dashboard, Progress Tracker backend, Edit Review Goal UI + Backend |
