@@ -88,17 +88,18 @@ class Signup : ComponentActivity() {
                 composable("Friends") {
                     FriendsMainContent(navController, userModel)
                 }
-                composable("ViewReview/{reviewID}/{isFriend}") {
+                composable("ViewReview/{reviewID}/{isFriend}/{friendID}") {
                     val reviewID = it.arguments?.getString("reviewID")!!
                     val isFriendStr = it.arguments?.getString("isFriend")!!
                     var isFriend = false
+                    val friendID = it.arguments?.getString("friendID")!!
                     if (isFriendStr == "true") {
                         isFriend = true
                     }
 
                     println("In composable: " + reviewID)
 
-                    ReviewDetailsMainContent(navController, reviewID, isFriend, userModel)
+                    ReviewDetailsMainContent(navController, reviewID, isFriend, friendID, userModel)
                 }
                 composable("AddFriends") {
                     AddFriends(navController, userModel)

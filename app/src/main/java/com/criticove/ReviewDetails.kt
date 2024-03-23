@@ -93,8 +93,9 @@ class ReviewDetails: ComponentActivity() {
 fun ReviewDetailsMainContent(navController: NavController,
                              reviewID: String,
                              isFriend: Boolean,
+                             friendID: String,
                              userModel: userModel) {
-    userModel.getSelReview(reviewID)
+    userModel.getSelReview(reviewID, friendID)
     val selReview by userModel.selReview.collectAsState()
     println(reviewID)
 

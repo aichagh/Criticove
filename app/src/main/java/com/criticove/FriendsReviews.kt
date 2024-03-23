@@ -53,10 +53,10 @@ val profilePic = R.drawable.default_pic // later if profile pic is set, change i
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun createFriendsReviews(usermodel: userModel) {
+fun createFriendsReviews(usermodel: userModel, navController: NavController) {
     val friendsReviewsList by usermodel.friendReviews.collectAsState()
     for ((key, value) in friendsReviewsList) {
-        displayFriendsReviews(key, value)
+        displayFriendsReviews(key, value, navController)
     }
 }
 
@@ -87,7 +87,7 @@ fun FriendsReviews(navController: NavController, usermodel: userModel) {
                     .padding(bottom = 10.dp)
                     .verticalScroll(rememberScrollState()),
             ) {
-                createFriendsReviews(usermodel)
+                createFriendsReviews(usermodel, navController)
             }
 
             Navbar(navController)
@@ -96,10 +96,10 @@ fun FriendsReviews(navController: NavController, usermodel: userModel) {
 }
 
 @Composable
-@Preview
 fun FriendReview(
     username: String = "realfriendtm", title: String = "Title",
-    author: String = "Author", year: String = "1999", rating: Int = 1) {
+    author: String = "Author", year: String = "1999", rating: Int = 1,
+    reviewID: String, friendID: String, navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -157,8 +157,7 @@ fun FriendReview(
                 modifier = Modifier
                     .width(50.dp),
                 onClick = {
-                    TODO()
-                    //navController.navigate("ViewReview/$reviewID/false")
+                    navController.navigate("ViewReview/$reviewID/true/$friendID")
                 }
             ) {
                 Icon(
@@ -171,25 +170,27 @@ fun FriendReview(
 }
 
 @Composable
-fun displayFriendsReviews(username: String, reviewsList: List<Review>) {
+fun displayFriendsReviews(key: Pair<String, String>, reviewsList: List<Review>,
+                          navController: NavController) {
 //    val reviewsList by reviewList.collectAsState()
     println("the review list in reviewspage is $reviewsList")
     println(reviewsList)
     for (review in reviewsList) {
+        var (username, friendID) = key
         when (review) {
             is BookReview -> {
                 val bookReview: BookReview = review
                 println("here book review")
                 println("this is the review $review")
-                FriendReview(username, bookReview.title, bookReview.author, bookReview.date, bookReview.rating)
+                FriendReview(username, bookReview.title, bookReview.author, bookReview.date, bookReview.rating, bookReview.reviewID, friendID, navController)
             }
             is TVShowReview -> {
                 val tvShowReview: TVShowReview = review
-                FriendReview(username, tvShowReview.title, tvShowReview.director,tvShowReview.date, tvShowReview.rating)
+                FriendReview(username, tvShowReview.title, tvShowReview.director,tvShowReview.date, tvShowReview.rating, tvShowReview.reviewID, friendID, navController)
             }
             is MovieReview -> {
                 val movieReview: MovieReview = review
-                FriendReview(username, movieReview.title, movieReview.director, movieReview.date, movieReview.rating)
+                FriendReview(username, movieReview.title, movieReview.director, movieReview.date, movieReview.rating, movieReview.reviewID, friendID, navController)
             }
         }
     }

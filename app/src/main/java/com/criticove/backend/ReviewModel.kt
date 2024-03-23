@@ -26,18 +26,28 @@ class userModel: ViewModel {
         "test", "test", "test", 4, "test", "test"))
     val selReview: StateFlow<Review> = _selReview
 
+    private val _selFriendReview: MutableStateFlow<Review> = MutableStateFlow(Review("Book",
+        "test", "test", "test", 4, "test", "test"))
+    val selFriendReview: StateFlow<Review> = _selFriendReview
+
     private val _friendMap: MutableStateFlow<MutableMap<String, String>> = MutableStateFlow(mutableMapOf<String, String>())
     val friendMap: StateFlow<MutableMap<String, String>> = _friendMap
 
     private val _userMap: MutableStateFlow<MutableMap<String, String>> = MutableStateFlow(mutableMapOf<String, String>())
     val userMap: StateFlow<MutableMap<String, String>> = _userMap
 
-    private val _friendReviews: MutableStateFlow<MutableMap<String, List<Review>>> = MutableStateFlow(mutableMapOf())
-    val friendReviews: StateFlow<MutableMap<String, List<Review>>> = _friendReviews
+    private val _friendReviews: MutableStateFlow<MutableMap<Pair<String, String>, List<Review>>> = MutableStateFlow(mutableMapOf())
+    val friendReviews: StateFlow<MutableMap<Pair<String, String>, List<Review>>> = _friendReviews
 
-    fun getSelReview(reviewID: String) {
+    fun getSelReview(reviewID: String, friendID: String = "none") {
         println("this is the user id : ${userID}")
         var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Reviews/${reviewID}")
+
+        if (friendID != "none") {
+            println("Getting a friend's review")
+            reviewsRef = FirebaseDatabase.getInstance().getReference("Users/${friendID}/Reviews/${reviewID}")
+        }
+
         // var selReviewQuery = reviewsRef.orderByChild("title").equalTo(reviewTitle)
 
         println("the users ${this.userID} reviews keys and their corresponding values: ,")
@@ -268,7 +278,7 @@ class userModel: ViewModel {
         var friendsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Friends")
         friendsRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val newfriendMap: MutableMap<String, List<Review>> = mutableMapOf<String, List<Review>>()
+                val newfriendMap: MutableMap<Pair<String, String>, List<Review>> = mutableMapOf<Pair<String, String>, List<Review>>()
                 for (childSnapshot in dataSnapshot.children) {
                     val friendID = childSnapshot.key
                     val frienduserName = childSnapshot.getValue(String::class.java)
@@ -329,11 +339,11 @@ class userModel: ViewModel {
                                     }
                                     if (s) {
                                         newReviewList.add(reviewPost)
-                                        newfriendMap[frienduserName] = newReviewList
+                                        newfriendMap[Pair(frienduserName, friendID)] = newReviewList
                                         _friendReviews.update { newfriendMap }
                                         _friendReviews.value.forEach { (frienuserName, reviews) ->
                                             reviews.forEach { review ->
-                                                println("in getfriendreviews Friend ID: $frienduserName and Title: ${review.title} ")
+                                                println("in getfriendreviews Friend ID: $friendID, $frienduserName and Title: ${review.title} ")
                                             }
                                         }
                                     }
