@@ -371,15 +371,19 @@ fun CreateForm(type:String, userModel: userModel, navController: NavController, 
         when (type) {
             "Book" -> {
                 BookForm()
+                reviewText("Book")
             }
             "TV Show" -> {
                 TVShowForm(mediaViewModel)
+                reviewText("TV Show")
 
             }
             "Movie" -> {
                 MovieForm(mediaViewModel)
+                reviewText("Movie")
             }
         }
+        /*
         OutlinedTextField(
             value = text,
             onValueChange = { text = it },
@@ -400,6 +404,10 @@ fun CreateForm(type:String, userModel: userModel, navController: NavController, 
             ),
             shape = RoundedCornerShape(10.dp)
         )
+
+         */
+
+
     }
     println("this is filled $filled")
     StarRating(type)
@@ -749,6 +757,36 @@ fun normalText(field: String, type: String, initialValue: String = "", onValueCh
         shape = RoundedCornerShape(10.dp)
     )
     filled[type]?.set(field, entered).toString()
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun reviewText(type: String, initialValue: String = "") {
+    var entered by remember { mutableStateOf(initialValue)  }
+    LaunchedEffect(initialValue) {
+        entered = initialValue
+    }
+    OutlinedTextField(
+        value = entered,
+        onValueChange = {entered = it },
+        minLines = 7,
+        label = {
+            Text(
+                text = "Review",
+                color = colorResource(id = R.color.coolGrey),
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+            )
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = colorResource(id = R.color.blue),
+            unfocusedBorderColor = colorResource(id = R.color.teal)
+        ),
+        shape = RoundedCornerShape(10.dp)
+    )
+    filled[type]?.set("Review", entered).toString()
 }
 
 @Suppress("ModifierParameter")
