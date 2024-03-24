@@ -76,10 +76,12 @@
 | 2024/03/20 |       |         |2        |          |            |      | Bookmark Reviews Functionality|
 | 2024/03/20 |       | 5     |        |          |            |         | testing and debugging for the api database for the movie and tv show to autofill and autosuggest forms   |
 | 2024/03/21 |       |         |        |          | 1.5        |      | Fixed reviews per media type on dashboard |
-| 2024/03/21 |       |         |        |          | 3          | 3.5  | Worked on D4 |
+| 2024/03/21 |       | 2.5     |        |          | 3          | 3.5  | Worked on D4 |
 | 2024/03/21 |       |         | 1      |          |            |      | Filter Bookmarked reviews |
 | 2024/03/21 |       |         |        |1         |            |      | Discussion on D4 |
 | 2024/03/22 |       |         |        |          | 7          |      | CTA button for review goal on dashboard, Progress Tracker backend, Edit Review Goal UI + Backend |
 | 2024/03/22 |       |         |        |          |            |  2   | Added review delete functionality |
 | 2024/03/22 |       |         |        |          |            |  5   | Added review edit functionality |
 | 2024/03/23 |       |         |        |          |            |  4   | Added ability to view friends review details without editing |
+| 2024/03/24 |       | 6       |        |          |            |      | Added Google Books API database for suggestions and autofill in the review form and updated the friends/regualar page hamburger menu |
+
