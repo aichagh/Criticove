@@ -216,9 +216,9 @@ val TvShow.suggestion: Suggestion.TvShowSuggestion
 val BookItem.suggestion: Suggestion.BookSuggestion
     get() = Suggestion.BookSuggestion(
         id = this.id,
-        displayText = this.volumeInfo.title,
-        displayDate = this.volumeInfo.publishedDate.substringBefore("-"),
-        genre = this.volumeInfo.categories?.firstOrNull()
+        displayText = this.volumeInfo.title?: "",
+        displayDate = this.volumeInfo.publishedDate.substringBefore("-")?: "",
+        genre = this.volumeInfo.categories?.firstOrNull()?: "Other"
     )
 
 //
@@ -698,7 +698,7 @@ fun BookForm(mediaViewModel: MediaViewModel) {
             println("bookdetails $bookDetails")
             bookTitle = it.volumeInfo.title
             author = it.volumeInfo.authors?.joinToString(", ") ?: ""
-            yearPublished = it.volumeInfo.publishedDate.substringBefore("-")
+            yearPublished = it.volumeInfo.publishedDate.substringBefore("-") ?: ""
             selectedGenre = it.volumeInfo.categories?.firstOrNull() ?: ""
         }
     }
