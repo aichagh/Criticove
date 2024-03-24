@@ -22,22 +22,24 @@
 | 2024/02/25 |       |         |        |1         |            |      | Splash Screen UI using Compose |
 | 2024/02/28 |       |         |        |          | 4          |      | Signup UI + Backend using Compose |
 | 2024/02/20 |       |         |5       |          |            |      | Create Review Form UI using Compose |
-| 2024/02/28 |       |         |        |          |            | 4.5  | Create Review Details UI |
-| 2024/02/28 |       |         |        |          |            | 1    | Create Review List UI |
+| 2024/02/28 |       |         |        |          |            | 5.5  | Create Review Details UI |
+| 2024/02/28 |       |         |        |          |            | 3    | Create Review List UI |
 | 2024/02/28 | 4     |         |        |          |            |      | Recreate Navbar / Topbar in Compose |
 | 2024/02/29 |       |         |        |          | 2          |      | Added username to Firebase, Login UI + Backend, Navigation support |
 | 2024/02/29 |       |         |        |          | 9.5        |      | Dashboard UI, Navigation after successful Signup & Login |
 | 2024/02/29 | 3.5   |         |        |          |            |      | Created review cards + updated navbar / topbar |
 | 2024/03/01 |       |         |        |6         |            |      | Friends UI and Functionality |
 | 2024/03/01 |       |         |15      |1.5       |            |      | ViewModel and Review Backend from Firebase |
+| 2024/03/01 |       |         |        |          |            | 7    | Worked on getting a selected Review Backend |
 | 2024/03/01 |       | 3       |        |          |            |      | Movies/TV info API search and menu work |
 | 2024/03/01 | 3     |         |        |          |            |      | Updating the create review UI |
 | 2024/03/02 |       | 4       |        |          |            |      | Navbar navigation setup |
 | 2024/03/03 |       |         |        |          | 0.5        |      | Navbar navigation complete |
+| 2024/03/03 |       |         |        |          |            | 8.5  | Updated selected review backend with viewmodel |
 | 2024/03/03 |       |         |        |1         |            |      | Fixing padding and font for review form |
-| 2024/03/03 | 1.5   | 1.5     | 1.5    |1.5       | 1.5        |      | Prepare for prototype demo |
-| 2024/03/04 | 1.5   | 1.25    | 1.5    |1.5       | 1.5        |      | Prototype demo presentation and discussion  |
-| 2024/03/08 | 1.5   | 1.5     | 2.5    |2.5       | 2          |      | Prototype document discussion and work | 
+| 2024/03/03 | 1.5   | 1.5     | 1.5    |1.5       | 1.5        | 1.5  | Prepare for prototype demo |
+| 2024/03/04 | 1.5   | 1.25    | 1.5    |1.5       | 1.5        | 1.5  | Prototype demo presentation and discussion  |
+| 2024/03/08 | 1.5   | 1.5     | 2.5    |2.5       | 2          | 2.5  | Prototype document discussion and work | 
 | 2024/03/09 |       | 10      |        |          |            |      | Setting hamburger menu and navigation |
 | 2024/03/11 |       |         |        |          | 1.5        |      | Auth error message on Signup & Login pages and show real username on Dashboard |
 | 2024/03/12 |       |         |        |          | 0.5        |      | Enable/Disable Signup & Login buttons |
@@ -47,8 +49,9 @@
 | 2024/03/14 | 4     |         |        |          |            |      | finished profile page UI + edit page |
 | 2024/03/14 | 4     |         |        | 0.5      |            |      | Verification of input field testing for sign up page |
 | 2024/03/15 |       |         |        | 1        |            |      | Work on the profile page buttons and changing colors |
-| 2024/03/15 | 2     |         |  4     | 2        |            |      | Debugging editing the review after creation |
-| 2024/03/15 |       |         |        | 2        |            |      | Fixing the edit review after creation feature |
+| 2024/03/15 | 2     |         |  4     | 2        |            |  9   | Debugging editing the review after creation |
+| 2024/03/15 |       |         |        | 2        |            |  2   | Fixing the edit review after creation feature |
+| 2024/03/15 |       |         |        |          |            | 1.5  | Updated viewModel to be passed via navController for all pages |
 | 2024/03/15 |       |         |        | 2        |            |      | Updated Friends UI page and hamburger menu |
 | 2024/03/15 |       |         |        | 2        |            |      | Worked on integrating the backend into the friends page to display in real time |
 | 2024/03/16 |       |         |  4     |          |            |      | Backend for adding friends and obtaining users |
@@ -57,12 +60,15 @@
 | 2024/03/16 | 5     |         |        |          |            |      | fixed review form UI + created friend review card UI + started dashboard real data update|
 | 2024/03/17 |       |         | 5      |          |            |     | backend for adding friends, setting visibility of reviews, viewing friends reviews|
 | 2024/03/17 |       |         |        | 5        |            |     | worked on displaying friends reviews in real time and adjusting the ui for that, and minor changes on the ui for hamburger |
+| 2024/03/17 |       |         |        |          |            |  5   | Worked on fixing constant refreshing on review details page |
 | 2024/03/18 |       |         | 2      |          |            |      | filtering reviews |
 | 2024/03/17 | 3.5   |         |        |          |            |      | finished dashboard top-genres widget + changed navbar to not have add review (created button within page) |
 | 2024/03/17 |       | 10      |        |          |            |      | added api integration calls with TMBD and set mediaviewmodel file for the api   |
 | 2024/03/18 |       | 10      |        |          |            |      | added api integration for movies and tv shows in the reviewform to get the details from the database |
 | 2024/03/18 | 1     |         |        |          |            |      | display images from phone gallery |
 | 2024/03/18 | 2     |         |        |          |            |      | view / edit review page UI update |
+| 2024/03/18 |       |         |        |          |            |  3   | Fixed issue where submitted reviews don't submit the review paragraph |
+| 2024/03/15 |       |         |        |          |            | 1.5  | Updated review details UI |
 | 2024/03/19 |       |         |1       |          |            |      | review details page |
 | 2024/03/20 | 0.75  |         | 0.75   |0.75      | 0.75       |      | D4 discussion and next steps for the app |
 | 2024/03/20 | 2.5   |         |        |2.5         |            |      | Debug autofill |
@@ -70,7 +76,10 @@
 | 2024/03/20 |       |         |2        |          |            |      | Bookmark Reviews Functionality|
 | 2024/03/20 |       | 5     |        |          |            |         | testing and debugging for the api database for the movie and tv show to autofill and autosuggest forms   |
 | 2024/03/21 |       |         |        |          | 1.5        |      | Fixed reviews per media type on dashboard |
-| 2024/03/21 |       |         |        |          | 3          |      | Worked on D4 |
+| 2024/03/21 |       |         |        |          | 3          | 3.5  | Worked on D4 |
 | 2024/03/21 |       |         | 1      |          |            |      | Filter Bookmarked reviews |
 | 2024/03/21 |       |         |        |1         |            |      | Discussion on D4 |
 | 2024/03/22 |       |         |        |          | 7          |      | CTA button for review goal on dashboard, Progress Tracker backend, Edit Review Goal UI + Backend |
+| 2024/03/22 |       |         |        |          |            |  2   | Added review delete functionality |
+| 2024/03/22 |       |         |        |          |            |  5   | Added review edit functionality |
+| 2024/03/23 |       |         |        |          |            |  4   | Added ability to view friends review details without editing |

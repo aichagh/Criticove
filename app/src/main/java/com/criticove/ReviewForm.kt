@@ -221,44 +221,6 @@ val BookItem.suggestion: Suggestion.BookSuggestion
         genre = this.volumeInfo.categories?.firstOrNull()?: "Other"
     )
 
-//
-//interface SuggestionItem {
-//    val id: Int
-//    val displayText: String
-//    val displayDate: String
-//}
-//
-//val Movie.suggestionItem: SuggestionItem
-//    get() = object : SuggestionItem {
-//        override val id: Int = this@suggestionItem.id
-//        override val displayText: String = this@suggestionItem.title
-//        override val displayDate: String = this@suggestionItem.release_date.substringBefore("-")
-//    }
-
-// Extension properties for TvShow
-//val TvShow.suggestionItem: SuggestionItem
-//    get() = object : SuggestionItem {
-//        override val id: Int = this@suggestionItem.id
-//        override val displayText: String = this@suggestionItem.name
-//        override val displayDate: String = this@suggestionItem.first_air_date.substringBefore("-")
-//    }
-//
-//interface SuggestionBook {
-//    val id: String
-//    val displayText: String
-//    val displayDate: String
-//    val genre: String?
-//}
-//
-//val BookItem.suggestionBook: SuggestionBook
-//    get() = object : SuggestionBook {
-//        override val id: String = this@suggestionBook.id
-//        override val displayText: String = this@suggestionBook.volumeInfo.title
-//        override val displayDate: String = this@suggestionBook.volumeInfo.publishedDate.substringBefore("-")
-//        override val genre: String? = this@suggestionBook.volumeInfo.categories?.firstOrNull()
-//    }
-
-
 @ExperimentalMaterial3Api
 @Composable
 fun AutocompleteTextField(
@@ -441,15 +403,19 @@ fun CreateForm(type:String, userModel: userModel, navController: NavController, 
         when (type) {
             "Book" -> {
                 BookForm(mediaViewModel)
+                reviewText("Book")
             }
             "TV Show" -> {
                 TVShowForm(mediaViewModel)
+                reviewText("TV Show")
 
             }
             "Movie" -> {
                 MovieForm(mediaViewModel)
+                reviewText("Movie")
             }
         }
+        /*
         OutlinedTextField(
             value = text,
             onValueChange = { text = it },
@@ -470,6 +436,10 @@ fun CreateForm(type:String, userModel: userModel, navController: NavController, 
             ),
             shape = RoundedCornerShape(10.dp)
         )
+
+         */
+
+
     }
     println("this is filled $filled")
     StarRating(type)
@@ -827,6 +797,36 @@ fun normalText(field: String, type: String, initialValue: String = "", onValueCh
         shape = RoundedCornerShape(10.dp)
     )
     filled[type]?.set(field, entered).toString()
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun reviewText(type: String, initialValue: String = "") {
+    var entered by remember { mutableStateOf(initialValue)  }
+    LaunchedEffect(initialValue) {
+        entered = initialValue
+    }
+    OutlinedTextField(
+        value = entered,
+        onValueChange = {entered = it },
+        minLines = 7,
+        label = {
+            Text(
+                text = "Review",
+                color = colorResource(id = R.color.coolGrey),
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+            )
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = colorResource(id = R.color.blue),
+            unfocusedBorderColor = colorResource(id = R.color.teal)
+        ),
+        shape = RoundedCornerShape(10.dp)
+    )
+    filled[type]?.set("Review", entered).toString()
 }
 
 @Suppress("ModifierParameter")

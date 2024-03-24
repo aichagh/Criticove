@@ -50,6 +50,7 @@ import com.criticove.backend.SubmittedReview
 import com.criticove.backend.TVShowReview
 import com.criticove.backend.delSelectedReview
 import com.criticove.backend.getSelectedReview
+import com.criticove.backend.updateSelReview
 import com.criticove.backend.userModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -92,8 +93,9 @@ class ReviewDetails: ComponentActivity() {
 fun ReviewDetailsMainContent(navController: NavController,
                              reviewID: String,
                              isFriend: Boolean,
+                             friendID: String,
                              userModel: userModel) {
-    userModel.getSelReview(reviewID)
+    userModel.getSelReview(reviewID, friendID)
     val selReview by userModel.selReview.collectAsState()
     println(reviewID)
 
@@ -105,7 +107,7 @@ fun ReviewDetailsMainContent(navController: NavController,
                 .background(colorResource(id = R.color.off_white))
         ) {
             CommonHeader(navController, selReview.title, "Reviews")
-            ReviewDetailsTable(reviewType, userModel.selReview, reviewID, isFriend)
+            ReviewDetailsTable(reviewType, selReview, reviewID, isFriend, navController)
         }
 //    }
 }
@@ -133,9 +135,10 @@ fontSize = 20.sp
  **/
 
 @Composable
-fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
-                       reviewID: String, isFriend: Boolean) {
-    val selReview by selReview.collectAsState()
+fun ReviewDetailsTable(type: String, selReview: Review,
+                       reviewID: String, isFriend: Boolean,
+                       navController: NavController) {
+    //val selReview by selReview.collectAsState()
 
     var elements =  mutableListOf<String>()
     var reviewData: MutableMap<String, String> = mutableMapOf()
@@ -208,6 +211,15 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
         }
     }
 
+    displayReviewDetails(type, reviewData, elements, reviewID, isFriend, navController)
+
+}
+
+@Composable
+fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
+                         elements: MutableList<String>,
+                         reviewID: String, isFriend: Boolean,
+                         navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -222,9 +234,9 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                         .fillMaxWidth()
                 ) {
                     Column() {
-                        var curData = reviewData[label].toString()
+                        //var curData = reviewData[label].toString()
                         var edit by remember { mutableStateOf(false) }
-                        //var curData by remember {mutableStateOf(reviewData[label].toString())}
+                        var curData by remember {mutableStateOf(reviewData[label].toString())}
 
                         if (label != "Review") {
                             Row(
@@ -295,10 +307,17 @@ fun ReviewDetailsTable(type: String, selReview: StateFlow<Review>,
                                 ) {
                                     if (!edit) {
                                         CustomButton("Edit") { edit = true }
+                                        CustomButton("Delete") {
+                                            navController.navigate("Friends")
+                                            delSelectedReview(reviewID)
+                                            //navController.navigate("Reviews")
+                                        }
                                     } else {
                                         CustomButton("Save") {
                                             edit = false
                                             reviewData.set("Review", curData).toString()
+
+                                            updateSelReview(reviewID, curData)
                                         }
                                         CustomButton("Cancel") { edit = false }
                                     }

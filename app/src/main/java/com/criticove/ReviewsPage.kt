@@ -202,7 +202,7 @@ fun Review(title: String = "Title",
             Row {
                 TextButton(
                     modifier = Modifier.width(50.dp),
-                    onClick = { navController.navigate("ViewReview/$reviewID/false") }
+                    onClick = { navController.navigate("ViewReview/$reviewID/false/none") }
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.view),
