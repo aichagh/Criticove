@@ -93,7 +93,8 @@ fun AddFriends(navController: NavController, usermodel: userModel) {
     perform_search()
     MainLayout(
         title = "Add Friends",
-        navController = navController
+        navController = navController,
+        friends = true
     ) { padding ->
         Column(
             modifier = Modifier

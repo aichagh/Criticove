@@ -65,7 +65,8 @@ fun FriendsReviews(navController: NavController, usermodel: userModel) {
     usermodel.getfriendReviews()
     MainLayout(
         title = "Friends Reviews",
-        navController = navController
+        navController = navController,
+        friends = true
     ) { padding ->
         Column(
             modifier = Modifier

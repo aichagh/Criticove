@@ -95,7 +95,8 @@ fun FriendsMainContent(navController: NavController, usermodel: userModel) {
 
     MainLayout(
         title = "Manage Friends",
-        navController = navController
+        navController = navController,
+        friends = true
     ) { padding ->
         Column(
             modifier = Modifier

@@ -99,6 +99,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
+import com.criticove.api.BookItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -170,33 +171,62 @@ fun ReviewHeader() {
     }
 }
 
-interface SuggestionItem {
-    val id: Int
-    val displayText: String // Combine 'title' or 'name' into one common field for simplicity
-    val displayDate: String // Combine 'release_date' or 'first_air_date' into one common field
+sealed class Suggestion {
+    abstract val displayText: String
+    abstract val displayDate: String
+    abstract val genre: String?
+
+    data class MovieSuggestion(
+        val id: Int,
+        override val displayText: String,
+        override val displayDate: String,
+        override val genre: String? = null
+    ) : Suggestion()
+
+    data class TvShowSuggestion(
+        val id: Int,
+        override val displayText: String,
+        override val displayDate: String,
+        override val genre: String? = null
+    ) : Suggestion()
+
+    data class BookSuggestion(
+        val id: String,
+        override val displayText: String,
+        override val displayDate: String,
+        override val genre: String?
+    ) : Suggestion()
+
 }
 
-val Movie.suggestionItem: SuggestionItem
-    get() = object : SuggestionItem {
-        override val id: Int = this@suggestionItem.id
-        override val displayText: String = this@suggestionItem.title
-        override val displayDate: String = this@suggestionItem.release_date.substringBefore("-")
-    }
+val Movie.suggestion: Suggestion.MovieSuggestion
+    get() = Suggestion.MovieSuggestion(
+        id = this.id,
+        displayText = this.title,
+        displayDate = this.release_date.substringBefore("-"),
+    )
 
-// Extension properties for TvShow
-val TvShow.suggestionItem: SuggestionItem
-    get() = object : SuggestionItem {
-        override val id: Int = this@suggestionItem.id
-        override val displayText: String = this@suggestionItem.name
-        override val displayDate: String = this@suggestionItem.first_air_date.substringBefore("-")
-    }
+val TvShow.suggestion: Suggestion.TvShowSuggestion
+    get() = Suggestion.TvShowSuggestion(
+        id = this.id,
+        displayText = this.name,
+        displayDate = this.first_air_date.substringBefore("-"),
+    )
+
+val BookItem.suggestion: Suggestion.BookSuggestion
+    get() = Suggestion.BookSuggestion(
+        id = this.id,
+        displayText = this.volumeInfo.title?: "",
+        displayDate = this.volumeInfo.publishedDate.substringBefore("-")?: "",
+        genre = this.volumeInfo.categories?.firstOrNull()?: "Other"
+    )
 
 @ExperimentalMaterial3Api
 @Composable
 fun AutocompleteTextField(
     label: String,
     viewModel: MediaViewModel,
-    onSuggestionSelected: (Int) -> Unit,
+//    onSuggestionSelected: (Suggestion) -> Unit,
     type: String
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -210,11 +240,14 @@ fun AutocompleteTextField(
 
     val movieSuggestions by viewModel.movieSuggestions.observeAsState()
     val tvShowSuggestions by viewModel.tvShowSuggestions.observeAsState()
+    val bookSuggestions by viewModel.bookSuggestions.observeAsState()
 
-    val suggestions: List<SuggestionItem> = if (type == "Movie")
-        movieSuggestions?.map { it.suggestionItem } ?: emptyList()
-    else
-        tvShowSuggestions?.map { it.suggestionItem } ?: emptyList()
+
+    val suggestions: List<Suggestion> = when (type) {
+        "Movie" -> movieSuggestions?.map { it.suggestion } ?: emptyList()
+        "Book" -> bookSuggestions?.map { it.suggestion } ?: emptyList()
+        else -> tvShowSuggestions?.map { it.suggestion } ?: emptyList()
+    }
 
     OutlinedTextField(
         value = query,
@@ -228,8 +261,10 @@ fun AutocompleteTextField(
                     if (query == newValue) { // Check if the query hasn't changed
                         if (type == "Movie") {
                             viewModel.searchMovieTitles(newValue)
-                        } else {
+                        } else if (type == "TV Show"){
                             viewModel.searchTvShowTitles(newValue)
+                        } else {
+                            viewModel.searchBookTitles(newValue)
                         }
                     }
                 } catch (e: Exception) {
@@ -256,11 +291,6 @@ fun AutocompleteTextField(
         shape = RoundedCornerShape(10.dp)
     )
 
-//    DisposableEffect(Unit) {
-//        focusRequester.requestFocus()
-//        onDispose { }
-//    }
-
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
@@ -278,7 +308,11 @@ fun AutocompleteTextField(
                     onClick = {
                         query = suggestion.displayText
                         isExpanded = false
-                        onSuggestionSelected(suggestion.id)
+                        when(suggestion) {
+                            is Suggestion.MovieSuggestion -> viewModel.fetchMovieDetails(suggestion.id)
+                            is Suggestion.TvShowSuggestion -> viewModel.fetchTvShowDetails(suggestion.id)
+                            is Suggestion.BookSuggestion -> viewModel.selectBook(suggestion.id)
+                        }
                     },
                     text = {
                         Text("${suggestion.displayText} (${suggestion.displayDate})",
@@ -338,9 +372,7 @@ fun Selection(userModel: userModel, navController: NavController) {
 @Composable
 fun CreateForm(type:String, userModel: userModel, navController: NavController, mediaViewModel: MediaViewModel) {
     var elements = mutableListOf<String>()
-    var review by remember { mutableStateOf("") }
     var text by remember { mutableStateOf("") }
-    val movieDetails by  mediaViewModel.movieDetails.observeAsState()
 
     when (type) {
         "Book" -> elements =
@@ -370,7 +402,7 @@ fun CreateForm(type:String, userModel: userModel, navController: NavController, 
     {
         when (type) {
             "Book" -> {
-                BookForm()
+                BookForm(mediaViewModel)
                 reviewText("Book")
             }
             "TV Show" -> {
@@ -613,18 +645,37 @@ fun PreviewCreateReview() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookForm() {
+fun BookForm(mediaViewModel: MediaViewModel) {
     // Fields: "Book Title","Author", "Date Published", "Genre", "Book Type"
+    val bookDetails by mediaViewModel.selectedBookDetails.observeAsState()
+    var bookTitle by remember { mutableStateOf("") }
+    var author by remember { mutableStateOf("") }
+    var yearPublished by remember { mutableStateOf("") }
+    var selectedGenre by remember { mutableStateOf("") }
     val genreList = listOf<String>("Romance", "Thriller", "Drama", "Autobiography", "Sci-fi")
     val typeList = listOf<String>("Physical", "E-Book")
-//    var selectedService by remember { mutableStateOf(serviceList.first()) }
-    var selectedGenre by remember { mutableStateOf(genreList.first()) }
+    var selectedType by remember { mutableStateOf("") }
 
-    normalText(field = "Book Title", type = "Book", onValueChange = {})
-    normalText(field = "Author", type = "Book", onValueChange = {})
-    normalNumber(field = "Year Published", type = "Book", onValueChange = {})
+
+    AutocompleteTextField (
+        label = "Book Title",
+        viewModel = mediaViewModel,
+        type = "Book"
+    )
+
+    LaunchedEffect(bookDetails) {
+        bookDetails?.let {
+            bookTitle = it.volumeInfo.title
+            author = it.volumeInfo.authors?.joinToString(", ") ?: ""
+            yearPublished = it.volumeInfo.publishedDate.substringBefore("-") ?: ""
+            selectedGenre = it.volumeInfo.categories?.firstOrNull() ?: ""
+        }
+    }
+
+    normalText(field = "Author", type = "Book", initialValue = author,  onValueChange = { author = it })
+    normalNumber(field = "Year Published", type = "Book", initialValue = yearPublished,  onValueChange = { yearPublished = it })
     Dropdown(type = "Book", field = "Genre", list = genreList, selectedGenre) { selectedGenre = it }
-    Dropdown(type = "Book", field = "Book Type", list = typeList) { /* TODO */ }
+    Dropdown(type = "Book", field = "Book Type", list = typeList, selectedType) { selectedType = it }
     dateField(field = "Date finished", type = "Book")
 }
 
@@ -638,15 +689,10 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
     val genreList = listOf("Drama", "Comedy", "Action", "Fantasy", "Science Fiction")
     val updatedGenreList = remember { mutableStateListOf(*genreList.toTypedArray()) }
     var selectedService by remember { mutableStateOf("") }
-    var auto by remember { mutableStateOf("false")
-    }
 
-    AutocompleteTextField(
+    AutocompleteTextField (
         label = "TV Show Title",
         viewModel = mediaViewModel,
-        onSuggestionSelected = { tvShowId ->
-            mediaViewModel.fetchTvShowDetails(tvShowId)
-        },
         type = "TV Show"
     )
 
@@ -654,7 +700,6 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
         tvShowDetails?.let {
             tvShowTitle = it.name
             yearReleased = it.first_air_date.substringBefore("-")
-            println("the director the year $yearReleased and show is $tvShowTitle")
             // Update genre list if the first genre isn't in the static list
             if (it.genres.isNotEmpty()) {
                 val firstgenre = it.genres.first().name
@@ -691,18 +736,13 @@ fun MovieForm(mediaViewModel: MediaViewModel) {
     AutocompleteTextField(
         label = "Movie Title",
         viewModel = mediaViewModel,
-        onSuggestionSelected = { movieId ->
-            mediaViewModel.fetchMovieDetails(movieId)
-        },
         type = "Movie"
     )
 
     LaunchedEffect(movieDetails) {
-        println("In function: $movieDetails")
         movieDetails?.let {
             movieTitle = it.title
             yearReleased = it.release_date.substringBefore("-") // Assuming YYYY-MM-DD format
-            println("the year added is $yearReleased")
             // Update genre list if the first genre isn't in the static list
             if (it.genres.isNotEmpty()) {
                 val firstgenre = it.genres.first().name
