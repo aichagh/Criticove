@@ -695,7 +695,6 @@ fun BookForm(mediaViewModel: MediaViewModel) {
 
     LaunchedEffect(bookDetails) {
         bookDetails?.let {
-            println("bookdetails $bookDetails")
             bookTitle = it.volumeInfo.title
             author = it.volumeInfo.authors?.joinToString(", ") ?: ""
             yearPublished = it.volumeInfo.publishedDate.substringBefore("-") ?: ""
@@ -729,10 +728,8 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
 
     LaunchedEffect(tvShowDetails) {
         tvShowDetails?.let {
-            println("TV SHOW DETAILS tvShowDetails")
             tvShowTitle = it.name
             yearReleased = it.first_air_date.substringBefore("-")
-            println("the director the year $yearReleased and show is $tvShowTitle")
             // Update genre list if the first genre isn't in the static list
             if (it.genres.isNotEmpty()) {
                 val firstgenre = it.genres.first().name
@@ -773,11 +770,9 @@ fun MovieForm(mediaViewModel: MediaViewModel) {
     )
 
     LaunchedEffect(movieDetails) {
-        println("In function: $movieDetails")
         movieDetails?.let {
             movieTitle = it.title
             yearReleased = it.release_date.substringBefore("-") // Assuming YYYY-MM-DD format
-            println("the year added is $yearReleased")
             // Update genre list if the first genre isn't in the static list
             if (it.genres.isNotEmpty()) {
                 val firstgenre = it.genres.first().name
