@@ -6,7 +6,7 @@ import retrofit2.http.Query
 
 interface GoogleBooksApiService {
     @GET("volumes")
-    fun searchBooks(@Query("q") query: String, @Query("key") apiKey: String): Call<BookSearchResponse>
+    suspend fun searchBooks(@Query("q") query: String, @Query("key") apiKey: String): BookSearchResponse
 }
 
 data class BookSearchResponse(val items: List<BookItem>)

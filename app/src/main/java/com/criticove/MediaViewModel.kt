@@ -107,15 +107,8 @@ class MediaViewModel: ViewModel() {
         val BOOK_API = "AIzaSyBtP-ywLo6XXLl-D3x3YjhECEPVGwRmJY8"
         viewModelScope.launch {
             try {
-                val response = googleBooksApiService.searchBooks(query, BOOK_API).execute()
-                if (response.isSuccessful) {
-                    val bookItems = response.body()?.items?.map { bookItem ->
-                        bookItem
-                    } ?: emptyList()
-                    bookSuggestions.postValue(bookItems)
-                } else {
-                    Log.e("MediaViewModel", "Error searching book titles: ${response.message()}")
-                }
+                    val response = googleBooksApiService.searchBooks(query, BOOK_API)
+                    bookSuggestions.postValue(response.items ?: emptyList())
             } catch (e: Exception) {
                 Log.e("MediaViewModel", "Error searching book titles", e)
             }
