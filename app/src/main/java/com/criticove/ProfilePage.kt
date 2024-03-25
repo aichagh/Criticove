@@ -312,12 +312,16 @@ fun EditMain(navController: NavController) {
             horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
             CustomButton("Save changes") {
-                FirebaseManager.updateUsername(username) { success ->
-                    statusMessage = if (success) {
-                        "Username updated."
-                    } else {
-                        "Username update failed. Try again."
+                if (username != "") {
+                    FirebaseManager.updateUsername(username) { success ->
+                        statusMessage = if (success && username != "") {
+                            "Username updated."
+                        } else {
+                            "Username update failed. Try again."
+                        }
                     }
+                } else {
+                    statusMessage = "Username cannot be empty"
                 }
             }
 //            CustomButton("Back") { navController.navigate("ProfilePage") }
