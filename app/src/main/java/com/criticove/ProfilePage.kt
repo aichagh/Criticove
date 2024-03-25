@@ -291,11 +291,11 @@ fun EditMain(navController: NavController) {
                     .clip(CircleShape)
             )
         }
-
+        var textColor = if (statusMessage == "Username updated.") colorResource(id = R.color.darkgreen) else colorResource(id = R.color.red)
         Text(
             text = statusMessage,
             fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
-            color = colorResource(id = R.color.darkgreen),
+            color = textColor,
             fontSize = 18.sp
         )
 
