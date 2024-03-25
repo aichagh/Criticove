@@ -112,28 +112,6 @@ fun ReviewDetailsMainContent(navController: NavController,
 //    }
 }
 
-/**
-@Composable
-fun ReviewDetailsHeader() {
-Box(
-modifier = Modifier
-.fillMaxWidth()
-.height(50.dp)
-.background(colorResource(id = R.color.blue)),
-contentAlignment = Alignment.Center
-) {
-reviewData["Title"]?.let {
-Text(
-text = it,
-color = colorResource(id = R.color.white),
-fontSize = 20.sp
-
-)
-}
-}
-}
- **/
-
 @Composable
 fun ReviewDetailsTable(type: String, selReview: Review,
                        reviewID: String, isFriend: Boolean,
@@ -142,13 +120,6 @@ fun ReviewDetailsTable(type: String, selReview: Review,
 
     var elements =  mutableListOf<String>()
     var reviewData: MutableMap<String, String> = mutableMapOf()
-
-    /*
-    reviewData = mutableMapOf("Title" to "The Night Circus", "Author" to "Erin Morgenstern",
-    "Date Published" to "01/01/2024", "Genre" to "Fantasy", "Book Type" to "eBook",
-    "Started" to "01/01/2024", "Finished" to "20/01/2024", "Rating" to "4",
-    "Review" to "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
-    */
 
     elements = listOf(
         "Title", "Author", "Date Published", "Genre", "Book Type", "Started",
@@ -160,8 +131,8 @@ fun ReviewDetailsTable(type: String, selReview: Review,
             reviewData.clear()
 
             elements = listOf(
-                "Title", "Author", "Date Published", "Genre", "Book Type", "Started",
-                "Finished", "Rating", "Review"
+                "Title", "Author", "Date Published", "Genre", "Book Type",
+                "Date finished", "Rating", "Review"
             ).toMutableList()
 
             val bookReview: BookReview = selReview as BookReview
@@ -171,6 +142,7 @@ fun ReviewDetailsTable(type: String, selReview: Review,
             reviewData["Date Published"] = bookReview.date
             reviewData["Genre"] = bookReview.genre
             reviewData["Book Type"] = bookReview.booktype
+            reviewData["Date finished"] = bookReview.datefinished
             reviewData["Rating"] = bookReview.rating.toString()
             reviewData["Review"] = bookReview.paragraph
 
@@ -178,8 +150,8 @@ fun ReviewDetailsTable(type: String, selReview: Review,
         is TVShowReview -> {
             reviewData.clear()
             elements = listOf(
-                "Title", "Director", "Date Released", "Genre", "Streaming Service", "Started",
-                "Finished", "Rating", "Review"
+                "Title", "Director", "Date Released", "Genre", "Streaming Service",
+                "Date finished", "Rating", "Review"
             ).toMutableList()
 
             val tvReview: TVShowReview = selReview as TVShowReview
@@ -189,14 +161,15 @@ fun ReviewDetailsTable(type: String, selReview: Review,
             reviewData["Date Released"] = tvReview.date
             reviewData["Genre"] = tvReview.genre
             reviewData["Streaming Service"] = tvReview.streamingservice
+            reviewData["Date finished"] = tvReview.datefinished
             reviewData["Rating"] = tvReview.rating.toString()
             reviewData["Review"] = tvReview.paragraph
         }
         is MovieReview -> {
             reviewData.clear()
             elements = listOf(
-                "Title", "Director", "Date Released", "Genre", "Streaming Service", "Started",
-                "Finished", "Rating", "Review"
+                "Title", "Director", "Date Released", "Genre", "Streaming Service",
+                "Date watched", "Rating", "Review"
             ).toMutableList()
 
             val movieReview: MovieReview = selReview as MovieReview
@@ -206,13 +179,13 @@ fun ReviewDetailsTable(type: String, selReview: Review,
             reviewData["Date Released"] = movieReview.date
             reviewData["Genre"] = movieReview.genre
             reviewData["Streaming Service"] = movieReview.streamingservice
+            reviewData["Date watched"] = movieReview.datewatched
             reviewData["Rating"] = movieReview.rating.toString()
             reviewData["Review"] = movieReview.paragraph
         }
     }
 
     displayReviewDetails(type, reviewData, elements, reviewID, isFriend, navController)
-
 }
 
 @Composable
@@ -432,58 +405,4 @@ fun PreviewReviewDetails() {
             }
         }
     }
-    /*
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .verticalScroll(rememberScrollState())
-            .background(colorResource(id = R.color.off_white))
-    ) {
-        Column() {
-            //Topbar()
-
-            Row(
-                modifier = Modifier
-                .fillMaxWidth()
-                    .padding(5.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "title: ",
-                    textAlign = TextAlign.End,
-                    modifier = Modifier
-                        .width(150.dp)
-                        .padding(5.dp)
-                )
-                Text(
-                    text = "mew",
-                    modifier = Modifier
-                        .padding(5.dp)
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "author: ",
-                    textAlign = TextAlign.End,
-                    modifier = Modifier
-                        .width(150.dp)
-                        .padding(5.dp)
-                )
-                Text(
-                    text = "mew mew",
-                    modifier = Modifier
-                        .padding(5.dp)
-                )
-            }
-
-        }
-    }
-
-     */
 }
