@@ -50,15 +50,19 @@ val menuItems = listOf(
     MenuItem("Books", Icons.Filled.Book, "Books" ),
     MenuItem("Movies", Icons.Filled.Movie, "Movies"),
     MenuItem("TV Shows", Icons.Filled.LiveTv, "TVShows"),
-    MenuItem("Bookmarks", Icons.Filled.Bookmark, "Bookmarks"),
+    MenuItem("Bookmarks", Icons.Filled.Bookmark, "Bookmarks")
+)
+
+val menuItemsFriends = listOf(
     MenuItem("Manage Friends", Icons.Filled.Group, "Friends"),
-    MenuItem("Add Friends", Icons.Filled.Group, "AddFriends"),
+    MenuItem("Add Friends", Icons.Filled.Group, "AddFriends")
 )
 
 @Composable
-fun DrawerContent(navController: NavController, closeDrawer: () -> Unit) {
-    val backgroundColor = colorResource(id = R.color.green) // The teal color for the background
-    val dividerColor = Color.Gray // Use Color.Gray for dividers
+fun DrawerContent(navController: NavController, friends: Boolean = false, closeDrawer: () -> Unit) {
+    val backgroundColor = colorResource(id = R.color.green)
+    val dividerColor = Color.Gray
+    val itemsToShow = if (friends) menuItemsFriends else menuItems
 
     Column(
         modifier = Modifier
@@ -68,7 +72,7 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit) {
     ) {
         Spacer(modifier = Modifier.height(24.dp)) // Add padding at the top of the drawer
 
-        menuItems.forEachIndexed { index, item ->
+        itemsToShow.forEachIndexed { index, item ->
             // Create a custom drawer item
             Row(
                 modifier = Modifier
@@ -94,7 +98,7 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit) {
             }
 
             // Add a gray divider after each item except the last one
-            if (index != menuItems.size - 1) {
+            if (index != itemsToShow.size - 1) {
             Divider(
                 color = dividerColor,
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -111,6 +115,7 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit) {
 fun MainLayout(
     title: String,
     navController: NavController,
+    friends: Boolean = false,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -119,7 +124,7 @@ fun MainLayout(
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            DrawerContent(navController, closeDrawer = {
+            DrawerContent(navController, friends, closeDrawer = {
                 coroutineScope.launch { drawerState.close() }
             })
         }
