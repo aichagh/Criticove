@@ -83,9 +83,9 @@
 | 2024/03/22 |       |         |        |          |            |  2   | Added review delete functionality |
 | 2024/03/22 |       |         |        |          |            |  5   | Added review edit functionality |
 | 2024/03/23 |       |         |        |          |            |  4   | Added ability to view friends review details without editing |
-| 2024/03/24 |       | 6       |        |          |            |      | Added Google Books API database for suggestions and autofill in the review form and updated the friends/regualar page hamburger menu |
+| 2024/03/24 |       | 6       |        |2         |            |      | Added Google Books API database for suggestions and autofill in the review form and updated the friends/regualar page hamburger menu |
 | 2024/03/22 |  2    |         |        |          |            |      | Changing date watched / finished to date picker |
-| 2024/03/22 |  3    |         |        |          |            |      | Fixed date watched / finished to date picker + fixed review details page UI|
-
+| 2024/03/24 |  3    |         |        |          |            |      | Fixed date watched / finished to date picker + fixed review details page UI|
+| 2024/03/24 |       |         |        |1         |            |      | Made some UI changes - Changed the color for the confirmation messages, added padding to username in profile page, added ellipses for long usernames  |
 
 
