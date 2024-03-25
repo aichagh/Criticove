@@ -791,14 +791,13 @@ fun normalText(field: String, type: String, initialValue: String = "", onValueCh
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun reviewText(type: String, initialValue: String = "") {
-    var entered by remember { mutableStateOf(initialValue)  }
-    LaunchedEffect(initialValue) {
-        entered = initialValue
-    }
+    var entered by remember { mutableStateOf("")  }
+
     OutlinedTextField(
         value = entered,
         onValueChange = {entered = it },
-        minLines = 7,
+        minLines = 3,
+        maxLines = 7,
         label = {
             Text(
                 text = "Review",
