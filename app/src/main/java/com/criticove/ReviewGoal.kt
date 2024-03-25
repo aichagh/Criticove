@@ -88,7 +88,7 @@ fun ReviewGoalMainContent(navController: NavController, userModel: userModel) {
                 modifier = Modifier.padding(top = 20.dp, bottom = 5.dp),
                 text = statusMessage,
                 fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
-                color = colorResource(id = R.color.red),
+                color = colorResource(id = R.color.darkgreen),
                 fontSize = 18.sp
             )
 

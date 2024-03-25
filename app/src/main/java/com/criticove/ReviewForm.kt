@@ -366,7 +366,6 @@ fun CreateForm(type:String, userModel: userModel, navController: NavController, 
             listOf("Book Title", "Author", "Year Published", "Genre", "Book Type", "Date finished").toMutableList()
         "TV Show" -> elements = listOf(
             "TV Show Title",
-            "Director",
             "Year Released",
             "Genre",
             "Streaming Service",
@@ -676,7 +675,7 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
     val genreList = listOf("Drama", "Comedy", "Action", "Fantasy", "Science Fiction")
     val updatedGenreList = remember { mutableStateListOf(*genreList.toTypedArray()) }
     var selectedService by remember { mutableStateOf("") }
-
+ 
     AutocompleteTextField (
         label = "TV Show Title",
         viewModel = mediaViewModel,
@@ -702,7 +701,7 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
         }
     }
 
-//    "TV Show Title", "Director", "Date Released", "Genre", "Streaming Service"
+//    "TV Show Title", "Date Released", "Genre", "Streaming Service"
     normalNumber(field = "Year Released", type = "TV Show", initialValue = yearReleased, onValueChange = { yearReleased = it })
     Dropdown(type = "TV Show", field = "Genre", list = updatedGenreList, selectedGenre) { selectedGenre = it }
     Dropdown(type = "TV Show", field = "Streaming Service", list = serviceList, selectedService) { selectedService = it }
@@ -747,7 +746,7 @@ fun MovieForm(mediaViewModel: MediaViewModel) {
     }
 
 
-    //"Movie Title", "Director", "Date Released", "Genre", "Publication Company"
+    //"Movie Title", "Date Released", "Genre", "Publication Company"
 //    normalText(field = "Movie Title", type = "Movie", initialValue = movieTitle, onValueChange = { movieTitle = it })
     normalNumber(field = "Year Released", type = "Movie", initialValue = yearReleased, onValueChange = { yearReleased = it })
     Dropdown(type = "Movie", field = "Genre", list = updatedGenreList, selectedGenre) { selectedGenre = it }
@@ -791,14 +790,13 @@ fun normalText(field: String, type: String, initialValue: String = "", onValueCh
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun reviewText(type: String, initialValue: String = "") {
-    var entered by remember { mutableStateOf(initialValue)  }
-    LaunchedEffect(initialValue) {
-        entered = initialValue
-    }
+    var entered by remember { mutableStateOf("")  }
+
     OutlinedTextField(
         value = entered,
         onValueChange = {entered = it },
-        minLines = 7,
+        minLines = 3,
+        maxLines = 7,
         label = {
             Text(
                 text = "Review",

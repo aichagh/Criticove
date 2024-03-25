@@ -60,11 +60,6 @@ var reviewID = "Insert ID"   // replace with other id
 // var reviewData = getSelectedReview(reviewID)
 var reviewType = ""   // reviewData["type"]!!
 
-// var reviewData = mutableMapOf("Title" to "The Night Circus", "Author" to "Erin Morgenstern",
-//    "Date Published" to "01/01/2024", "Genre" to "Fantasy", "Book Type" to "eBook",
-//    "Started" to "01/01/2024", "Finished" to "20/01/2024", "Rating" to "4",
-//    "Review" to "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
-
 var updatedReview: MutableMap<String, String>? = null
 
 /*
@@ -96,6 +91,7 @@ fun ReviewDetailsMainContent(navController: NavController,
                              friendID: String,
                              userModel: userModel) {
     userModel.getSelReview(reviewID, friendID)
+
     val selReview by userModel.selReview.collectAsState()
     println(reviewID)
 
@@ -150,14 +146,13 @@ fun ReviewDetailsTable(type: String, selReview: Review,
         is TVShowReview -> {
             reviewData.clear()
             elements = listOf(
-                "Title", "Director", "Date Released", "Genre", "Streaming Service",
+                "Title", "Date Released", "Genre", "Streaming Service",
                 "Date finished", "Rating", "Review"
             ).toMutableList()
 
             val tvReview: TVShowReview = selReview as TVShowReview
 
             reviewData["Title"] = tvReview.title
-            reviewData["Director"] = tvReview.director
             reviewData["Date Released"] = tvReview.date
             reviewData["Genre"] = tvReview.genre
             reviewData["Streaming Service"] = tvReview.streamingservice
@@ -168,14 +163,13 @@ fun ReviewDetailsTable(type: String, selReview: Review,
         is MovieReview -> {
             reviewData.clear()
             elements = listOf(
-                "Title", "Director", "Date Released", "Genre", "Streaming Service",
+                "Title", "Date Released", "Genre", "Streaming Service",
                 "Date watched", "Rating", "Review"
             ).toMutableList()
 
             val movieReview: MovieReview = selReview as MovieReview
 
             reviewData["Title"] = movieReview.title
-            reviewData["Director"] = movieReview.director
             reviewData["Date Released"] = movieReview.date
             reviewData["Genre"] = movieReview.genre
             reviewData["Streaming Service"] = movieReview.streamingservice

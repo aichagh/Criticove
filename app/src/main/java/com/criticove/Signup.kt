@@ -64,7 +64,7 @@ class Signup : ComponentActivity() {
             val navController = rememberNavController()
             NavHost(
                 navController,
-                startDestination = "Signup",
+                startDestination = "Login",
 
                 // removes the default crossfade animation when changing between pages
                 enterTransition = { EnterTransition.None },

@@ -133,6 +133,9 @@ fun ProfileMain(navController: NavController) {
 
         Text(
             text = username,
+            Modifier.padding(
+                horizontal = 15.dp
+            ),
             fontSize = 24.sp,
             fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
         )
@@ -223,7 +226,7 @@ fun EditProfile(navController: NavController, userModel: userModel) {
             .fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        EditHeader()
+        CommonHeader(navController, "Edit Profile", "ProfilePage")
 
         Column(
             modifier = Modifier
@@ -291,11 +294,11 @@ fun EditMain(navController: NavController) {
                     .clip(CircleShape)
             )
         }
-
+        var textColor = if (statusMessage == "Username updated.") colorResource(id = R.color.darkgreen) else colorResource(id = R.color.red)
         Text(
             text = statusMessage,
             fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
-            color = colorResource(id = R.color.red),
+            color = textColor,
             fontSize = 18.sp
         )
 
@@ -312,15 +315,19 @@ fun EditMain(navController: NavController) {
             horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
             CustomButton("Save changes") {
-                FirebaseManager.updateUsername(username) { success ->
-                    statusMessage = if (success) {
-                        "Username updated."
-                    } else {
-                        "Username update failed. Try again."
+                if (username != "") {
+                    FirebaseManager.updateUsername(username) { success ->
+                        statusMessage = if (success && username != "") {
+                            "Username updated."
+                        } else {
+                            "Username update failed. Try again."
+                        }
                     }
+                } else {
+                    statusMessage = "Username cannot be empty"
                 }
             }
-            CustomButton("Back") { navController.navigate("ProfilePage") }
+//            CustomButton("Back") { navController.navigate("ProfilePage") }
         }
 
     }
