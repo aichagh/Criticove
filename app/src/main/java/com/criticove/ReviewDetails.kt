@@ -146,14 +146,13 @@ fun ReviewDetailsTable(type: String, selReview: Review,
         is TVShowReview -> {
             reviewData.clear()
             elements = listOf(
-                "Title", "Director", "Date Released", "Genre", "Streaming Service",
+                "Title", "Date Released", "Genre", "Streaming Service",
                 "Date finished", "Rating", "Review"
             ).toMutableList()
 
             val tvReview: TVShowReview = selReview as TVShowReview
 
             reviewData["Title"] = tvReview.title
-            reviewData["Director"] = tvReview.director
             reviewData["Date Released"] = tvReview.date
             reviewData["Genre"] = tvReview.genre
             reviewData["Streaming Service"] = tvReview.streamingservice
@@ -164,14 +163,13 @@ fun ReviewDetailsTable(type: String, selReview: Review,
         is MovieReview -> {
             reviewData.clear()
             elements = listOf(
-                "Title", "Director", "Date Released", "Genre", "Streaming Service",
+                "Title", "Date Released", "Genre", "Streaming Service",
                 "Date watched", "Rating", "Review"
             ).toMutableList()
 
             val movieReview: MovieReview = selReview as MovieReview
 
             reviewData["Title"] = movieReview.title
-            reviewData["Director"] = movieReview.director
             reviewData["Date Released"] = movieReview.date
             reviewData["Genre"] = movieReview.genre
             reviewData["Streaming Service"] = movieReview.streamingservice

@@ -366,7 +366,6 @@ fun CreateForm(type:String, userModel: userModel, navController: NavController, 
             listOf("Book Title", "Author", "Year Published", "Genre", "Book Type", "Date finished").toMutableList()
         "TV Show" -> elements = listOf(
             "TV Show Title",
-            "Director",
             "Year Released",
             "Genre",
             "Streaming Service",
@@ -702,7 +701,7 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
         }
     }
 
-//    "TV Show Title", "Director", "Date Released", "Genre", "Streaming Service"
+//    "TV Show Title", "Date Released", "Genre", "Streaming Service"
     normalNumber(field = "Year Released", type = "TV Show", initialValue = yearReleased, onValueChange = { yearReleased = it })
     Dropdown(type = "TV Show", field = "Genre", list = updatedGenreList, selectedGenre) { selectedGenre = it }
     Dropdown(type = "TV Show", field = "Streaming Service", list = serviceList, selectedService) { selectedService = it }
@@ -747,7 +746,7 @@ fun MovieForm(mediaViewModel: MediaViewModel) {
     }
 
 
-    //"Movie Title", "Director", "Date Released", "Genre", "Publication Company"
+    //"Movie Title", "Date Released", "Genre", "Publication Company"
 //    normalText(field = "Movie Title", type = "Movie", initialValue = movieTitle, onValueChange = { movieTitle = it })
     normalNumber(field = "Year Released", type = "Movie", initialValue = yearReleased, onValueChange = { yearReleased = it })
     Dropdown(type = "Movie", field = "Genre", list = updatedGenreList, selectedGenre) { selectedGenre = it }
