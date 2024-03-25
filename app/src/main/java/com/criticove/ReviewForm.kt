@@ -6,91 +6,78 @@ package com.criticove
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonColors
-import androidx.compose.material3.RadioButtonDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.criticove.backend.SubmittedReview
-import androidx.compose.runtime.*
-import com.criticove.m3.ButtonStyles.PrimaryButton
-import android.content.Context
-import android.content.Intent
-import android.service.autofill.DateTransformation
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerColors
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MenuItemColors
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.window.PopupProperties
-import com.criticove.m3.ButtonStyles.IconButton
-import com.criticove.backend.userModel
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.criticove.api.Movie
-import com.criticove.api.MovieDetail
 import com.criticove.api.TvShow
+import com.criticove.backend.SubmittedReview
+import com.criticove.backend.userModel
 import com.criticove.api.TvShowDetail
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -103,7 +90,9 @@ import com.criticove.api.BookItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.LocalDate
+import java.text.SimpleDateFormat
+import java.util.Date
+import kotlin.math.abs
 
 
 val filled = mutableMapOf(
@@ -675,8 +664,8 @@ fun BookForm(mediaViewModel: MediaViewModel) {
     normalText(field = "Author", type = "Book", initialValue = author,  onValueChange = { author = it })
     normalNumber(field = "Year Published", type = "Book", initialValue = yearPublished,  onValueChange = { yearPublished = it })
     Dropdown(type = "Book", field = "Genre", list = genreList, selectedGenre) { selectedGenre = it }
-    Dropdown(type = "Book", field = "Book Type", list = typeList, selectedType) { selectedType = it }
-    dateField(field = "Date finished", type = "Book")
+   Dropdown(type = "Book", field = "Book Type", list = typeList, selectedType) { selectedType = it }
+    datePicker(type = "Book", field = "Date finished")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -719,7 +708,8 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
     normalNumber(field = "Year Released", type = "TV Show", initialValue = yearReleased, onValueChange = { yearReleased = it })
     Dropdown(type = "TV Show", field = "Genre", list = updatedGenreList, selectedGenre) { selectedGenre = it }
     Dropdown(type = "TV Show", field = "Streaming Service", list = serviceList, selectedService) { selectedService = it }
-    dateField(field = "Date finished", type = "TV Show")
+//    dateField(field = "Date finished", type = "TV Show")
+    datePicker(type = "TV Show", field = "Date finished")
 }
 
 @Composable
@@ -764,7 +754,8 @@ fun MovieForm(mediaViewModel: MediaViewModel) {
     normalNumber(field = "Year Released", type = "Movie", initialValue = yearReleased, onValueChange = { yearReleased = it })
     Dropdown(type = "Movie", field = "Genre", list = updatedGenreList, selectedGenre) { selectedGenre = it }
     Dropdown(type = "Movie", field = "Streaming Service", list = serviceList, selectedService) { selectedService = it }
-    dateField(field = "Date watched", type = "Movie")
+//    dateField(field = "Date watched", type = "Movie")
+    datePicker(type = "Movie", field = "Date watched")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -831,13 +822,8 @@ fun reviewText(type: String, initialValue: String = "") {
 
 @Suppress("ModifierParameter")
 @Composable
-fun Dropdown(
-    type: String,
-    field: String,
-    list: List<String>,
-    selected: String = "",
-    onSelectedChange: (String) -> Unit
-) {
+fun Dropdown(type: String, field: String, list: List<String>,
+             selected: String = "", onSelectedChange: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     // Use the placeholder if 'selected' is empty, otherwise, show the selected value
     var entered by remember { mutableStateOf(if (selected.isEmpty()) field else selected) }
@@ -921,66 +907,34 @@ fun Dropdown(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun dateField(field: String, type: String) {
-    var entered by remember { mutableStateOf("") }
-
-    OutlinedTextField(
-        value = entered,
-        onValueChange = { if (it.length < 9) entered = it },
-        singleLine = true,
-        label = {
-            Text(
-                text = field, color = colorResource(id = R.color.coolGrey),
-                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
-            )
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = colorResource(id = R.color.blue),
-            unfocusedBorderColor = colorResource(id = R.color.teal)
-        ),
-        shape = RoundedCornerShape(10.dp),
-        visualTransformation = DateTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-
-        )
-    filled[type]?.set(field, entered).toString()
-}
-
-// Adapted from :
-// https://stackoverflow.com/questions/69309829/how-to-mask-a-textfield-to-show-the-dd-mm-yyyy-date-format-in-jetpack-compose
-class DateTransformation : VisualTransformation {
-
-    // XX/XX/XXXX format
-    override fun filter(text: AnnotatedString): TransformedText {
-        var out = ""
-        text.text.forEachIndexed { index, char ->
-            when (index) {
-                2 -> out += "/$char"
-                4 -> out += "/$char"
-                else -> out += char
-            }
-        }
-        val numberOffsetTranslator = object : OffsetMapping {
-            override fun originalToTransformed(offset: Int): Int {
-                if (offset <= 2) return offset
-                if (offset <= 4) return offset + 1
-                return offset + 2
-            }
-
-            override fun transformedToOriginal(offset: Int): Int {
-                if (offset <= 2) return offset
-                if (offset <= 5) return offset - 1
-                return offset - 2
-            }
-        }
-        return TransformedText(AnnotatedString(out), numberOffsetTranslator)
-    }
-}
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun dateField(field: String, type: String) {
+//    var entered by remember{ mutableStateOf("Select a date") }
+//
+//    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = 1578096000000)
+//    DatePicker(
+//        state = datePickerState,
+//        modifier = Modifier
+//            .padding(5.dp)
+//            .fillMaxWidth()
+//            .border(1.dp, colorResource(id = R.color.teal)),
+//        showModeToggle = true,
+//        title = {
+//            Text(
+//                text = "Select a date",
+//                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+//                textAlign = TextAlign.Center,
+//                fontSize = 18.sp,
+//                modifier = Modifier.padding(horizontal = 5.dp)
+//            )
+//        },
+//    )
+//    val formatter = SimpleDateFormat("dd/MM/yyyy")
+//    entered = formatter.format(datePickerState.selectedDateMillis?.let { Date(it) })
+//
+//    filled[type]?.set(field, entered).toString()
+//}
 
 @Composable
 fun normalNumber(field: String, type: String, initialValue: String = "", onValueChange: (String) -> Unit) {
@@ -1037,4 +991,108 @@ fun normalNumber(field: String, type: String, initialValue: String = "", onValue
 
 fun isValidYear(year: String): Boolean {
     return year.length == 4 && year.toIntOrNull()?.let { it in 1000..2099 } == true
+}
+
+@Composable
+fun datePicker(type: String, field: String) {
+    var entered = "Select a date"
+    Box(
+        modifier = Modifier.padding(horizontal = 10.dp)
+    ) {
+        val snackState = remember { SnackbarHostState() }
+        SnackbarHost(hostState = snackState, Modifier)
+        val openDialog = remember { mutableStateOf(false) }
+        val datePickerState = rememberDatePickerState()
+
+        if (openDialog.value) {
+            val confirmEnabled = remember {
+                derivedStateOf { datePickerState.selectedDateMillis != null }
+            }
+            // this button doesn't do anything but is here so there is no gap in background when
+            // the dialog pops up
+            TextButton(
+                onClick = { /* TODO() */},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(
+                        width = 1.dp,
+                        color = colorResource(id = R.color.teal),
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .background(colorResource(id = R.color.off_white))
+            ){""}
+
+            DatePickerDialog(
+                onDismissRequest = { openDialog.value = false },
+                confirmButton = {
+                    TextButton(
+                        onClick = { openDialog.value = false },
+                        enabled = confirmEnabled.value
+                    ) {
+                        Text("OK")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { openDialog.value = false }) {
+                        Text("Cancel")
+                    }
+                },
+                colors = DatePickerDefaults.colors(
+                    containerColor = colorResource(id = R.color.off_white),
+                    yearContentColor = colorResource(id = R.color.off_white),
+                    navigationContentColor = colorResource(id = R.color.off_white),
+                    subheadContentColor = colorResource(id = R.color.off_white),
+                    weekdayContentColor = colorResource(id = R.color.off_white),
+                    headlineContentColor = colorResource(id = R.color.off_white),
+                    selectedDayContainerColor = colorResource(id = R.color.off_white),
+                    selectedDayContentColor = colorResource(id = R.color.teal),
+                ),
+            ) {
+                DatePicker(state = datePickerState)
+            }
+        } else {
+            TextButton(
+                onClick = { openDialog.value = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(
+                        width = 1.dp,
+                        color = colorResource(id = R.color.teal),
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .background(colorResource(id = R.color.off_white))
+            ) {
+                val formatter = SimpleDateFormat("MM/dd/yyyy")
+                datePickerState.selectedDateMillis?.let {
+                    val temp = (Date(datePickerState.selectedDateMillis!!).time + abs(Date(datePickerState.selectedDateMillis!!).timezoneOffset * 60000)).toLong()
+                    entered = formatter.format(Date(temp)).toString()
+                }
+                Text(
+                    text = entered,
+                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                    color = colorResource(id = R.color.black),
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 15.dp, horizontal = 10.dp),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.calendar),
+                contentDescription = "calendar icon",
+                tint = colorResource(id = R.color.black),
+                modifier = Modifier.height(20.dp)
+            )
+        }
+    }
+
+    filled[type]?.set(field, entered).toString()
 }
