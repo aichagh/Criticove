@@ -676,7 +676,7 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
     val genreList = listOf("Drama", "Comedy", "Action", "Fantasy", "Science Fiction")
     val updatedGenreList = remember { mutableStateListOf(*genreList.toTypedArray()) }
     var selectedService by remember { mutableStateOf("") }
-
+ 
     AutocompleteTextField (
         label = "TV Show Title",
         viewModel = mediaViewModel,
