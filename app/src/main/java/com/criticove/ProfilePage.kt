@@ -320,8 +320,7 @@ fun EditMain(navController: NavController) {
                     }
                 }
             }
-//            CustomButton("Back") { navController.navigate("ProfilePage")
-            }
+//            CustomButton("Back") { navController.navigate("ProfilePage") }
         }
 
     }
