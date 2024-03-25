@@ -133,6 +133,9 @@ fun ProfileMain(navController: NavController) {
 
         Text(
             text = username,
+            Modifier.padding(
+                horizontal = 15.dp
+            ),
             fontSize = 24.sp,
             fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
         )
