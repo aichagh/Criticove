@@ -223,7 +223,7 @@ fun EditProfile(navController: NavController, userModel: userModel) {
             .fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        EditHeader()
+        CommonHeader(navController, "Edit Profile", "ProfilePage")
 
         Column(
             modifier = Modifier
@@ -295,7 +295,7 @@ fun EditMain(navController: NavController) {
         Text(
             text = statusMessage,
             fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
-            color = colorResource(id = R.color.red),
+            color = colorResource(id = R.color.darkgreen),
             fontSize = 18.sp
         )
 
@@ -320,7 +320,8 @@ fun EditMain(navController: NavController) {
                     }
                 }
             }
-            CustomButton("Back") { navController.navigate("ProfilePage") }
+//            CustomButton("Back") { navController.navigate("ProfilePage")
+            }
         }
 
     }
