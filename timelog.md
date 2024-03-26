@@ -87,5 +87,6 @@
 | 2024/03/22 |  2    |         |        |          |            |      | Changing date watched / finished to date picker |
 | 2024/03/24 |  3    |         |        |          |            |      | Fixed date watched / finished to date picker + fixed review details page UI|
 | 2024/03/24 |  1    |         |        |1         |            |      | Made some UI changes - Changed the color for the confirmation messages, added padding to username in profile page, added ellipses for long usernames  |
+| 2024/03/26 |       |         |1       |          |            |      | delete friends backend |
 
 
