@@ -107,7 +107,11 @@ fun ReviewDetailsMainContent(navController: NavController,
                 .verticalScroll(rememberScrollState())
                 .background(colorResource(id = R.color.off_white))
         ) {
-            CommonHeader(navController, selReview.title, "Reviews")
+            if(isFriend) {
+                CommonHeader(navController, selReview.title, "FriendsReviews")
+            } else {
+                CommonHeader(navController, selReview.title, "Reviews")
+            }
             ReviewDetailsTable(reviewType, selReview, reviewID, isFriend, navController)
         }
 //    }
