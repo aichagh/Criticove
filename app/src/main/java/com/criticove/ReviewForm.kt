@@ -89,9 +89,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.format.TextStyle
 import java.util.Date
 import kotlin.math.abs
-import androidx.compose.ui.text.TextStyle as TextStyle
 
 
 val filled = mutableMapOf(
@@ -256,8 +256,8 @@ fun AutocompleteTextField(
                         }
                     }
                 } catch (e: Exception) {
-                println("Error in coroutine: ${e.message}")
-            }
+                    println("Error in coroutine: ${e.message}")
+                }
             }
         },
         label = { Text(text = label,
@@ -304,14 +304,14 @@ fun AutocompleteTextField(
                     },
                     text = {
                         Text("${suggestion.displayText} (${suggestion.displayDate})",
-                        fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxSize(),
-                        color = colorResource(id = R.color.black))
+                            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxSize(),
+                            color = colorResource(id = R.color.black))
                     },
                     modifier = Modifier
                         .background(colorResource(id = R.color.off_white)),
-                    )
+                )
             }
         }
     }
@@ -325,14 +325,16 @@ fun Selection(userModel: userModel, navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(30.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly
+            .height(60.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         val mediaType = listOf("Book", "TV Show", "Movie")
         mediaType.forEach{ el ->
             Row(
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .fillMaxHeight(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
                     selected = selectedType == el,
@@ -347,8 +349,11 @@ fun Selection(userModel: userModel, navController: NavController) {
                     "Book" -> id = R.drawable.book_black
                     "TV Show" -> id = R.drawable.tv_black
                 }
-                Icon(imageVector = ImageVector.vectorResource(id = id),
-                    contentDescription = el )
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = id),
+                    contentDescription = el,
+                    modifier = Modifier.height(30.dp)
+                )
             }
         }
     }
@@ -662,7 +667,7 @@ fun BookForm(mediaViewModel: MediaViewModel) {
     normalText(field = "Author", type = "Book", initialValue = author,  onValueChange = { author = it })
     normalNumber(field = "Year Published", type = "Book", initialValue = yearPublished,  onValueChange = { yearPublished = it })
     Dropdown(type = "Book", field = "Genre", list = genreList, selectedGenre) { selectedGenre = it }
-   Dropdown(type = "Book", field = "Book Type", list = typeList, selectedType) { selectedType = it }
+    Dropdown(type = "Book", field = "Book Type", list = typeList, selectedType) { selectedType = it }
     datePicker(type = "Book", field = "Date finished")
 }
 
@@ -676,7 +681,7 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
     val genreList = listOf("Drama", "Comedy", "Action", "Fantasy", "Science Fiction")
     val updatedGenreList = remember { mutableStateListOf(*genreList.toTypedArray()) }
     var selectedService by remember { mutableStateOf("") }
- 
+
     AutocompleteTextField (
         label = "TV Show Title",
         viewModel = mediaViewModel,
@@ -765,7 +770,10 @@ fun normalText(field: String, type: String, initialValue: String = "", onValueCh
     }
     OutlinedTextField(
         value = entered,
-        onValueChange = { entered = it },
+        onValueChange = {
+            entered = it
+//                        onValueChange(it)
+        },
         singleLine = true,
         label = {
             Text(
@@ -779,10 +787,6 @@ fun normalText(field: String, type: String, initialValue: String = "", onValueCh
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = colorResource(id = R.color.blue),
             unfocusedBorderColor = colorResource(id = R.color.teal)
-        ),
-        textStyle = TextStyle(
-            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-            fontSize = 18.sp,
         ),
         shape = RoundedCornerShape(10.dp)
     )
@@ -812,10 +816,6 @@ fun reviewText(type: String, initialValue: String = "") {
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = colorResource(id = R.color.blue),
             unfocusedBorderColor = colorResource(id = R.color.teal)
-        ),
-        textStyle = TextStyle(
-            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-            fontSize = 18.sp,
         ),
         shape = RoundedCornerShape(10.dp)
     )
@@ -851,6 +851,28 @@ fun Dropdown(type: String, field: String, list: List<String>,
                 .background(colorResource(id = R.color.off_white))
                 .padding(vertical = 5.dp),
         ) {
+            var textColor = colorResource(id = R.color.black);
+            // Adjust the condition to change text color if necessary
+            textColor = if (entered == field) colorResource(id = R.color.coolGrey) else colorResource(id = R.color.black)
+
+            Text(
+                text = entered,
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                fontSize = 18.sp,
+                color = textColor,
+                textAlign = TextAlign.Left,
+                modifier = Modifier.weight(1F)
+            )
+
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.right_arrow),
+                contentDescription = "dropdown",
+                tint = colorResource(id = R.color.black),
+                modifier = Modifier
+                    .rotate(90F)
+                    .height(20.dp)
+            )
+        }
 
         DropdownMenu(
             expanded = expanded,
@@ -870,9 +892,9 @@ fun Dropdown(type: String, field: String, list: List<String>,
                         )},
                     onClick = {
                         if (el != field) { // Ignore clicks on placeholder
-                        entered = el
-                        onSelectedChange(el)
-                    }
+                            entered = el
+                            onSelectedChange(el)
+                        }
                         expanded = false
                     },
                     modifier = Modifier
@@ -915,23 +937,20 @@ fun normalNumber(field: String, type: String, initialValue: String = "", onValue
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp),
-
+            .padding(horizontal = 10.dp, vertical = 5.dp),
         // Update TextField colors based on isError state.
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = if (isError) colorResource(id = R.color.red) else colorResource(id = R.color.blue),
             unfocusedBorderColor = if (isError) colorResource(id = R.color.red) else colorResource(id = R.color.teal),
             errorBorderColor = colorResource(id = R.color.red),
         ),
-
         shape = RoundedCornerShape(10.dp),
-
         isError = isError, // Indicate error state.
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        textStyle = TextStyle(
+        textStyle = androidx.compose.ui.text.TextStyle(
             fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-            fontSize = 18.sp,
-        ),
+            fontSize = 18.sp
+        )
     )
 
     // Optionally display an error message
@@ -955,7 +974,7 @@ fun isValidYear(year: String): Boolean {
 fun datePicker(type: String, field: String) {
     var entered = "Select a date"
     Box(
-        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+        modifier = Modifier.padding(horizontal = 10.dp)
     ) {
         val snackState = remember { SnackbarHostState() }
         SnackbarHost(hostState = snackState, Modifier)
@@ -969,7 +988,7 @@ fun datePicker(type: String, field: String) {
             // this button doesn't do anything but is here so there is no gap in background when
             // the dialog pops up
             TextButton(
-                onClick = { /* TODO() */ },
+                onClick = { /* TODO() */},
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(
@@ -978,7 +997,8 @@ fun datePicker(type: String, field: String) {
                         shape = RoundedCornerShape(10.dp)
                     )
                     .background(colorResource(id = R.color.off_white))
-            ) { "" }
+                    .padding(vertical = 5.dp),
+            ){""}
 
             DatePickerDialog(
                 onDismissRequest = { openDialog.value = false },
@@ -997,6 +1017,7 @@ fun datePicker(type: String, field: String) {
                 },
                 colors = DatePickerDefaults.colors(
                     containerColor = colorResource(id = R.color.off_white),
+                    selectedDayContentColor = colorResource(id = R.color.teal),
                 ),
             ) {
                 DatePicker(state = datePickerState)
@@ -1012,14 +1033,11 @@ fun datePicker(type: String, field: String) {
                         shape = RoundedCornerShape(10.dp)
                     )
                     .background(colorResource(id = R.color.off_white))
+                    .padding(vertical = 5.dp)
             ) {
                 val formatter = SimpleDateFormat("MM/dd/yyyy")
                 datePickerState.selectedDateMillis?.let {
-                }
-                    // needed to compensate the offset created by the timezone difference
-                    // otherwise date is always 1 day behind
-                    val temp =
-                        (Date(datePickerState.selectedDateMillis!!).time + abs(Date(datePickerState.selectedDateMillis!!).timezoneOffset * 60000)).toLong()
+                    val temp = (Date(datePickerState.selectedDateMillis!!).time + abs(Date(datePickerState.selectedDateMillis!!).timezoneOffset * 60000)).toLong()
                     entered = formatter.format(Date(temp)).toString()
                 }
                 Text(
