@@ -159,7 +159,7 @@ fun Stars(rating: Int) {
 }
 @Composable
 fun Review(title: String = "Title",
-           author: String = "Author",
+           author: String,
            year: String = "1999",
            rating: Int = 1,
            reviewID: String,
@@ -189,8 +189,12 @@ fun Review(title: String = "Title",
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.alegreya_sans_medium))
                 )
+                var author_text = "$author, $year"
+                if (author == "null") {
+                    author_text = "$year"
+                }
                 Text(
-                    text = "$author, $year",
+                    text = author_text,
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
                 )

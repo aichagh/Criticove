@@ -18,6 +18,20 @@ import androidx.navigation.NavController
 
 @Composable
 fun Navbar(navController: NavController) {
+    var value = navController.currentDestination?.route
+    var home_tint_color = colorResource(id = R.color.off_white)
+    var reviews_tint_color = colorResource(id = R.color.off_white)
+    var friends_tint_color = colorResource(id = R.color.off_white)
+    println("the values is $value")
+    if (value == "Dashboard") {
+        home_tint_color = colorResource(id = R.color.green)
+    }
+    if (value == "Reviews" || value == "Books" || value == "Movies" || value ==  "TVShows" || value == "Bookmarks") {
+        reviews_tint_color = colorResource(id = R.color.green)
+    }
+    if (value == "FriendsReviews" || value == "Friends" || value == "AddFriends") {
+        friends_tint_color = colorResource(id = R.color.green)
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -26,24 +40,26 @@ fun Navbar(navController: NavController) {
             .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        TextButton(onClick = { navController.navigate("Dashboard") }) {
+        TextButton(onClick = { navController.navigate("Dashboard")
+        }) {
+//
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.homepage),
-                contentDescription = "homepage", tint = colorResource(id = R.color.off_white)
+                contentDescription = "homepage", tint = home_tint_color
             )
         }
 
         TextButton(onClick = { navController.navigate("Reviews") }) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.list),
-                contentDescription = "all reviews", tint = colorResource(id = R.color.off_white)
+                contentDescription = "all reviews", tint = reviews_tint_color
             )
         }
 
         TextButton(onClick = { navController.navigate("FriendsReviews") }) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.people_white),
-                contentDescription = "friends", tint = colorResource(id = R.color.off_white)
+                contentDescription = "friends", tint = friends_tint_color
             )
         }
 

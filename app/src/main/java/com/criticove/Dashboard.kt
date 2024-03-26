@@ -270,7 +270,7 @@ fun TopGenres(userModel: userModel) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 20.dp),
+                    .padding(vertical = 20.dp, horizontal = 12.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -332,7 +332,10 @@ fun PieChart(numbers: List<Float>, colors: List<Color>) {
 @Composable
 fun PieChartLegendRow(color: Color, str: String, num: Double) {
     Row(
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(
+            horizontal = 7.dp
+        )
     ) {
         Icon(
             modifier = Modifier.size(20.dp),

@@ -972,7 +972,7 @@ fun isValidYear(year: String): Boolean {
 
 @Composable
 fun datePicker(type: String, field: String) {
-    var entered = "Select a date"
+    var entered = field
     Box(
         modifier = Modifier.padding(horizontal = 10.dp)
     ) {
