@@ -22,13 +22,14 @@ fun Navbar(navController: NavController) {
     var home_tint_color = colorResource(id = R.color.off_white)
     var reviews_tint_color = colorResource(id = R.color.off_white)
     var friends_tint_color = colorResource(id = R.color.off_white)
+    println("the values is $value")
     if (value == "Dashboard") {
         home_tint_color = colorResource(id = R.color.green)
     }
-    if (value == "Reviews") {
+    if (value == "Reviews" || value == "Books" || value == "Movies" || value ==  "TVShows" || value == "Bookmarks") {
         reviews_tint_color = colorResource(id = R.color.green)
     }
-    if (value == "FriendsReviews") {
+    if (value == "FriendsReviews" || value == "Friends" || value == "AddFriends") {
         friends_tint_color = colorResource(id = R.color.green)
     }
     Row(
