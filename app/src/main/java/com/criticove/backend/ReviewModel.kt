@@ -39,6 +39,7 @@ class userModel: ViewModel {
     private val _friendReviews: MutableStateFlow<MutableMap<Pair<String, String>, List<Review>>> = MutableStateFlow(mutableMapOf())
     val friendReviews: StateFlow<MutableMap<Pair<String, String>, List<Review>>> = _friendReviews
 
+
     fun getSelReview(reviewID: String, friendID: String = "none") {
         println("this is the user id : ${userID}")
         var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Reviews/${reviewID}")
@@ -125,6 +126,20 @@ class userModel: ViewModel {
         var friendsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Friends")
         if (friendID != null) {
             friendsRef.child("$friendID").setValue(friendusername)
+        }
+    }
+
+    fun delFriend(friendusername: String) {
+        val friendID = userMap.value.entries.find { it.value == friendusername }?.key
+        if (friendID != null) {
+            var friendsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Friends/${friendID}")
+            friendsRef.removeValue()
+                .addOnSuccessListener {
+                    println("removed friend $friendusername")
+                }
+            .addOnFailureListener { error ->
+                println("removed friend didnt work $error")
+            }
         }
     }
 @Composable

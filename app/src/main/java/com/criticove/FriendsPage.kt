@@ -152,7 +152,7 @@ fun FriendsMainContent(navController: NavController, usermodel: userModel) {
 
                 LazyColumn {
                     items(filteredFriends) { friend ->
-                        Friends(friend)
+                        Friends(friend, usermodel)
                     }
                 }
             }
@@ -164,7 +164,7 @@ fun FriendsMainContent(navController: NavController, usermodel: userModel) {
 
 
 @Composable
-fun Friends(friend: Friend) {
+fun Friends(friend: Friend, usermodel: userModel) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -209,6 +209,7 @@ fun Friends(friend: Friend) {
                     .width(50.dp),
                 onClick = {
 //                    ognewFriendsList.add(Friend(friend.username))
+                    usermodel.delFriend(friend.username)
                     remove_friend(friend.username)}
             ) {
                 Icon(
