@@ -91,6 +91,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import kotlin.math.abs
+import androidx.compose.ui.text.TextStyle as TextStyle
 
 
 val filled = mutableMapOf(
@@ -764,10 +765,7 @@ fun normalText(field: String, type: String, initialValue: String = "", onValueCh
     }
     OutlinedTextField(
         value = entered,
-        onValueChange = {
-                        entered = it
-//                        onValueChange(it)
-                        },
+        onValueChange = { entered = it },
         singleLine = true,
         label = {
             Text(
@@ -781,6 +779,10 @@ fun normalText(field: String, type: String, initialValue: String = "", onValueCh
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = colorResource(id = R.color.blue),
             unfocusedBorderColor = colorResource(id = R.color.teal)
+        ),
+        textStyle = TextStyle(
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+            fontSize = 18.sp,
         ),
         shape = RoundedCornerShape(10.dp)
     )
@@ -810,6 +812,10 @@ fun reviewText(type: String, initialValue: String = "") {
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = colorResource(id = R.color.blue),
             unfocusedBorderColor = colorResource(id = R.color.teal)
+        ),
+        textStyle = TextStyle(
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+            fontSize = 18.sp,
         ),
         shape = RoundedCornerShape(10.dp)
     )
@@ -842,30 +848,9 @@ fun Dropdown(type: String, field: String, list: List<String>,
                     color = colorResource(id = R.color.teal),
                     shape = RoundedCornerShape(10.dp)
                 )
-                .background(colorResource(id = R.color.off_white)),
+                .background(colorResource(id = R.color.off_white))
+                .padding(vertical = 5.dp),
         ) {
-            var textColor = colorResource(id = R.color.black);
-            // Adjust the condition to change text color if necessary
-            textColor = if (entered == field) colorResource(id = R.color.coolGrey) else colorResource(id = R.color.black)
-
-            Text(
-                text = entered,
-                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-                fontSize = 18.sp,
-                color = textColor,
-                textAlign = TextAlign.Left,
-                modifier = Modifier.weight(1F)
-            )
-
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.right_arrow),
-                contentDescription = "dropdown",
-                tint = colorResource(id = R.color.black),
-                modifier = Modifier
-                    .rotate(90F)
-                    .height(20.dp)
-            )
-        }
 
         DropdownMenu(
             expanded = expanded,
@@ -903,35 +888,6 @@ fun Dropdown(type: String, field: String, list: List<String>,
     }
 }
 
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun dateField(field: String, type: String) {
-//    var entered by remember{ mutableStateOf("Select a date") }
-//
-//    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = 1578096000000)
-//    DatePicker(
-//        state = datePickerState,
-//        modifier = Modifier
-//            .padding(5.dp)
-//            .fillMaxWidth()
-//            .border(1.dp, colorResource(id = R.color.teal)),
-//        showModeToggle = true,
-//        title = {
-//            Text(
-//                text = "Select a date",
-//                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-//                textAlign = TextAlign.Center,
-//                fontSize = 18.sp,
-//                modifier = Modifier.padding(horizontal = 5.dp)
-//            )
-//        },
-//    )
-//    val formatter = SimpleDateFormat("dd/MM/yyyy")
-//    entered = formatter.format(datePickerState.selectedDateMillis?.let { Date(it) })
-//
-//    filled[type]?.set(field, entered).toString()
-//}
-
 @Composable
 fun normalNumber(field: String, type: String, initialValue: String = "", onValueChange: (String) -> Unit) {
     var entered by remember { mutableStateOf(initialValue) }
@@ -953,7 +909,6 @@ fun normalNumber(field: String, type: String, initialValue: String = "", onValue
         label = {
             Text(
                 text = field,
-                // Use MaterialTheme.colors to access current theme colors.
                 color = colorResource(id = R.color.coolGrey),
                 fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
             )
@@ -961,15 +916,22 @@ fun normalNumber(field: String, type: String, initialValue: String = "", onValue
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 10.dp),
+
         // Update TextField colors based on isError state.
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = if (isError) colorResource(id = R.color.red) else colorResource(id = R.color.blue),
             unfocusedBorderColor = if (isError) colorResource(id = R.color.red) else colorResource(id = R.color.teal),
             errorBorderColor = colorResource(id = R.color.red),
         ),
+
         shape = RoundedCornerShape(10.dp),
+
         isError = isError, // Indicate error state.
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        textStyle = TextStyle(
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+            fontSize = 18.sp,
+        ),
     )
 
     // Optionally display an error message
@@ -993,7 +955,7 @@ fun isValidYear(year: String): Boolean {
 fun datePicker(type: String, field: String) {
     var entered = "Select a date"
     Box(
-        modifier = Modifier.padding(horizontal = 10.dp)
+        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
     ) {
         val snackState = remember { SnackbarHostState() }
         SnackbarHost(hostState = snackState, Modifier)
@@ -1007,7 +969,7 @@ fun datePicker(type: String, field: String) {
             // this button doesn't do anything but is here so there is no gap in background when
             // the dialog pops up
             TextButton(
-                onClick = { /* TODO() */},
+                onClick = { /* TODO() */ },
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(
@@ -1016,7 +978,7 @@ fun datePicker(type: String, field: String) {
                         shape = RoundedCornerShape(10.dp)
                     )
                     .background(colorResource(id = R.color.off_white))
-            ){""}
+            ) { "" }
 
             DatePickerDialog(
                 onDismissRequest = { openDialog.value = false },
@@ -1035,13 +997,6 @@ fun datePicker(type: String, field: String) {
                 },
                 colors = DatePickerDefaults.colors(
                     containerColor = colorResource(id = R.color.off_white),
-                    yearContentColor = colorResource(id = R.color.off_white),
-                    navigationContentColor = colorResource(id = R.color.off_white),
-                    subheadContentColor = colorResource(id = R.color.off_white),
-                    weekdayContentColor = colorResource(id = R.color.off_white),
-                    headlineContentColor = colorResource(id = R.color.off_white),
-                    selectedDayContainerColor = colorResource(id = R.color.off_white),
-                    selectedDayContentColor = colorResource(id = R.color.teal),
                 ),
             ) {
                 DatePicker(state = datePickerState)
@@ -1060,7 +1015,11 @@ fun datePicker(type: String, field: String) {
             ) {
                 val formatter = SimpleDateFormat("MM/dd/yyyy")
                 datePickerState.selectedDateMillis?.let {
-                    val temp = (Date(datePickerState.selectedDateMillis!!).time + abs(Date(datePickerState.selectedDateMillis!!).timezoneOffset * 60000)).toLong()
+                }
+                    // needed to compensate the offset created by the timezone difference
+                    // otherwise date is always 1 day behind
+                    val temp =
+                        (Date(datePickerState.selectedDateMillis!!).time + abs(Date(datePickerState.selectedDateMillis!!).timezoneOffset * 60000)).toLong()
                     entered = formatter.format(Date(temp)).toString()
                 }
                 Text(

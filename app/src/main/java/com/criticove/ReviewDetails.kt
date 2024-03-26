@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -21,8 +23,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -182,16 +187,18 @@ fun ReviewDetailsTable(type: String, selReview: Review,
     displayReviewDetails(type, reviewData, elements, reviewID, isFriend, navController)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
                          elements: MutableList<String>,
                          reviewID: String, isFriend: Boolean,
                          navController: NavController) {
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(colorResource(id = R.color.off_white))
-            .padding(10.dp)
+            .padding(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column() {
             println("in the review details page but not yet added info")
@@ -214,8 +221,8 @@ fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
                             ) {
                                 Text(
                                     text = "$label: ",
-                                    fontSize = 18.sp,
-                                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                                    fontSize = 16.sp,
+                                    fontFamily = FontFamily(Font(R.font.alegreya_sans_medium)),
                                     textAlign = TextAlign.End,
                                     color = colorResource(id = R.color.teal),
                                     modifier = Modifier
@@ -246,10 +253,6 @@ fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
                                             .padding(5.dp)
                                     )
                                 }
-
-
-
-
                             }
                         }
 
@@ -259,13 +262,31 @@ fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
                                 onValueChange = { curData = it },
                                 enabled = edit,
                                 minLines = 3,
-                                maxLines = 7,
-                                label = {Text( text = "Review", fontSize = 18.sp, color = colorResource(id = R.color.blue)) },
+                                label = {
+                                    Text(
+                                        text = "Review",
+                                        fontSize = 16.sp,
+                                        fontFamily = FontFamily(Font(R.font.alegreya_sans_medium)),
+                                        color = colorResource(id = R.color.teal))
+                                        },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .horizontalScroll(rememberScrollState())
-                                    .padding(5.dp)
+                                    .padding(horizontal = 10.dp),
+                                colors = TextFieldDefaults.outlinedTextFieldColors(
+                                    focusedBorderColor = colorResource(id = R.color.blue),
+                                    unfocusedBorderColor = colorResource(id = R.color.teal),
+                                    disabledTextColor = colorResource(id = R.color.black),
+                                ),
+                                textStyle = TextStyle(
+                                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                                    fontSize = 18.sp,
+//                                    color = colorResource(id = R.color.black))
+                                )
                             )
+
+                            Spacer(modifier = Modifier.size(15.dp))
+
                             if (!isFriend) {
                                 Row(
                                     modifier = Modifier
