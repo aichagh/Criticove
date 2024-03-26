@@ -95,8 +95,9 @@ fun ReviewDetailsMainContent(navController: NavController,
                              isFriend: Boolean,
                              friendID: String,
                              userModel: userModel) {
+    // userModel.getSelReview(reviewID, friendID)
+    // val selOReview by userModel.selReview.collectAsState()
     userModel.getSelReview(reviewID, friendID)
-
     val selReview by userModel.selReview.collectAsState()
     println(reviewID)
 
@@ -212,9 +213,9 @@ fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
                         .fillMaxWidth()
                 ) {
                     Column() {
-                        //var curData = reviewData[label].toString()
+                        var curData = reviewData[label].toString()
                         var edit by remember { mutableStateOf(false) }
-                        var curData by remember {mutableStateOf(reviewData[label].toString())}
+                        // var curData by remember {mutableStateOf(reviewData[label].toString())}
 
                         if (label != "Review") {
                             Row(
@@ -300,7 +301,8 @@ fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
                                     if (!edit) {
                                         CustomButton("Edit") { edit = true }
                                         CustomButton("Delete") {
-                                            navController.navigate("Friends")
+                                            //navController.navigate("Reviews")
+                                            navController.popBackStack()
                                             delSelectedReview(reviewID)
                                             //navController.navigate("Reviews")
                                         }

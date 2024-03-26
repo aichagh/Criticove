@@ -14,6 +14,7 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlin.coroutines.suspendCoroutine
 
 class userModel: ViewModel {
     //private val _userID: MutableStateFlow<String> = MutableStateFlow("ZFZrCVjIR0P76TqT5lxX0W3dUI93")
@@ -52,9 +53,79 @@ class userModel: ViewModel {
         // var selReviewQuery = reviewsRef.orderByChild("title").equalTo(reviewTitle)
 
         println("the users ${this.userID} reviews keys and their corresponding values: ,")
+
+        /*
+        var reviewPost = suspendCoroutine<Review> { continuation ->
+            reviewsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(reviewSnapshot: DataSnapshot) {
+                    val reviewKey = reviewSnapshot.key
+                    val review = reviewSnapshot.value as Map<String, Any>
+                    lateinit var reviewPost: Review
+                    val rDB = review["rating"]
+                    val r = when (rDB) {
+                        is Int -> rDB
+                        is Long -> rDB.toInt()
+                        else -> 3
+                    }
+                    val sDB = review["shared"]
+                    val s = when (sDB) {
+                        is Boolean -> sDB
+                        else -> false
+                    }
+                    println("this is rint $r")
+
+                    when (review["type"]) {
+                        "Book" -> {
+                            reviewPost = BookReview(
+                                "Book", review["title"].toString(), review["date"].toString(),
+                                review["genre"].toString(), r, review["paragraph"].toString(),
+                                review["reviewID"].toString(), review["author"].toString(),
+                                review["booktype"].toString(),
+                                review["datefinished"].toString(), s
+                            )
+                        }
+
+                        "Movie" -> {
+                            reviewPost = MovieReview(
+                                "Movie",
+                                review["title"].toString(),
+                                review["date"].toString(),
+                                review["genre"].toString(),
+                                r,
+                                review["paragraph"].toString(),
+                                review["reviewID"].toString(),
+                                review["director"].toString(),
+                                review["streamingservice"].toString(),
+                                review["datewatched"].toString(), s
+                            )
+                        }
+
+                        "TV Show" -> {
+                            reviewPost = TVShowReview(
+                                "TV Show", review["title"].toString(), review["date"].toString(),
+                                review["genre"].toString(), r, review["paragraph"].toString(),
+                                review["reviewID"].toString(), review["director"].toString(),
+                                review["streamingservice"].toString(),
+                                review["datefinished"].toString(), s
+                            )
+                        }
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    // Log.w(TAG, "review:onCancelled", databaseError.toException())
+                }
+            })
+        }
+
+         */
+
+
         reviewsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(reviewSnapshot: DataSnapshot) {
                 val reviewKey = reviewSnapshot.key
+                if (reviewSnapshot.value == null) {
+                    return
+                }
                 val review = reviewSnapshot.value as Map<String, Any>
                 lateinit var reviewPost: Review
                 val rDB = review["rating"]
@@ -119,6 +190,8 @@ class userModel: ViewModel {
                 // Log.w(TAG, "review:onCancelled", databaseError.toException())
             }
         })
+
+
     }
 
     fun addFriend(friendusername: String) {
