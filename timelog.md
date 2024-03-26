@@ -91,3 +91,4 @@
 | 2024/03/25 | 3.5   |         |        |          |            |      | minor UI fixes + testing API for email verificaiton on signup |
 | 2024/03/25 |       |         |        |2.5       |            |      | Changing text fields for review form. Worked on navbar color for current page. Removing director from review card. |
 | 2024/03/26 |       |         |        |1.5       |            |      | Added functionality to navbar to display current page the user is on. Made some UI changes to the dashbaord. Tested the app to improve UX. |
+| 2024/03/26 |       |         |        |0.5       |            |      | Worked on not displaying all users as friends. Working on modifying the add friends list. |
