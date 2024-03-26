@@ -89,5 +89,5 @@
 | 2024/03/24 |  1    |         |        |1         |            |      | Made some UI changes - Changed the color for the confirmation messages, added padding to username in profile page, added ellipses for long usernames  |
 | 2024/03/26 |       |         |2       |          |            |      | delete friends backend |
 | 2024/03/25 | 3.5   |         |        |          |            |      | minor UI fixes + testing API for email verificaiton on signup |
-
+| 2024/03/25 |       |         |        |2.5       |            |      | Changing text fields for review form. Worked on navbar color for current page. Removing director from review card. |
 
