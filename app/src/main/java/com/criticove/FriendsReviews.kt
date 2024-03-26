@@ -162,7 +162,7 @@ fun FriendReview(
                 }
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.bookmark_empty),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.view),
                     contentDescription = "bookmark", tint = colorResource(id = R.color.black)
                 )
             }
