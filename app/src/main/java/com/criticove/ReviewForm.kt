@@ -89,6 +89,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.format.TextStyle
 import java.util.Date
 import kotlin.math.abs
 
@@ -255,8 +256,8 @@ fun AutocompleteTextField(
                         }
                     }
                 } catch (e: Exception) {
-                println("Error in coroutine: ${e.message}")
-            }
+                    println("Error in coroutine: ${e.message}")
+                }
             }
         },
         label = { Text(text = label,
@@ -303,14 +304,14 @@ fun AutocompleteTextField(
                     },
                     text = {
                         Text("${suggestion.displayText} (${suggestion.displayDate})",
-                        fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxSize(),
-                        color = colorResource(id = R.color.black))
+                            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxSize(),
+                            color = colorResource(id = R.color.black))
                     },
                     modifier = Modifier
                         .background(colorResource(id = R.color.off_white)),
-                    )
+                )
             }
         }
     }
@@ -324,14 +325,16 @@ fun Selection(userModel: userModel, navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(30.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly
+            .height(60.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         val mediaType = listOf("Book", "TV Show", "Movie")
         mediaType.forEach{ el ->
             Row(
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .fillMaxHeight(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
                     selected = selectedType == el,
@@ -346,8 +349,11 @@ fun Selection(userModel: userModel, navController: NavController) {
                     "Book" -> id = R.drawable.book_black
                     "TV Show" -> id = R.drawable.tv_black
                 }
-                Icon(imageVector = ImageVector.vectorResource(id = id),
-                    contentDescription = el )
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = id),
+                    contentDescription = el,
+                    modifier = Modifier.height(30.dp)
+                )
             }
         }
     }
@@ -661,7 +667,7 @@ fun BookForm(mediaViewModel: MediaViewModel) {
     normalText(field = "Author", type = "Book", initialValue = author,  onValueChange = { author = it })
     normalNumber(field = "Year Published", type = "Book", initialValue = yearPublished,  onValueChange = { yearPublished = it })
     Dropdown(type = "Book", field = "Genre", list = genreList, selectedGenre) { selectedGenre = it }
-   Dropdown(type = "Book", field = "Book Type", list = typeList, selectedType) { selectedType = it }
+    Dropdown(type = "Book", field = "Book Type", list = typeList, selectedType) { selectedType = it }
     datePicker(type = "Book", field = "Date finished")
 }
 
@@ -675,7 +681,7 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
     val genreList = listOf("Drama", "Comedy", "Action", "Fantasy", "Science Fiction")
     val updatedGenreList = remember { mutableStateListOf(*genreList.toTypedArray()) }
     var selectedService by remember { mutableStateOf("") }
- 
+
     AutocompleteTextField (
         label = "TV Show Title",
         viewModel = mediaViewModel,
@@ -765,9 +771,9 @@ fun normalText(field: String, type: String, initialValue: String = "", onValueCh
     OutlinedTextField(
         value = entered,
         onValueChange = {
-                        entered = it
+            entered = it
 //                        onValueChange(it)
-                        },
+        },
         singleLine = true,
         label = {
             Text(
@@ -842,7 +848,8 @@ fun Dropdown(type: String, field: String, list: List<String>,
                     color = colorResource(id = R.color.teal),
                     shape = RoundedCornerShape(10.dp)
                 )
-                .background(colorResource(id = R.color.off_white)),
+                .background(colorResource(id = R.color.off_white))
+                .padding(vertical = 5.dp),
         ) {
             var textColor = colorResource(id = R.color.black);
             // Adjust the condition to change text color if necessary
@@ -885,9 +892,9 @@ fun Dropdown(type: String, field: String, list: List<String>,
                         )},
                     onClick = {
                         if (el != field) { // Ignore clicks on placeholder
-                        entered = el
-                        onSelectedChange(el)
-                    }
+                            entered = el
+                            onSelectedChange(el)
+                        }
                         expanded = false
                     },
                     modifier = Modifier
@@ -902,35 +909,6 @@ fun Dropdown(type: String, field: String, list: List<String>,
         filled[type]?.set(field, entered).toString()
     }
 }
-
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun dateField(field: String, type: String) {
-//    var entered by remember{ mutableStateOf("Select a date") }
-//
-//    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = 1578096000000)
-//    DatePicker(
-//        state = datePickerState,
-//        modifier = Modifier
-//            .padding(5.dp)
-//            .fillMaxWidth()
-//            .border(1.dp, colorResource(id = R.color.teal)),
-//        showModeToggle = true,
-//        title = {
-//            Text(
-//                text = "Select a date",
-//                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-//                textAlign = TextAlign.Center,
-//                fontSize = 18.sp,
-//                modifier = Modifier.padding(horizontal = 5.dp)
-//            )
-//        },
-//    )
-//    val formatter = SimpleDateFormat("dd/MM/yyyy")
-//    entered = formatter.format(datePickerState.selectedDateMillis?.let { Date(it) })
-//
-//    filled[type]?.set(field, entered).toString()
-//}
 
 @Composable
 fun normalNumber(field: String, type: String, initialValue: String = "", onValueChange: (String) -> Unit) {
@@ -953,14 +931,13 @@ fun normalNumber(field: String, type: String, initialValue: String = "", onValue
         label = {
             Text(
                 text = field,
-                // Use MaterialTheme.colors to access current theme colors.
                 color = colorResource(id = R.color.coolGrey),
                 fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
             )
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp),
+            .padding(horizontal = 10.dp, vertical = 5.dp),
         // Update TextField colors based on isError state.
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = if (isError) colorResource(id = R.color.red) else colorResource(id = R.color.blue),
@@ -969,7 +946,11 @@ fun normalNumber(field: String, type: String, initialValue: String = "", onValue
         ),
         shape = RoundedCornerShape(10.dp),
         isError = isError, // Indicate error state.
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        textStyle = androidx.compose.ui.text.TextStyle(
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+            fontSize = 18.sp
+        )
     )
 
     // Optionally display an error message
@@ -1016,6 +997,7 @@ fun datePicker(type: String, field: String) {
                         shape = RoundedCornerShape(10.dp)
                     )
                     .background(colorResource(id = R.color.off_white))
+                    .padding(vertical = 5.dp),
             ){""}
 
             DatePickerDialog(
@@ -1035,12 +1017,6 @@ fun datePicker(type: String, field: String) {
                 },
                 colors = DatePickerDefaults.colors(
                     containerColor = colorResource(id = R.color.off_white),
-                    yearContentColor = colorResource(id = R.color.off_white),
-                    navigationContentColor = colorResource(id = R.color.off_white),
-                    subheadContentColor = colorResource(id = R.color.off_white),
-                    weekdayContentColor = colorResource(id = R.color.off_white),
-                    headlineContentColor = colorResource(id = R.color.off_white),
-                    selectedDayContainerColor = colorResource(id = R.color.off_white),
                     selectedDayContentColor = colorResource(id = R.color.teal),
                 ),
             ) {
@@ -1057,6 +1033,7 @@ fun datePicker(type: String, field: String) {
                         shape = RoundedCornerShape(10.dp)
                     )
                     .background(colorResource(id = R.color.off_white))
+                    .padding(vertical = 5.dp)
             ) {
                 val formatter = SimpleDateFormat("MM/dd/yyyy")
                 datePickerState.selectedDateMillis?.let {

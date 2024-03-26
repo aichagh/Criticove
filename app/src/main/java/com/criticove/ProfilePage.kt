@@ -24,12 +24,15 @@ import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 
@@ -266,6 +270,7 @@ fun EditHeader() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditMain(navController: NavController) {
     val user = FirebaseManager.getUsername()
@@ -307,7 +312,17 @@ fun EditMain(navController: NavController) {
             onValueChange = {
                 username = it
                 statusMessage = ""
-            }
+            },
+            modifier = Modifier
+                .width(300.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = colorResource(id = R.color.blue),
+                unfocusedBorderColor = colorResource(id = R.color.teal)
+            ),
+            textStyle = TextStyle(
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                fontSize = 18.sp
+            )
         )
 
         Row(
