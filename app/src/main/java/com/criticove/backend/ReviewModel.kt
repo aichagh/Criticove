@@ -282,6 +282,29 @@ class userModel: ViewModel {
         })
     }
 
+    fun delReviewList() {
+        var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Reviews")
+        println("the users ${this.userID} reviews keys and their corresponding values: ,")
+        var countChild = 0
+        reviewsRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                countChild = dataSnapshot.childrenCount.toInt()
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Log.w(TAG, "review:onCancelled", databaseError.toException())
+            }
+        })
+        println("num of reviews in list is $countChild")
+
+        if (countChild > 0) {
+            return
+        }
+
+        var empReviewList: MutableList<Review> = mutableListOf()
+        _reviewList.update{empReviewList}
+    }
+
     fun getReviews() {
             var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Reviews")
             println("the users ${this.userID} reviews keys and their corresponding values: ,")
@@ -347,13 +370,14 @@ class userModel: ViewModel {
                             }
                         }
                         newReviewList.add(reviewPost)
-                        _reviewList.update{newReviewList}
-                        println("reviewList in the event handelr $reviewList")
+                        //_reviewList.update{newReviewList}
+                        println("reviewList in the event handelr $_reviewList")
                         println("this is the review back to a structure $reviewPost")
                         println("this is the reviews title ${reviewPost.title}")
                         println("this is the reviews date ${reviewPost.date}")
                         println("this is the reviews bookmarked ${reviewPost.bookmarked}")
                     }
+                    _reviewList.update{newReviewList}
                 }
 
                 override fun onCancelled(error: DatabaseError) {
