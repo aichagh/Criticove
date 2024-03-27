@@ -240,7 +240,7 @@ fun TopGenres(userModel: userModel) {
     val genres: List<Pair<Double, String>> = calcTopGenres(userModel.reviewList)
     val colors = listOf(colorResource(id = R.color.blue),
         colorResource(id = R.color.black),
-        colorResource(id = R.color.coolGrey),
+        colorResource(id = R.color.darkTeal),
         colorResource(id = R.color.teal))
 
     Column(

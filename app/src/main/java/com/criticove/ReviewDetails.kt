@@ -105,7 +105,7 @@ fun ReviewDetailsMainContent(navController: NavController,
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .verticalScroll(rememberScrollState())
+//                .verticalScroll(rememberScrollState())
                 .background(colorResource(id = R.color.off_white))
         ) {
             if(isFriend) {
@@ -202,8 +202,9 @@ fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
         modifier = Modifier
             .fillMaxWidth()
             .background(colorResource(id = R.color.off_white))
-            .padding(10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(10.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Column() {
             println("in the review details page but not yet added info")
