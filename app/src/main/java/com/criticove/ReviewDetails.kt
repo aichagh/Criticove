@@ -66,6 +66,7 @@ var reviewID = "Insert ID"   // replace with other id
 var reviewType = ""   // reviewData["type"]!!
 
 var updatedReview: MutableMap<String, String>? = null
+var didOnce = false
 
 /*
 class ReviewDetails: ComponentActivity() {
@@ -263,8 +264,13 @@ fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
                         }
 
                         else {
+                            var realRev = reviewData[label].toString()
                             var curData by remember {mutableStateOf(reviewData[label].toString())}
-                            println("this is the curData for review: $curData")
+                            if (!didOnce && curData != realRev) {
+                                curData = realRev
+                                didOnce = true
+                            }
+                            println("this is the curData for review: $curData ${reviewData[label].toString()}")
 
                             OutlinedTextField(
                                 value = curData,
