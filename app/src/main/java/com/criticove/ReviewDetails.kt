@@ -213,11 +213,12 @@ fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
                         .fillMaxWidth()
                 ) {
                     Column() {
-                        var curData = reviewData[label].toString()
+                        // var curData = reviewData[label].toString()
                         var edit by remember { mutableStateOf(false) }
                         // var curData by remember {mutableStateOf(reviewData[label].toString())}
 
                         if (label != "Review") {
+                            var curData = reviewData[label].toString()
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -262,6 +263,9 @@ fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
                         }
 
                         else {
+                            var curData by remember {mutableStateOf(reviewData[label].toString())}
+                            println("this is the curData for review: $curData")
+
                             OutlinedTextField(
                                 value = curData,
                                 onValueChange = { curData = it },
