@@ -241,9 +241,9 @@ class userModel: ViewModel {
                         if (friendID is String && frienduserName is String) {
                             newfriendMap[friendID] = frienduserName
                         }
-                        _friendMap.update{newfriendMap}
                     }
                 }
+                _friendMap.update{newfriendMap}
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -452,12 +452,21 @@ class userModel: ViewModel {
                                     if (s) {
                                         newReviewList.add(reviewPost)
                                         newfriendMap[Pair(frienduserName, friendID)] = newReviewList
+                                        /*
                                         _friendReviews.update { newfriendMap }
                                         _friendReviews.value.forEach { (frienuserName, reviews) ->
                                             reviews.forEach { review ->
                                                 println("in getfriendreviews Friend ID: $friendID, $frienduserName and Title: ${review.title} ")
                                             }
                                         }
+
+                                         */
+                                    }
+                                }
+                                _friendReviews.update { newfriendMap }
+                                _friendReviews.value.forEach { (frienuserName, reviews) ->
+                                    reviews.forEach { review ->
+                                        println("in getfriendreviews Friend ID: $friendID, $frienduserName and Title: ${review.title} ")
                                     }
                                 }
                             }
