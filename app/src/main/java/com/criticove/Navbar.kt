@@ -22,7 +22,7 @@ fun Navbar(navController: NavController) {
     var home_tint_color = colorResource(id = R.color.off_white)
     var reviews_tint_color = colorResource(id = R.color.off_white)
     var friends_tint_color = colorResource(id = R.color.off_white)
-    println("the values is $value")
+
     if (value == "Dashboard") {
         home_tint_color = colorResource(id = R.color.green)
     }
@@ -40,9 +40,7 @@ fun Navbar(navController: NavController) {
             .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        TextButton(onClick = { navController.navigate("Dashboard")
-        }) {
-//
+        TextButton(onClick = { navController.navigate("Dashboard") }) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.homepage),
                 contentDescription = "homepage", tint = home_tint_color

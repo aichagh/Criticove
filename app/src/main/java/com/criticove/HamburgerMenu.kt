@@ -1,4 +1,3 @@
-// DrawerMenu.kt
 package com.criticove
 
 import androidx.compose.foundation.background
@@ -8,30 +7,26 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.LiveTv
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,6 +42,7 @@ import kotlinx.coroutines.launch
 data class MenuItem(val name: String, val icon: ImageVector, val route: String)
 
 val menuItems = listOf(
+    MenuItem("All", Icons.Filled.Checklist, "Reviews" ),
     MenuItem("Books", Icons.Filled.Book, "Books" ),
     MenuItem("Movies", Icons.Filled.Movie, "Movies"),
     MenuItem("TV Shows", Icons.Filled.LiveTv, "TVShows"),
