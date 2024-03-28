@@ -93,3 +93,6 @@
 | 2024/03/26 |       |         |        |1.5       |            |      | Added functionality to navbar to display current page the user is on. Made some UI changes to the dashbaord. Tested the app to improve UX. |
 | 2024/03/26 |       |         |        |0.5       |            |      | Worked on not displaying all users as friends. Working on modifying the add friends list. |
 | 2024/03/27 |       |         |        |          | 3.5        |      | Sorting menu for every (All/Book/Movie/TV Show/Bookmarked) Reviews page - UI + Backend, No reviews messages added in case list of reviews is empty, All Reviews added to hamburger menu, Floating add button added to every Reviews page |
+| 2024/03/27 |  2    |         |        |          |            |      | Minor UI fixes in review form + more research in email validation APIs + adding transitions when viewing review to compensate for loading time |
+| 2024/03/27 |  2    |         |        |          |            |      | Working on D5 |
+
