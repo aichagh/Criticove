@@ -1,9 +1,6 @@
 package com.criticove
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.viewModels
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -13,12 +10,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -43,22 +37,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.criticove.backend.BookReview
 import com.criticove.backend.MovieReview
 import com.criticove.backend.Review
-import com.criticove.backend.SubmittedReview
 import com.criticove.backend.TVShowReview
 import com.criticove.backend.delSelectedReview
-import com.criticove.backend.getSelectedReview
 import com.criticove.backend.updateSelReview
 import com.criticove.backend.userModel
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 // get this data from database, or passed from review select page, currently sample data
 var reviewID = "Insert ID"   // replace with other id
@@ -90,6 +76,7 @@ class ReviewDetails: ComponentActivity() {
 
  */
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun ReviewDetailsMainContent(navController: NavController,
                              reviewID: String,
@@ -102,11 +89,11 @@ fun ReviewDetailsMainContent(navController: NavController,
     val selReview by userModel.selReview.collectAsState()
     println(reviewID)
 
-        Column(
+    Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .verticalScroll(rememberScrollState())
+//                .verticalScroll(rememberScrollState())
                 .background(colorResource(id = R.color.off_white))
         ) {
             if(isFriend) {
@@ -114,7 +101,7 @@ fun ReviewDetailsMainContent(navController: NavController,
             } else {
                 CommonHeader(navController, selReview.title, "Reviews")
             }
-            ReviewDetailsTable(reviewType, selReview, reviewID, isFriend, navController)
+                ReviewDetailsTable(reviewType, selReview, reviewID, isFriend, navController)
         }
 //    }
 }
@@ -193,19 +180,23 @@ fun ReviewDetailsTable(type: String, selReview: Review,
     displayReviewDetails(type, reviewData, elements, reviewID, isFriend, navController)
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
                          elements: MutableList<String>,
                          reviewID: String, isFriend: Boolean,
                          navController: NavController) {
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(colorResource(id = R.color.off_white))
-            .padding(10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(10.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+
         Column() {
             println("in the review details page but not yet added info")
             elements.forEach { label ->
