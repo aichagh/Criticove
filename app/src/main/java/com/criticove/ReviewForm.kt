@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -222,37 +223,36 @@ fun AutocompleteTextField(
     val debouncePeriod = 300L
     val coroutineScope = rememberCoroutineScope()
     var searchJob by remember { mutableStateOf<Job?>(null) }
+    val interactionSource = remember { MutableInteractionSource() }
 
     var query by remember { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
 
-    val movieSuggestions by viewModel.movieSuggestions.observeAsState()
-    val tvShowSuggestions by viewModel.tvShowSuggestions.observeAsState()
-    val bookSuggestions by viewModel.bookSuggestions.observeAsState()
-    val suggestions: List<Suggestion> = when (type) {
-        "Movie" -> movieSuggestions?.map { it.suggestion } ?: emptyList()
-        "TV Show" -> tvShowSuggestions?.map { it.suggestion } ?: emptyList()
-        "Book" -> bookSuggestions?.map { it.suggestion } ?: emptyList()
+    LaunchedEffect(query) {
+        if (query.isNotEmpty()) {
+            // Debounce delay to wait before making the search request
+            delay(300L) // Adjust this value as needed
+            when (type) {
+                "Movie" -> viewModel.searchMovieTitles(query)
+                "TV Show" -> viewModel.searchTvShowTitles(query)
+                "Book" -> viewModel.searchBookTitles(query)
+            }
+        }
+    }
+
+    val suggestions = when (type) {
+        "Movie" -> viewModel.movieSuggestions.observeAsState().value?.map { it.suggestion } ?: emptyList()
+        "TV Show" -> viewModel.tvShowSuggestions.observeAsState().value?.map { it.suggestion } ?: emptyList()
+        "Book" -> viewModel.bookSuggestions.observeAsState().value?.map { it.suggestion } ?: emptyList()
         else -> emptyList()
     }
 
     Box(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
             value = query,
-            onValueChange = {newValue ->
-                query = newValue
-                isExpanded = newValue.isNotEmpty()
-                searchJob?.cancel()
-                searchJob = coroutineScope.launch {
-                    delay(debouncePeriod) // Add debounce delay
-                    if (query == newValue) { // Check if the query hasn't changed
-                        when (type) {
-                            "Movie" -> viewModel.searchMovieTitles(newValue)
-                            "TV Show" -> viewModel.searchTvShowTitles(newValue)
-                            "Book" -> viewModel.searchBookTitles(newValue)
-                        }
-                    }
-                }
+            onValueChange = {
+                query = it
+                isExpanded = it.isNotEmpty()
             },
             textStyle = androidx.compose.ui.text.TextStyle(
                 fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
@@ -273,22 +273,47 @@ fun AutocompleteTextField(
                 focusedBorderColor = colorResource(id = R.color.blue),
                 unfocusedBorderColor = colorResource(id = R.color.teal)
             ),
-            shape = RoundedCornerShape(10.dp)
+            shape = RoundedCornerShape(10.dp),
+            interactionSource = interactionSource,
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { focusRequester.requestFocus() })
+
         )
-        if (isExpanded && suggestions.isNotEmpty()) {
-            DropdownSuggestions(
-                suggestions = suggestions.take(5), // Show up to 5 suggestions
-                onSuggestionSelected = { suggestion ->
-                    query = suggestion.displayText
-                    isExpanded = false
-                    when (suggestion) {
-                        is Suggestion.MovieSuggestion -> viewModel.fetchMovieDetails(suggestion.id)
-                        is Suggestion.TvShowSuggestion -> viewModel.fetchTvShowDetails(suggestion.id)
-                        is Suggestion.BookSuggestion -> viewModel.selectBook(suggestion.id)
-                    }
-                }
-            )
+        DropdownMenu(
+            expanded = isExpanded && suggestions.isNotEmpty(),
+            onDismissRequest = { isExpanded = false },
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(colorResource(id = R.color.off_white))
+        ) {
+            suggestions.take(5).forEach { suggestion ->
+                DropdownMenuItem(
+                    onClick = {
+                        query = suggestion.displayText
+                        isExpanded = false
+                        when (suggestion) {
+                            is Suggestion.MovieSuggestion -> viewModel.fetchMovieDetails(suggestion.id)
+                            is Suggestion.TvShowSuggestion -> viewModel.fetchTvShowDetails(suggestion.id)
+                            is Suggestion.BookSuggestion -> viewModel.selectBook(suggestion.id)
+                        }
+                    },
+                    text = { Text("${suggestion.displayText} (${suggestion.displayDate})") }
+                )
+            }
         }
+
+//        DropdownSuggestions(
+//            suggestions = suggestions.take(5), // Show up to 5 suggestions
+//            onSuggestionSelected = { suggestion ->
+//                query = suggestion.displayText
+//                isExpanded = false
+//                when (suggestion) {
+//                    is Suggestion.MovieSuggestion -> viewModel.fetchMovieDetails(suggestion.id)
+//                    is Suggestion.TvShowSuggestion -> viewModel.fetchTvShowDetails(suggestion.id)
+//                    is Suggestion.BookSuggestion -> viewModel.selectBook(suggestion.id)
+//                }
+//            }
+//        )
     }
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
