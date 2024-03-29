@@ -52,6 +52,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -224,87 +225,103 @@ fun AutocompleteTextField(
     var query by remember { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
 
-//    val movieSuggestions by viewModel.movieSuggestions.observeAsState()
-//    val tvShowSuggestions by viewModel.tvShowSuggestions.observeAsState()
-//    val bookSuggestions by viewModel.bookSuggestions.observeAsState()
+    val movieSuggestions by viewModel.movieSuggestions.observeAsState()
+    val tvShowSuggestions by viewModel.tvShowSuggestions.observeAsState()
+    val bookSuggestions by viewModel.bookSuggestions.observeAsState()
 
-//    val suggestions: List<Suggestion> = when (type) {
-//        "Movie" -> movieSuggestions?.map { it.suggestion } ?: emptyList()
-//        "Book" -> bookSuggestions?.map { it.suggestion } ?: emptyList()
-//        else -> tvShowSuggestions?.map { it.suggestion } ?: emptyList()
-//    }
-    Box(modifier = Modifier.fillMaxWidth()) {
-    OutlinedTextField(
-        value = query,
-        onValueChange = {newValue ->
-            query = newValue
-            isExpanded = newValue.isNotEmpty()
-        },
-        textStyle = androidx.compose.ui.text.TextStyle(
-            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-            color = colorResource(id = R.color.black),
-            fontSize = 18.sp
-            ),
-        label = {
-            Text(
-                text = label,
-                color = colorResource(id = R.color.coolGrey),
-                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
-        ) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp)
-            .focusRequester(focusRequester),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = colorResource(id = R.color.blue),
-            unfocusedBorderColor = colorResource(id = R.color.teal)
-        ),
-        shape = RoundedCornerShape(10.dp)
-    )
-
-    if (suggestions.isNotEmpty() && isExpanded) {
-        DropdownMenu(
-            expanded = isExpanded,
-            onDismissRequest = { isExpanded = false },
-            modifier = Modifier
-                .background(colorResource(id = R.color.off_white))
-                .fillMaxWidth()
-        ) {
-            suggestions.take(5).forEach { suggestion ->
-                DropdownMenuItem(
-                    onClick = {
-                        query = suggestion.displayText
-                        isExpanded = false
-                        when (suggestion) {
-                            is Suggestion.MovieSuggestion -> viewModel.fetchMovieDetails(suggestion.id)
-                            is Suggestion.TvShowSuggestion -> viewModel.fetchTvShowDetails(
-                                suggestion.id
-                            )
-
-                            is Suggestion.BookSuggestion -> viewModel.selectBook(suggestion.id)
-                        }
-                    },
-                    text = {
-                        Text(
-                            "${suggestion.displayText} (${suggestion.displayDate})",
-                            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxSize(),
-                            color = colorResource(id = R.color.black)
-                        )
-                    },
-                    modifier = Modifier
-                        .background(colorResource(id = R.color.off_white)),
-                )
-            }
-        }
+    val suggestions: List<Suggestion> = when (type) {
+        "Movie" -> movieSuggestions?.map { it.suggestion } ?: emptyList()
+        "Book" -> bookSuggestions?.map { it.suggestion } ?: emptyList()
+        else -> tvShowSuggestions?.map { it.suggestion } ?: emptyList()
     }
+
+//    val movieSuggestions = viewModel.movieSuggestions.collectAsState().value
+//
+//    val suggestions = produceState<List<Suggestion>>(initialValue = emptyList(), query, type) {
+//        // Debounce user input
+//        delay(debouncePeriod)
+//        value = when (type) {
+//            "Movie" -> viewModel.searchMovieTitles(query).map { it.suggestion }
+//            "TV Show" -> viewModel.searchTvShowTitles(query).map { it.suggestion }
+//            else -> viewModel.searchBookTitles(query).map { it.suggestion }
+//        }
+//    }.value
+
+    Box(modifier = Modifier.fillMaxWidth()) {
+        OutlinedTextField(
+            value = query,
+            onValueChange = {newValue ->
+                query = newValue
+                isExpanded = newValue.isNotEmpty()
+            },
+            textStyle = androidx.compose.ui.text.TextStyle(
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                color = colorResource(id = R.color.black),
+                fontSize = 18.sp
+                ),
+            label = {
+                Text(
+                    text = label,
+                    color = colorResource(id = R.color.coolGrey),
+                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+            ) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp)
+                .focusRequester(focusRequester),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = colorResource(id = R.color.blue),
+                unfocusedBorderColor = colorResource(id = R.color.teal)
+            ),
+            shape = RoundedCornerShape(10.dp)
+        )
+        DropdownSuggestions(suggestions = if (isExpanded) suggestions.take(5) else emptyList(),
+            onSuggestionSelected = {suggestion ->
+                query = suggestion.displayText
+                isExpanded = false
+                when (suggestion) {
+                    is Suggestion.MovieSuggestion -> viewModel.fetchMovieDetails(suggestion.id)
+                    is Suggestion.TvShowSuggestion -> viewModel.fetchTvShowDetails(suggestion.id)
+                    is Suggestion.BookSuggestion -> viewModel.selectBook(suggestion.id)
+                }
+            })
     }
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
 
     filled[type]?.set(label, query).toString()
+}
+
+@Composable
+fun DropdownSuggestions(
+    suggestions: List<Suggestion>,
+    onSuggestionSelected: (Suggestion) -> Unit,
+) {
+    DropdownMenu(
+        expanded = suggestions.isNotEmpty(),
+        onDismissRequest = { },
+        modifier = Modifier
+            .background(colorResource(id = R.color.off_white))
+            .fillMaxWidth()
+    ) {
+        suggestions.forEach { suggestion ->
+            DropdownMenuItem(
+                onClick = { onSuggestionSelected(suggestion) },
+                text = {
+                    Text(
+                        "${suggestion.displayText} (${suggestion.displayDate})",
+                        fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxSize(),
+                        color = colorResource(id = R.color.black)
+                    )
+                },
+                modifier = Modifier
+                    .background(colorResource(id = R.color.off_white)),
+            )
+        }
+    }
 }
 
 @Composable
