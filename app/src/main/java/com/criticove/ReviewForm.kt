@@ -34,6 +34,7 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
@@ -875,7 +876,7 @@ fun Dropdown(type: String, field: String, list: List<String>,
                 .background(colorResource(id = R.color.off_white))
                 .fillMaxWidth()
         ) {
-            list.forEach { el ->
+            list.forEachIndexed { index, el ->
                 DropdownMenuItem(
                     text = {
                         Text(
@@ -895,6 +896,7 @@ fun Dropdown(type: String, field: String, list: List<String>,
                         .background(colorResource(id = R.color.off_white))
                         .fillMaxWidth(),
                 )
+                if(index != list.size - 1) { HorizontalDivider() }
             }
         }
     }

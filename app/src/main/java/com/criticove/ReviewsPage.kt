@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -85,8 +86,8 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
-                            .padding(vertical = 10.dp),
+                            .height(50.dp),
+//                            .padding(vertical = 10.dp),
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.Bottom,
                     ) {
@@ -118,7 +119,7 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                                 .background(colorResource(id = R.color.off_white))
                                 .fillMaxWidth()
                         ) {
-                            sorting.forEach { el ->
+                            sorting.forEachIndexed { index, el ->
                                 DropdownMenuItem(
                                     text = {
                                         Text(
@@ -138,11 +139,14 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                                         .background(colorResource(id = R.color.off_white))
                                         .fillMaxWidth(),
                                 )
+                                if(index != sorting.size - 1) { HorizontalDivider() }
                             }
                         }
                     }
 
             }
+
+            Spacer(modifier = Modifier.size(5.dp))
 
             Box(
                 modifier = Modifier
