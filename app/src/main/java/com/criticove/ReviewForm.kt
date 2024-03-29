@@ -220,42 +220,25 @@ fun AutocompleteTextField(
     val focusRequester = remember { FocusRequester() }
     val debouncePeriod = 300L
     val coroutineScope = rememberCoroutineScope()
-    var searchJob by remember { mutableStateOf<Job?>(null) }
 
     var query by remember { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
-    val keyboardController = LocalSoftwareKeyboardController.current
 
-    val movieSuggestions by viewModel.movieSuggestions.observeAsState()
-    val tvShowSuggestions by viewModel.tvShowSuggestions.observeAsState()
-    val bookSuggestions by viewModel.bookSuggestions.observeAsState()
+//    val movieSuggestions by viewModel.movieSuggestions.observeAsState()
+//    val tvShowSuggestions by viewModel.tvShowSuggestions.observeAsState()
+//    val bookSuggestions by viewModel.bookSuggestions.observeAsState()
 
-    val suggestions: List<Suggestion> = when (type) {
-        "Movie" -> movieSuggestions?.map { it.suggestion } ?: emptyList()
-        "Book" -> bookSuggestions?.map { it.suggestion } ?: emptyList()
-        else -> tvShowSuggestions?.map { it.suggestion } ?: emptyList()
-    }
+//    val suggestions: List<Suggestion> = when (type) {
+//        "Movie" -> movieSuggestions?.map { it.suggestion } ?: emptyList()
+//        "Book" -> bookSuggestions?.map { it.suggestion } ?: emptyList()
+//        else -> tvShowSuggestions?.map { it.suggestion } ?: emptyList()
+//    }
     Box(modifier = Modifier.fillMaxWidth()) {
     OutlinedTextField(
         value = query,
         onValueChange = {newValue ->
             query = newValue
             isExpanded = newValue.isNotEmpty()
-            searchJob?.cancel()
-            searchJob = coroutineScope.launch {
-                try {
-                    delay(debouncePeriod) // Debounce delay
-                    if (query == newValue) { // Check if the query hasn't changed
-                        when (type) {
-                            "Movie" -> viewModel.searchMovieTitles(newValue)
-                            "TV Show" -> viewModel.searchTvShowTitles(newValue)
-                            else -> viewModel.searchBookTitles(newValue)
-                        }
-                    }
-                } catch (e: Exception) {
-                    println("Error in coroutine: ${e.message}")
-                }
-            }
         },
         textStyle = androidx.compose.ui.text.TextStyle(
             fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
@@ -276,16 +259,8 @@ fun AutocompleteTextField(
             focusedBorderColor = colorResource(id = R.color.blue),
             unfocusedBorderColor = colorResource(id = R.color.teal)
         ),
-        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-        keyboardActions = KeyboardActions(onDone = {
-            keyboardController?.hide()
-        }),
         shape = RoundedCornerShape(10.dp)
     )
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
 
     if (suggestions.isNotEmpty() && isExpanded) {
         DropdownMenu(
@@ -294,7 +269,6 @@ fun AutocompleteTextField(
             modifier = Modifier
                 .background(colorResource(id = R.color.off_white))
                 .fillMaxWidth()
-                .padding(top = with(LocalDensity.current) { TextFieldDefaults.MinHeight.roundToPx().dp })
         ) {
             suggestions.take(5).forEach { suggestion ->
                 DropdownMenuItem(
