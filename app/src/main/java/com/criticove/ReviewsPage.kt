@@ -21,7 +21,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -29,9 +28,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,13 +46,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.criticove.backend.BookReview
 import com.criticove.backend.MovieReview
 import com.criticove.backend.Review
 import com.criticove.backend.TVShowReview
 import com.criticove.backend.changeBookmark
-import com.criticove.backend.delSelectedReview
 import com.criticove.backend.userModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -166,6 +163,7 @@ fun Review(title: String = "Title",
            navController: NavController,
            bookmarked: Boolean = false) {
 
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -206,7 +204,11 @@ fun Review(title: String = "Title",
             Row {
                 TextButton(
                     modifier = Modifier.width(50.dp),
-                    onClick = { navController.navigate("ViewReview/$reviewID/false/none") }
+                    onClick = {
+//                        scope.launch {
+                            navController.navigate("ViewReview/$reviewID/false/none")
+//                        }
+                    }
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.view),
