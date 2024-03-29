@@ -228,12 +228,13 @@ fun AutocompleteTextField(
     val movieSuggestions by viewModel.movieSuggestions.observeAsState()
     val tvShowSuggestions by viewModel.tvShowSuggestions.observeAsState()
     val bookSuggestions by viewModel.bookSuggestions.observeAsState()
-
     val suggestions: List<Suggestion> = when (type) {
         "Movie" -> movieSuggestions?.map { it.suggestion } ?: emptyList()
+        "TV Show" -> tvShowSuggestions?.map { it.suggestion } ?: emptyList()
         "Book" -> bookSuggestions?.map { it.suggestion } ?: emptyList()
-        else -> tvShowSuggestions?.map { it.suggestion } ?: emptyList()
+        else -> emptyList()
     }
+
 
 //    val movieSuggestions = viewModel.movieSuggestions.collectAsState().value
 //
@@ -275,16 +276,20 @@ fun AutocompleteTextField(
             ),
             shape = RoundedCornerShape(10.dp)
         )
-        DropdownSuggestions(suggestions = if (isExpanded) suggestions.take(5) else emptyList(),
-            onSuggestionSelected = {suggestion ->
-                query = suggestion.displayText
-                isExpanded = false
-                when (suggestion) {
-                    is Suggestion.MovieSuggestion -> viewModel.fetchMovieDetails(suggestion.id)
-                    is Suggestion.TvShowSuggestion -> viewModel.fetchTvShowDetails(suggestion.id)
-                    is Suggestion.BookSuggestion -> viewModel.selectBook(suggestion.id)
+        if (isExpanded && suggestions.isNotEmpty()) {
+            DropdownSuggestions(
+                suggestions = suggestions.take(5), // Show up to 5 suggestions
+                onSuggestionSelected = { suggestion ->
+                    query = suggestion.displayText
+                    isExpanded = false
+                    when (suggestion) {
+                        is Suggestion.MovieSuggestion -> viewModel.fetchMovieDetails(suggestion.id)
+                        is Suggestion.TvShowSuggestion -> viewModel.fetchTvShowDetails(suggestion.id)
+                        is Suggestion.BookSuggestion -> viewModel.selectBook(suggestion.id)
+                    }
                 }
-            })
+            )
+        }
     }
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
