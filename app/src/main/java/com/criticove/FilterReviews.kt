@@ -137,7 +137,7 @@ fun FilterReviews(navController: NavController, userModel: userModel, type: Stri
                                         .fillMaxWidth(),
                                 )
                                 if (index != sorting.size - 1) {
-                                    HorizontalDivider()
+                                    HorizontalDivider( color = colorResource(id = R.color.coolGrey) )
                                 }
                             }
                         }

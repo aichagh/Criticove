@@ -139,7 +139,9 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                                         .background(colorResource(id = R.color.off_white))
                                         .fillMaxWidth(),
                                 )
-                                if(index != sorting.size - 1) { HorizontalDivider() }
+                                if(index != sorting.size - 1) { 
+                                    HorizontalDivider( color = colorResource(id = R.color.coolGrey) )
+                                }
                             }
                         }
                     }
