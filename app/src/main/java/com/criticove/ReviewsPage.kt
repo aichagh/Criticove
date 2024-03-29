@@ -86,7 +86,7 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp)
-                            .padding(top = 10.dp),
+                            .padding(vertical = 10.dp),
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.Bottom,
                     ) {
