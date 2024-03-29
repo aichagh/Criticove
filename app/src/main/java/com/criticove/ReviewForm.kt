@@ -221,6 +221,7 @@ fun AutocompleteTextField(
     val focusRequester = remember { FocusRequester() }
     val debouncePeriod = 300L
     val coroutineScope = rememberCoroutineScope()
+    var searchJob by remember { mutableStateOf<Job?>(null) }
 
     var query by remember { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
@@ -235,25 +236,23 @@ fun AutocompleteTextField(
         else -> emptyList()
     }
 
-
-//    val movieSuggestions = viewModel.movieSuggestions.collectAsState().value
-//
-//    val suggestions = produceState<List<Suggestion>>(initialValue = emptyList(), query, type) {
-//        // Debounce user input
-//        delay(debouncePeriod)
-//        value = when (type) {
-//            "Movie" -> viewModel.searchMovieTitles(query).map { it.suggestion }
-//            "TV Show" -> viewModel.searchTvShowTitles(query).map { it.suggestion }
-//            else -> viewModel.searchBookTitles(query).map { it.suggestion }
-//        }
-//    }.value
-
     Box(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
             value = query,
             onValueChange = {newValue ->
                 query = newValue
                 isExpanded = newValue.isNotEmpty()
+                searchJob?.cancel()
+                searchJob = coroutineScope.launch {
+                    delay(debouncePeriod) // Add debounce delay
+                    if (query == newValue) { // Check if the query hasn't changed
+                        when (type) {
+                            "Movie" -> viewModel.searchMovieTitles(newValue)
+                            "TV Show" -> viewModel.searchTvShowTitles(newValue)
+                            "Book" -> viewModel.searchBookTitles(newValue)
+                        }
+                    }
+                }
             },
             textStyle = androidx.compose.ui.text.TextStyle(
                 fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
