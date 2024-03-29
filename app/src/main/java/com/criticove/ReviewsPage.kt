@@ -58,7 +58,7 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
     var sortBy by remember { mutableStateOf("Newest") }
 
     MainLayout(
-        title = "All Reviews",
+        title = "All reviews",
         navController = navController
     ) { padding ->
         Column(
@@ -86,10 +86,10 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp),
-//                            .padding(vertical = 10.dp),
+                            .height(50.dp)
+                            .padding(5.dp),
                         horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.Bottom,
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         TextButton(
                             onClick = { expanded = true },
@@ -145,8 +145,6 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                     }
 
             }
-
-            Spacer(modifier = Modifier.size(5.dp))
 
             Box(
                 modifier = Modifier
