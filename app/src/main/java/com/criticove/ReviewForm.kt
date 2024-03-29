@@ -46,6 +46,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -231,12 +232,13 @@ fun AutocompleteTextField(
     LaunchedEffect(query) {
         if (query.isNotEmpty()) {
             // Debounce delay to wait before making the search request
-            delay(300L) // Adjust this value as needed
+            delay(1500L) // Adjust this value as needed
             when (type) {
                 "Movie" -> viewModel.searchMovieTitles(query)
                 "TV Show" -> viewModel.searchTvShowTitles(query)
                 "Book" -> viewModel.searchBookTitles(query)
             }
+            focusRequester.requestFocus()
         }
     }
 
@@ -279,9 +281,13 @@ fun AutocompleteTextField(
             keyboardActions = KeyboardActions(onDone = { focusRequester.requestFocus() })
 
         )
+
         DropdownMenu(
             expanded = isExpanded && suggestions.isNotEmpty(),
-            onDismissRequest = { isExpanded = false },
+            onDismissRequest = {
+                isExpanded = false
+                focusRequester.requestFocus()
+                               },
             modifier = Modifier
                 .fillMaxWidth()
                 .background(colorResource(id = R.color.off_white))
@@ -302,21 +308,12 @@ fun AutocompleteTextField(
             }
         }
 
-//        DropdownSuggestions(
-//            suggestions = suggestions.take(5), // Show up to 5 suggestions
-//            onSuggestionSelected = { suggestion ->
-//                query = suggestion.displayText
-//                isExpanded = false
-//                when (suggestion) {
-//                    is Suggestion.MovieSuggestion -> viewModel.fetchMovieDetails(suggestion.id)
-//                    is Suggestion.TvShowSuggestion -> viewModel.fetchTvShowDetails(suggestion.id)
-//                    is Suggestion.BookSuggestion -> viewModel.selectBook(suggestion.id)
-//                }
-//            }
-//        )
+
     }
-    LaunchedEffect(Unit) {
+
+    DisposableEffect(Unit) {
         focusRequester.requestFocus()
+        onDispose { }
     }
 
     filled[type]?.set(label, query).toString()
