@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,7 +23,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.ui.Modifier
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -32,9 +32,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -44,16 +43,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-
 import com.criticove.backend.FirebaseManager
 import com.criticove.backend.userModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class Signup : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,16 +78,29 @@ class Signup : ComponentActivity() {
                 composable("ReviewForm") {
                     ReviewFormMainContent(navController, userModel)
                 }
-                composable("Reviews") {
+                composable(
+                    route = "Reviews",
+//                    enterTransition = { slideInHorizontally() },
+//                    exitTransition = { slideOutHorizontally() }
+                ) {
                     ReviewPageMainContent(navController, userModel)
                 }
-                composable("Dashboard") {
+                composable(
+                    route = "Dashboard",
+//                    enterTransition = { slideInHorizontally() },
+//                    exitTransition = { slideOutHorizontally() }
+                ) {
                     DashboardMainContent(navController, userModel)
                 }
-                composable("Friends") {
+                composable(
+                    route = "Friends"
+                ) {
                     FriendsMainContent(navController, userModel)
                 }
-                composable("ViewReview/{reviewID}/{isFriend}/{friendID}") {
+                composable(
+                    route = "ViewReview/{reviewID}/{isFriend}/{friendID}",
+                    enterTransition = { expandHorizontally() }
+                ) {
                     val reviewID = it.arguments?.getString("reviewID")!!
                     val isFriendStr = it.arguments?.getString("isFriend")!!
                     var isFriend = false

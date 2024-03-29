@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,10 +29,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerColors
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,26 +42,32 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -72,24 +77,15 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.criticove.api.BookItem
 import com.criticove.api.Movie
 import com.criticove.api.TvShow
 import com.criticove.backend.SubmittedReview
 import com.criticove.backend.userModel
-import com.criticove.api.TvShowDetail
-import androidx.compose.runtime.*
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.input.ImeAction
-import com.criticove.api.BookItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.format.TextStyle
 import java.util.Date
 import kotlin.math.abs
 
@@ -133,7 +129,11 @@ fun ReviewFormMainContent(navController: NavController, userModel: userModel) {
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         ReviewHeader()
-        Column (modifier = Modifier.verticalScroll(rememberScrollState())) {
+        Column (
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 10.dp),
+        ) {
             Selection(userModel, navController)
         }
         println("this is filled $filled")
@@ -260,9 +260,16 @@ fun AutocompleteTextField(
                 }
             }
         },
-        label = { Text(text = label,
-            color = colorResource(id = R.color.coolGrey),
-            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+        textStyle = androidx.compose.ui.text.TextStyle(
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+            color = colorResource(id = R.color.black),
+            fontSize = 18.sp
+            ),
+        label = {
+            Text(
+                text = label,
+                color = colorResource(id = R.color.coolGrey),
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
         ) },
         modifier = Modifier
             .fillMaxWidth()
@@ -407,34 +414,12 @@ fun CreateForm(type:String, userModel: userModel, navController: NavController, 
                 reviewText("Movie")
             }
         }
-        /*
-        OutlinedTextField(
-            value = text,
-            onValueChange = { text = it },
-            minLines = 7,
-            label = {
-                Text(
-                    text = "Review",
-                    color = colorResource(id = R.color.coolGrey),
-                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = colorResource(id = R.color.blue),
-                unfocusedBorderColor = colorResource(id = R.color.teal)
-            ),
-            shape = RoundedCornerShape(10.dp)
-        )
-
-         */
-
-
     }
     println("this is filled $filled")
+
+    Spacer(modifier = Modifier.size(15.dp))
     StarRating(type)
+    Spacer(modifier = Modifier.size(15.dp))
     Submission(type, navController)
 }
 
@@ -448,7 +433,7 @@ fun Submission(type: String, navController: NavController) {
             .padding(10.dp)
     ) {
         Text(
-            text = "Do you want to share your review with your friends?",
+            text = "Review visibility",
             fontFamily = FontFamily(Font(R.font.alegreya_sans_medium)),
             fontSize = 18.sp
         )
@@ -456,7 +441,7 @@ fun Submission(type: String, navController: NavController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -563,6 +548,7 @@ fun StarRating(type: String) {
             fontFamily = FontFamily(Font(R.font.alegreya_sans_medium)),
             fontSize = 18.sp
         )
+        Spacer(modifier = Modifier.size(5.dp))
         Row() {
             for (i in 1..5) {
                 when (type) {
@@ -788,7 +774,12 @@ fun normalText(field: String, type: String, initialValue: String = "", onValueCh
             focusedBorderColor = colorResource(id = R.color.blue),
             unfocusedBorderColor = colorResource(id = R.color.teal)
         ),
-        shape = RoundedCornerShape(10.dp)
+        shape = RoundedCornerShape(10.dp),
+        textStyle = androidx.compose.ui.text.TextStyle(
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+            color = colorResource(id = R.color.black),
+            fontSize = 18.sp
+        ),
     )
     filled[type]?.set(field, entered).toString()
 }
@@ -817,8 +808,11 @@ fun reviewText(type: String, initialValue: String = "") {
             focusedBorderColor = colorResource(id = R.color.blue),
             unfocusedBorderColor = colorResource(id = R.color.teal)
         ),
-        shape = RoundedCornerShape(10.dp)
-    )
+        shape = RoundedCornerShape(10.dp),
+        textStyle = androidx.compose.ui.text.TextStyle(
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+            fontSize = 18.sp
+        ))
     filled[type]?.set("Review", entered).toString()
 }
 
@@ -1040,10 +1034,14 @@ fun datePicker(type: String, field: String) {
                     val temp = (Date(datePickerState.selectedDateMillis!!).time + abs(Date(datePickerState.selectedDateMillis!!).timezoneOffset * 60000)).toLong()
                     entered = formatter.format(Date(temp)).toString()
                 }
+
+                val textColor = colorResource(id = R.color.coolGrey)
+                if(entered != field) { colorResource(id = R.color.black) }
+
                 Text(
                     text = entered,
                     fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-                    color = colorResource(id = R.color.black),
+                    color = textColor,
                     fontSize = 18.sp,
                     textAlign = TextAlign.Left,
                     modifier = Modifier.fillMaxWidth()
@@ -1062,7 +1060,7 @@ fun datePicker(type: String, field: String) {
                 imageVector = ImageVector.vectorResource(id = R.drawable.calendar),
                 contentDescription = "calendar icon",
                 tint = colorResource(id = R.color.black),
-                modifier = Modifier.height(20.dp)
+                modifier = Modifier.height(30.dp)
             )
         }
     }

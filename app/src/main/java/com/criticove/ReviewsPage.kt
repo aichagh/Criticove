@@ -26,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -214,6 +215,7 @@ fun Review(title: String = "Title",
            navController: NavController,
            bookmarked: Boolean = false) {
 
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -254,7 +256,11 @@ fun Review(title: String = "Title",
             Row {
                 TextButton(
                     modifier = Modifier.width(50.dp),
-                    onClick = { navController.navigate("ViewReview/$reviewID/false/none") }
+                    onClick = {
+//                        scope.launch {
+                            navController.navigate("ViewReview/$reviewID/false/none")
+//                        }
+                    }
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.view),

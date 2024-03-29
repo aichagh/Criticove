@@ -44,6 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
 
 import com.criticove.backend.FirebaseManager
 import com.criticove.backend.userModel
@@ -96,10 +97,13 @@ fun CommonHeader(navController: NavController, title: String, route: String) {
             Alignment.Center
         ) {
             Text(
+                modifier = Modifier.padding(horizontal = 40.dp),
                 text = title,
                 color = colorResource(id = R.color.off_white),
                 fontSize = 30.sp,
                 fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
