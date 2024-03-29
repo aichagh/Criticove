@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import com.criticove.Friend
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.database.DataSnapshot
@@ -53,72 +55,6 @@ class userModel: ViewModel {
         // var selReviewQuery = reviewsRef.orderByChild("title").equalTo(reviewTitle)
 
         println("the users ${this.userID} reviews keys and their corresponding values: ,")
-
-        /*
-        var reviewPost = suspendCoroutine<Review> { continuation ->
-            reviewsRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(reviewSnapshot: DataSnapshot) {
-                    val reviewKey = reviewSnapshot.key
-                    val review = reviewSnapshot.value as Map<String, Any>
-                    lateinit var reviewPost: Review
-                    val rDB = review["rating"]
-                    val r = when (rDB) {
-                        is Int -> rDB
-                        is Long -> rDB.toInt()
-                        else -> 3
-                    }
-                    val sDB = review["shared"]
-                    val s = when (sDB) {
-                        is Boolean -> sDB
-                        else -> false
-                    }
-                    println("this is rint $r")
-
-                    when (review["type"]) {
-                        "Book" -> {
-                            reviewPost = BookReview(
-                                "Book", review["title"].toString(), review["date"].toString(),
-                                review["genre"].toString(), r, review["paragraph"].toString(),
-                                review["reviewID"].toString(), review["author"].toString(),
-                                review["booktype"].toString(),
-                                review["datefinished"].toString(), s
-                            )
-                        }
-
-                        "Movie" -> {
-                            reviewPost = MovieReview(
-                                "Movie",
-                                review["title"].toString(),
-                                review["date"].toString(),
-                                review["genre"].toString(),
-                                r,
-                                review["paragraph"].toString(),
-                                review["reviewID"].toString(),
-                                review["director"].toString(),
-                                review["streamingservice"].toString(),
-                                review["datewatched"].toString(), s
-                            )
-                        }
-
-                        "TV Show" -> {
-                            reviewPost = TVShowReview(
-                                "TV Show", review["title"].toString(), review["date"].toString(),
-                                review["genre"].toString(), r, review["paragraph"].toString(),
-                                review["reviewID"].toString(), review["director"].toString(),
-                                review["streamingservice"].toString(),
-                                review["datefinished"].toString(), s
-                            )
-                        }
-                    }
-                }
-                override fun onCancelled(error: DatabaseError) {
-                    // Log.w(TAG, "review:onCancelled", databaseError.toException())
-                }
-            })
-        }
-
-         */
-
 
         reviewsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(reviewSnapshot: DataSnapshot) {
@@ -387,102 +323,96 @@ class userModel: ViewModel {
             })
         }
     fun getfriendReviews() {
+
+        this.getFriends()
+        println("here is the test var getFriends ${_friendMap} ${friendMap.value}")
+
         var friendsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Friends")
-        friendsRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+        // init as empty
+        _friendReviews.update { mutableMapOf<Pair<String, String>, List<Review>>() }
+
+        friendMap.value.forEach { fren ->
+            var friendID = fren.key
+            var frienduserName = fren.value
+
+            val friendreviewsRef = FirebaseDatabase.getInstance().getReference("Users/$friendID/Reviews")
+            friendreviewsRef.addValueEventListener(object : ValueEventListener {
                 val newfriendMap: MutableMap<Pair<String, String>, List<Review>> = mutableMapOf<Pair<String, String>, List<Review>>()
-                for (childSnapshot in dataSnapshot.children) {
-                    val friendID = childSnapshot.key
-                    val frienduserName = childSnapshot.getValue(String::class.java)
-                    if (friendID is String && frienduserName is String) {
-                        var friendreviewsRef = FirebaseDatabase.getInstance().getReference("Users/$friendID/Reviews")
-                        friendreviewsRef.addValueEventListener(object : ValueEventListener {
-                            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                var newReviewList: MutableList<Review> = mutableListOf()
-                                for (reviewSnapshot in dataSnapshot.children) {
-                                    val reviewKey = reviewSnapshot.key
-                                    val review = reviewSnapshot.value as Map<String, Any>
-                                    lateinit var reviewPost: Review
-                                    val rDB = review["rating"]
-                                    val r = when (rDB) {
-                                        is Int -> rDB
-                                        is Long -> rDB.toInt()
-                                        else -> 3
-                                    }
-                                    val sDB = review["shared"]
-                                    val s = when (sDB) {
-                                        is Boolean -> sDB
-                                        else -> false
-                                    }
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    var newReviewList: MutableList<Review> = mutableListOf()
+                    for (reviewSnapshot in dataSnapshot.children) {
+                        val reviewKey = reviewSnapshot.key
+                        val review = reviewSnapshot.value as Map<String, Any>
+                        lateinit var reviewPost: Review
+                        val rDB = review["rating"]
+                        val r = when (rDB) {
+                            is Int -> rDB
+                            is Long -> rDB.toInt()
+                            else -> 3
+                        }
+                        val sDB = review["shared"]
+                        val s = when (sDB) {
+                            is Boolean -> sDB
+                            else -> false
+                        }
 
-                                    when (review["type"]) {
-                                        "Book" -> {
-                                            reviewPost = BookReview(
-                                                "Book", review["title"].toString(), review["date"].toString(),
-                                                review["genre"].toString(), r , review["paragraph"].toString(),
-                                                review["reviewID"].toString(), review["author"].toString(),
-                                                review["booktype"].toString(),
-                                                review["datefinished"].toString(), s
-                                            )
-                                        }
-                                        "Movie" -> {
-                                            reviewPost = MovieReview(
-                                                "Movie",
-                                                review["title"].toString(),
-                                                review["date"].toString(),
-                                                review["genre"].toString(),
-                                                r,
-                                                review["paragraph"].toString(),
-                                                review["reviewID"].toString(),
-                                                review["director"].toString(),
-                                                review["streamingservice"].toString(),
-                                                review["datewatched"].toString(), s
-                                            )
-                                        }
-                                        "TV Show" -> {
-                                            reviewPost = TVShowReview(
-                                                "TV Show", review["title"].toString(), review["date"].toString(),
-                                                review["genre"].toString(), r, review["paragraph"].toString(),
-                                                review["reviewID"].toString(), review["director"].toString(),
-                                                review["streamingservice"].toString(),
-                                                review["datefinished"].toString(), s
-                                            )
-                                        }
-                                    }
-                                    if (s) {
-                                        newReviewList.add(reviewPost)
-                                        newfriendMap[Pair(frienduserName, friendID)] = newReviewList
-                                        /*
-                                        _friendReviews.update { newfriendMap }
-                                        _friendReviews.value.forEach { (frienuserName, reviews) ->
-                                            reviews.forEach { review ->
-                                                println("in getfriendreviews Friend ID: $friendID, $frienduserName and Title: ${review.title} ")
-                                            }
-                                        }
-
-                                         */
-                                    }
-                                }
-                                _friendReviews.update { newfriendMap }
-                                _friendReviews.value.forEach { (frienuserName, reviews) ->
-                                    reviews.forEach { review ->
-                                        println("in getfriendreviews Friend ID: $friendID, $frienduserName and Title: ${review.title} ")
-                                    }
-                                }
+                        when (review["type"]) {
+                            "Book" -> {
+                                reviewPost = BookReview(
+                                    "Book", review["title"].toString(), review["date"].toString(),
+                                    review["genre"].toString(), r , review["paragraph"].toString(),
+                                    review["reviewID"].toString(), review["author"].toString(),
+                                    review["booktype"].toString(),
+                                    review["datefinished"].toString(), s
+                                )
                             }
-                            override fun onCancelled(error: DatabaseError) {
-                                // Log.w(TAG, "review:onCancelled", databaseError.toException())
+                            "Movie" -> {
+                                reviewPost = MovieReview(
+                                    "Movie",
+                                    review["title"].toString(),
+                                    review["date"].toString(),
+                                    review["genre"].toString(),
+                                    r,
+                                    review["paragraph"].toString(),
+                                    review["reviewID"].toString(),
+                                    review["director"].toString(),
+                                    review["streamingservice"].toString(),
+                                    review["datewatched"].toString(), s
+                                )
                             }
-
-                        })
+                            "TV Show" -> {
+                                reviewPost = TVShowReview(
+                                    "TV Show", review["title"].toString(), review["date"].toString(),
+                                    review["genre"].toString(), r, review["paragraph"].toString(),
+                                    review["reviewID"].toString(), review["director"].toString(),
+                                    review["streamingservice"].toString(),
+                                    review["datefinished"].toString(), s
+                                )
+                            }
+                        }
+                        if (s) {
+                            newReviewList.add(reviewPost)
+                            newfriendMap[Pair(frienduserName, friendID)] = newReviewList
+                            println("here is updated 1 $newfriendMap")
+                        }
+                    }
+                    var tempMap = friendReviews.value
+                    tempMap += newfriendMap
+                    println("here is updated 2 $tempMap")
+                    _friendReviews.update { tempMap }
+                    _friendReviews.value.forEach { (frienduserName, reviews) ->
+                        reviews.forEach { review ->
+                            println("in getfriendreviews Friend ID: $friendID, $frienduserName and Title: ${review.title} ")
+                        }
                     }
                 }
-            }
+                override fun onCancelled(error: DatabaseError) {
+                    // Log.w(TAG, "review:onCancelled", databaseError.toException())
+                }
 
-            override fun onCancelled(error: DatabaseError) {
-                // Log.w(TAG, "review:onCancelled", databaseError.toException())
-            }
-        })
+            })
+        }
 
     }
     fun signupUser(username: String) {
