@@ -50,6 +50,7 @@ val menuItems = listOf(
 )
 
 val menuItemsFriends = listOf(
+    MenuItem("Friends Reviews", Icons.Filled.Checklist, "FriendsReviews"),
     MenuItem("Manage Friends", Icons.Filled.Group, "Friends"),
     MenuItem("Add Friends", Icons.Filled.Group, "AddFriends")
 )

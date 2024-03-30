@@ -6,7 +6,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -59,38 +63,66 @@ class Signup : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setTheme(R.style.Theme_CritiCove)
         val userModel = userModel()
+        var dur = 1000
+        var del = 150
+        var prev = "Login"
         setContent {
             val navController = rememberNavController()
             NavHost(
                 navController,
                 startDestination = "Login",
-
                 // removes the default crossfade animation when changing between pages
                 enterTransition = { EnterTransition.None },
                 exitTransition = { ExitTransition.None }
             ) {
+//                if ((prev == "Login") || (prev == "SignUp")) {
+//                    println("prev inside $prev")
+//                    dur = 1000
+//                    del = 150
+//                } else {
+//                    println("prev outside $prev")
+//                    dur = 0
+//                    del = 0
+//                }
                 composable("Signup") {
+                    prev = navController.previousBackStackEntry?.destination?.route.toString()
+                    println("prev $prev")
                     SignupMainContent(navController, userModel)
+                    dur = 1000
+                    del = 150
                 }
                 composable("Login") {
+                    prev = navController.previousBackStackEntry?.destination?.route.toString()
+                    println("prev $prev")
                     LoginMainContent(navController, userModel)
+                    dur = 1000
+                    del = 150
                 }
                 composable("ReviewForm") {
+                    prev = navController.previousBackStackEntry?.destination?.route.toString()
+                    println("prev $prev")
                     ReviewFormMainContent(navController, userModel)
+
                 }
                 composable(
                     route = "Reviews",
 //                    enterTransition = { slideInHorizontally() },
 //                    exitTransition = { slideOutHorizontally() }
                 ) {
+                    prev = navController.previousBackStackEntry?.destination?.route.toString()
+                    println("prev $prev")
                     ReviewPageMainContent(navController, userModel)
                 }
                 composable(
                     route = "Dashboard",
-//                    enterTransition = { slideInHorizontally() },
+
+                    enterTransition = { fadeIn(animationSpec = tween(dur, del)) },
 //                    exitTransition = { slideOutHorizontally() }
                 ) {
+
                     DashboardMainContent(navController, userModel)
+                    dur = 0
+                    del = 0
                 }
                 composable(
                     route = "Friends"
