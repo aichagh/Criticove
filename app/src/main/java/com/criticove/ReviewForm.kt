@@ -221,7 +221,7 @@ fun AutocompleteTextField(
     type: String
 ) {
     val focusRequester = remember { FocusRequester() }
-    val debouncePeriod = 300L
+    val debouncePeriod = 1250L
     val coroutineScope = rememberCoroutineScope()
     var searchJob by remember { mutableStateOf<Job?>(null) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -229,24 +229,26 @@ fun AutocompleteTextField(
     var query by remember { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(query) {
-        if (query.isNotEmpty()) {
-            // Debounce delay to wait before making the search request
-            delay(1500L) // Adjust this value as needed
-            when (type) {
-                "Movie" -> viewModel.searchMovieTitles(query)
-                "TV Show" -> viewModel.searchTvShowTitles(query)
-                "Book" -> viewModel.searchBookTitles(query)
-            }
-            focusRequester.requestFocus()
-        }
-    }
-
     val suggestions = when (type) {
         "Movie" -> viewModel.movieSuggestions.observeAsState().value?.map { it.suggestion } ?: emptyList()
         "TV Show" -> viewModel.tvShowSuggestions.observeAsState().value?.map { it.suggestion } ?: emptyList()
         "Book" -> viewModel.bookSuggestions.observeAsState().value?.map { it.suggestion } ?: emptyList()
         else -> emptyList()
+    }
+
+    LaunchedEffect(query) {
+        searchJob?.cancel()
+        if (query.isNotEmpty()) {
+            searchJob = coroutineScope.launch {
+                // Debounce delay to wait before making the search request
+                delay(debouncePeriod) // Adjust this value as needed
+                when (type) {
+                    "Movie" -> viewModel.searchMovieTitles(query)
+                    "TV Show" -> viewModel.searchTvShowTitles(query)
+                    "Book" -> viewModel.searchBookTitles(query)
+                }
+            }
+        }
     }
 
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -276,7 +278,6 @@ fun AutocompleteTextField(
                 unfocusedBorderColor = colorResource(id = R.color.teal)
             ),
             shape = RoundedCornerShape(10.dp),
-            interactionSource = interactionSource,
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = { focusRequester.requestFocus() })
         )
@@ -285,7 +286,6 @@ fun AutocompleteTextField(
             expanded = isExpanded && suggestions.isNotEmpty(),
             onDismissRequest = {
                 isExpanded = false
-                focusRequester.requestFocus()
                                },
             modifier = Modifier
                 .fillMaxWidth()
@@ -301,6 +301,7 @@ fun AutocompleteTextField(
                             is Suggestion.TvShowSuggestion -> viewModel.fetchTvShowDetails(suggestion.id)
                             is Suggestion.BookSuggestion -> viewModel.selectBook(suggestion.id)
                         }
+                        focusRequester.requestFocus()
                     },
                     text = { Text("${suggestion.displayText}${if (suggestion.displayDate != "") " (${suggestion.displayDate})" else ""}") }
                 )
@@ -308,10 +309,7 @@ fun AutocompleteTextField(
         }
     }
 
-    DisposableEffect(Unit) {
-        focusRequester.requestFocus()
-        onDispose { }
-    }
+
     filled[type]?.set(label, query).toString()
 }
 
