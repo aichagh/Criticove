@@ -208,9 +208,9 @@ val TvShow.suggestion: Suggestion.TvShowSuggestion
 val BookItem.suggestion: Suggestion.BookSuggestion
     get() = Suggestion.BookSuggestion(
         id = this.id,
-        displayText = this.volumeInfo.title?: "",
-        displayDate = this.volumeInfo.publishedDate.substringBefore("-")?: "",
-        genre = this.volumeInfo.categories?.firstOrNull()?: "Other"
+        displayText = if (this.volumeInfo.title.isNullOrEmpty()) "" else this.volumeInfo.title,
+        displayDate = if (this.volumeInfo.publishedDate.isNullOrEmpty()) "" else this.volumeInfo.publishedDate.substringBefore("-"),
+        genre = if (this.volumeInfo.categories.isNullOrEmpty()) "Other" else this.volumeInfo.categories.first()
     )
 
 @ExperimentalMaterial3Api
@@ -279,7 +279,6 @@ fun AutocompleteTextField(
             interactionSource = interactionSource,
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = { focusRequester.requestFocus() })
-
         )
 
         DropdownMenu(
@@ -303,51 +302,17 @@ fun AutocompleteTextField(
                             is Suggestion.BookSuggestion -> viewModel.selectBook(suggestion.id)
                         }
                     },
-                    text = { Text("${suggestion.displayText} (${suggestion.displayDate})") }
+                    text = { Text("${suggestion.displayText}${if (suggestion.displayDate != "") " (${suggestion.displayDate})" else ""}") }
                 )
             }
         }
-
-
     }
 
     DisposableEffect(Unit) {
         focusRequester.requestFocus()
         onDispose { }
     }
-
     filled[type]?.set(label, query).toString()
-}
-
-@Composable
-fun DropdownSuggestions(
-    suggestions: List<Suggestion>,
-    onSuggestionSelected: (Suggestion) -> Unit,
-) {
-    DropdownMenu(
-        expanded = suggestions.isNotEmpty(),
-        onDismissRequest = { },
-        modifier = Modifier
-            .background(colorResource(id = R.color.off_white))
-            .fillMaxWidth()
-    ) {
-        suggestions.forEach { suggestion ->
-            DropdownMenuItem(
-                onClick = { onSuggestionSelected(suggestion) },
-                text = {
-                    Text(
-                        "${suggestion.displayText} (${suggestion.displayDate})",
-                        fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxSize(),
-                        color = colorResource(id = R.color.black)
-                    )
-                },
-                modifier = Modifier
-                    .background(colorResource(id = R.color.off_white)),
-            )
-        }
-    }
 }
 
 @Composable
@@ -669,8 +634,8 @@ fun BookForm(mediaViewModel: MediaViewModel) {
         bookDetails?.let {
             bookTitle = it.volumeInfo.title
             author = it.volumeInfo.authors?.joinToString(", ") ?: ""
-            yearPublished = it.volumeInfo.publishedDate.substringBefore("-") ?: ""
-            selectedGenre = it.volumeInfo.categories?.firstOrNull() ?: ""
+            yearPublished = if (it.volumeInfo.publishedDate.isNullOrEmpty()) "" else it.volumeInfo.publishedDate.substringBefore("-")
+            selectedGenre = if (it.volumeInfo.categories.isNullOrEmpty()) "Other" else it.volumeInfo.categories.first()
         }
     }
 
