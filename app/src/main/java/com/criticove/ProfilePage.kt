@@ -1,11 +1,9 @@
 package com.criticove
 
-
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,15 +29,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,17 +43,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.core.content.FileProvider
-import coil.compose.rememberAsyncImagePainter
 import com.criticove.backend.FirebaseManager
+
 import com.criticove.backend.userModel
+
 import com.google.firebase.Firebase
+
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.auth.userProfileChangeRequest
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Objects
+import kotlin.coroutines.CoroutineContext
 
 val profilePic = R.drawable.default_pic // later if profile pic is set, change it
 
@@ -71,7 +72,7 @@ fun ProfilePageMainContent(navController: NavController, userModel: userModel) {
             .fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        CommonHeader(navController, "Profile", "Dashboard")
+        ProfileHeader(navController, "Profile", "Dashboard")
 
         Column(
             modifier = Modifier
@@ -86,7 +87,7 @@ fun ProfilePageMainContent(navController: NavController, userModel: userModel) {
 }
 
 @Composable
-fun CommonHeader(navController: NavController, title: String, route: String) {
+fun ProfileHeader(navController: NavController, title: String, route: String) {
     Box(
         modifier = Modifier
             .height(50.dp)
@@ -108,13 +109,10 @@ fun CommonHeader(navController: NavController, title: String, route: String) {
             Alignment.Center
         ) {
             Text(
-                modifier = Modifier.padding(horizontal = 40.dp),
                 text = title,
                 color = colorResource(id = R.color.off_white),
                 fontSize = 30.sp,
                 fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
             )
         }
     }
@@ -130,8 +128,7 @@ fun ProfileMain(navController: NavController) {
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp),
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
@@ -152,21 +149,20 @@ fun ProfileMain(navController: NavController) {
 
         Text(
             text = username,
-            Modifier.padding(
-                horizontal = 15.dp
-            ),
             fontSize = 24.sp,
             fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
         )
 
 
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CustomButton("Edit Profile") { navController.navigate("EditProfile") }
-            CustomButton("Logout") { showDialog = true }
-            CustomButton("Delete Account") { showDeleteDialog = true }
+            customButton("Edit Profile",  { navController.navigate("EditProfile") })
+            customButton("Logout") {
+                showDialog = true
+            }
+            customButton("Delete Account")
+            {showDeleteDialog = true}
         }
     }
     // Dialog
@@ -182,14 +178,13 @@ fun ProfileMain(navController: NavController) {
                 Text(text = "Are you sure?", fontSize = 20.sp, fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)))
             },
             confirmButton = {
-                CustomButton("Logout") {
+                customButton("Logout", {
                     showDialog = false
-                    FirebaseManager.signOut()
-                    navController.navigate("Login")
-                }
+                    FirebaseAuth.getInstance().signOut()
+                    navController.navigate("Login")})
             },
             dismissButton = {
-                CustomButton("Cancel") { showDialog = false }
+                customButton("Cancel",{showDialog = false})
             },
         )
     }
@@ -205,14 +200,13 @@ fun ProfileMain(navController: NavController) {
                 Text("Are you sure?", fontSize = 20.sp, fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)))
             },
             confirmButton = {
-                CustomButton("Delete") {
+                customButton("Delete", {
                     showDeleteDialog = false
-                    FirebaseManager.deleteAccount()
-                    navController.navigate("Signup")
-                }
+                    FirebaseAuth.getInstance().getCurrentUser()?.delete()
+                    navController.navigate("Login")})
             },
             dismissButton = {
-                CustomButton("Cancel") { showDeleteDialog = false }
+                customButton("Cancel",{showDeleteDialog = false})
             }
         )
     }
@@ -220,11 +214,9 @@ fun ProfileMain(navController: NavController) {
 
 
 @Composable
-fun CustomButton(text: String = "Default",
-                 isBtnEnabled: Boolean = true,
+fun customButton(text: String = "Default",
                  clicked: () -> Unit) {
     Button(
-        enabled = isBtnEnabled,
         onClick = clicked,
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(id = R.color.teal),
@@ -238,14 +230,14 @@ fun CustomButton(text: String = "Default",
 }
 
 @Composable
-fun EditProfile(navController: NavController, userModel: userModel) {
+fun editProfile(navController: NavController, userModel: userModel) {
     Column(
         modifier = Modifier
             .background(colorResource(id = R.color.off_white))
             .fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        CommonHeader(navController, "Edit Profile", "ProfilePage")
+        EditHeader()
 
         Column(
             modifier = Modifier
@@ -285,25 +277,10 @@ fun EditHeader() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditMain(navController: NavController) {
     val user = FirebaseManager.getUsername()
     var username by remember { mutableStateOf(user) }
-    var newPicture by remember {
-        mutableStateOf<Uri?>(null)
-    }
-
-    val galleryLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri ->
-            uri?.let {
-                newPicture = it
-            }
-        }
-    )
-
-    var statusMessage by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -314,73 +291,30 @@ fun EditMain(navController: NavController) {
     ) {
 
         TextButton(
-            modifier = Modifier.padding(top = 20.dp),
-            onClick = { galleryLauncher.launch("image/*") },
+            onClick = { },
         ) {
-            if (newPicture != null) {
-                Image(
-                    painter = rememberAsyncImagePainter(model = newPicture),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(200.dp)
-                )
-            } else {
-                Image(
-                    painter = painterResource(id = profilePic),
-                    contentDescription = "profile picture",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(200.dp)
-                        .clip(CircleShape)
-                )
-            }
+            Image(
+                painter = painterResource(id = profilePic),
+                contentDescription = "profile picture",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(200.dp)
+                    .clip(CircleShape)
+            )
         }
-        var textColor = if (statusMessage == "Username updated.") colorResource(id = R.color.darkgreen) else colorResource(id = R.color.red)
-        Text(
-            text = statusMessage,
-            fontFamily = FontFamily(Font(R.font.alegreya_sans_bold)),
-            color = textColor,
-            fontSize = 18.sp
-        )
 
         OutlinedTextField(
             value = username,
             onValueChange = {
                 username = it
-                statusMessage = ""
-            },
-            modifier = Modifier
-                .width(300.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = colorResource(id = R.color.blue),
-                unfocusedBorderColor = colorResource(id = R.color.teal)
-            ),
-            textStyle = TextStyle(
-                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-                fontSize = 18.sp
-            )
+            }
         )
 
         Row(
-            modifier = Modifier.padding(top = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-            CustomButton("Save changes") {
-                if (username != "") {
-                    FirebaseManager.updateUsername(username) { success ->
-                        statusMessage = if (success && username != "") {
-                            "Username updated."
-                        } else {
-                            "Username update failed. Try again."
-                        }
-                    }
-                } else {
-                    statusMessage = "Username cannot be empty"
-                }
-            }
-//            CustomButton("Back") { navController.navigate("ProfilePage") }
+            customButton("Save changes", { changed(username) })
+            customButton("Back", { navController.navigate("ProfilePage") })
         }
 
     }
