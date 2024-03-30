@@ -101,4 +101,4 @@
 | 2024/03/28 |  2    |         |3       |0.5       |            |      | Reviewing D5 |
 | 2024/03/28 |  3    |         |        |          |            |      | Making filtering a dropdown menu + adjusting UI |
 | 2024/03/28 |       |         |        |5         |            |      | Debugging the bug in review form suggestions while typing |
-| 2024/03/29 |       |         |        |2         |            |      | Worked on the transition from sign up / log in to dashboard and vice versa |
+| 2024/03/29 |  2    |         |        |2         |            |      | Worked on the transition from sign up / log in to dashboard and vice versa |
