@@ -144,8 +144,12 @@ fun FriendReview(
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.alegreya_sans_medium))
                 )
+                var author_text = "$author, $year"
+                if (author == "null") {
+                    author_text = year
+                }
                 Text(
-                    text = "$author, $year",
+                    text = author_text,
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
                 )

@@ -58,7 +58,7 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
     var sortBy by remember { mutableStateOf("Newest") }
 
     MainLayout(
-        title = "All reviews",
+        title = "All Reviews",
         navController = navController
     ) { padding ->
         Column(
