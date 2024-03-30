@@ -70,7 +70,7 @@
 | 2024/03/18 |       |         |        |          |            |  3   | Fixed issue where submitted reviews don't submit the review paragraph |
 | 2024/03/15 |       |         |        |          |            | 1.5  | Updated review details UI |
 | 2024/03/19 |       |         |1       |          |            |      | review details page |
-| 2024/03/20 | 0.75  |         | 0.75   |0.75      | 0.75       |      | D4 discussion and next steps for the app |
+| 2024/03/20 | 0.75  | 0.75    | 0.75   |0.75      | 0.75       |      | D4 discussion and next steps for the app |
 | 2024/03/20 | 2.5   |         |        |2.5         |            |      | Debug autofill |
 | 2024/03/20 |       |         |        |          | 7          |      | Integrate Profile with FirebaseManager, Success/Fail message after profile username update, New Call to Action (CTA) button for new user with 0 reviews, Percentages shown in pie chart legend, Removed Dashboard share symbols (no more discussion board), Changed monthly reviews to all reviews so far on Dashboard, Real time updates for Reviews Per Media Type on Dashboard, Added reviews per media type and total # of reviews in userModel, UI enhancements throughout the pages above |
 | 2024/03/20 |       |         |2        |          |            |      | Bookmark Reviews Functionality|
@@ -98,7 +98,8 @@
 | 2024/03/27 |  2    |         |        |          |            |      | Minor UI fixes in review form + more research in email validation APIs + adding transitions when viewing review to compensate for loading time |
 | 2024/03/27 |       |         |        |          |            | 1    | Debugged reviews showing old data (with TA during office hours) |
 | 2024/03/27 |  2    |         |3       |3         |            |      | Working on D5 |
-| 2024/03/28 |  2    |         |3       |0.5       |            |      | Reviewing D5 |
+| 2024/03/28 |  2    | 1       |3       |0.5       |            |      | Reviewing D5 |
 | 2024/03/28 |  3    |         |        |          |            |      | Making filtering a dropdown menu + adjusting UI |
-| 2024/03/28 |       |         |        |5         |            |      | Debugging the bug in review form suggestions while typing |
+| 2024/03/28 |       | 3       |        |5         |            |      | Debugging the bug in review form suggestions while typing |
 | 2024/03/29 |  2    |         |        |2         |            |      | Worked on the transition from sign up / log in to dashboard and vice versa |
+| 2024/03/29 |       | 3       |        |          |            |      | Debugging the book api crash bug and review form bug |
