@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -53,6 +55,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -62,6 +65,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
@@ -205,9 +209,9 @@ val TvShow.suggestion: Suggestion.TvShowSuggestion
 val BookItem.suggestion: Suggestion.BookSuggestion
     get() = Suggestion.BookSuggestion(
         id = this.id,
-        displayText = this.volumeInfo.title?: "",
-        displayDate = this.volumeInfo.publishedDate.substringBefore("-")?: "",
-        genre = this.volumeInfo.categories?.firstOrNull()?: "Other"
+        displayText = if (this.volumeInfo.title.isNullOrEmpty()) "" else this.volumeInfo.title,
+        displayDate = if (this.volumeInfo.publishedDate.isNullOrEmpty()) "" else this.volumeInfo.publishedDate.substringBefore("-"),
+        genre = if (this.volumeInfo.categories.isNullOrEmpty()) "Other" else this.volumeInfo.categories.first()
     )
 
 @ExperimentalMaterial3Api
@@ -215,114 +219,97 @@ val BookItem.suggestion: Suggestion.BookSuggestion
 fun AutocompleteTextField(
     label: String,
     viewModel: MediaViewModel,
-//    onSuggestionSelected: (Suggestion) -> Unit,
     type: String
 ) {
     val focusRequester = remember { FocusRequester() }
-    val debouncePeriod = 300L
+    val debouncePeriod = 1250L
     val coroutineScope = rememberCoroutineScope()
     var searchJob by remember { mutableStateOf<Job?>(null) }
+    val interactionSource = remember { MutableInteractionSource() }
 
     var query by remember { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
-    val keyboardController = LocalSoftwareKeyboardController.current
 
-    val movieSuggestions by viewModel.movieSuggestions.observeAsState()
-    val tvShowSuggestions by viewModel.tvShowSuggestions.observeAsState()
-    val bookSuggestions by viewModel.bookSuggestions.observeAsState()
-
-
-    val suggestions: List<Suggestion> = when (type) {
-        "Movie" -> movieSuggestions?.map { it.suggestion } ?: emptyList()
-        "Book" -> bookSuggestions?.map { it.suggestion } ?: emptyList()
-        else -> tvShowSuggestions?.map { it.suggestion } ?: emptyList()
+    val suggestions = when (type) {
+        "Movie" -> viewModel.movieSuggestions.observeAsState().value?.map { it.suggestion } ?: emptyList()
+        "TV Show" -> viewModel.tvShowSuggestions.observeAsState().value?.map { it.suggestion } ?: emptyList()
+        "Book" -> viewModel.bookSuggestions.observeAsState().value?.map { it.suggestion } ?: emptyList()
+        else -> emptyList()
     }
 
-    OutlinedTextField(
-        value = query,
-        onValueChange = {newValue ->
-            query = newValue
-            isExpanded = newValue.isNotEmpty()
-            searchJob?.cancel()
+    LaunchedEffect(query) {
+        searchJob?.cancel()
+        if (query.isNotEmpty()) {
             searchJob = coroutineScope.launch {
-                try {
-                    delay(debouncePeriod) // Debounce delay
-                    if (query == newValue) { // Check if the query hasn't changed
-                        if (type == "Movie") {
-                            viewModel.searchMovieTitles(newValue)
-                        } else if (type == "TV Show"){
-                            viewModel.searchTvShowTitles(newValue)
-                        } else {
-                            viewModel.searchBookTitles(newValue)
-                        }
-                    }
-                } catch (e: Exception) {
-                    println("Error in coroutine: ${e.message}")
+                // Debounce delay to wait before making the search request
+                delay(debouncePeriod) // Adjust this value as needed
+                when (type) {
+                    "Movie" -> viewModel.searchMovieTitles(query)
+                    "TV Show" -> viewModel.searchTvShowTitles(query)
+                    "Book" -> viewModel.searchBookTitles(query)
                 }
             }
-        },
-        textStyle = androidx.compose.ui.text.TextStyle(
-            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-            color = colorResource(id = R.color.black),
-            fontSize = 18.sp
-            ),
-        label = {
-            Text(
-                text = label,
-                color = colorResource(id = R.color.coolGrey),
-                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
-        ) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp)
-            .focusRequester(focusRequester),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = colorResource(id = R.color.blue),
-            unfocusedBorderColor = colorResource(id = R.color.teal)
-        ),
-        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-        keyboardActions = KeyboardActions(onDone = {
-            keyboardController?.hide()
-        }),
-        shape = RoundedCornerShape(10.dp)
-    )
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
+        }
     }
 
-    if (suggestions.isNotEmpty() && isExpanded) {
-        DropdownMenu(
-            expanded = isExpanded,
-            onDismissRequest = { isExpanded = false },
+    Box(modifier = Modifier.fillMaxWidth()) {
+        OutlinedTextField(
+            value = query,
+            onValueChange = {
+                query = it
+                isExpanded = it.isNotEmpty()
+            },
+            textStyle = androidx.compose.ui.text.TextStyle(
+                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                color = colorResource(id = R.color.black),
+                fontSize = 18.sp
+                ),
+            label = {
+                Text(
+                    text = label,
+                    color = colorResource(id = R.color.coolGrey),
+                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
+            ) },
             modifier = Modifier
-                .background(colorResource(id = R.color.off_white))
                 .fillMaxWidth()
+                .padding(horizontal = 10.dp)
+                .focusRequester(focusRequester),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = colorResource(id = R.color.blue),
+                unfocusedBorderColor = colorResource(id = R.color.teal)
+            ),
+            shape = RoundedCornerShape(10.dp),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { focusRequester.requestFocus() })
+        )
+
+        DropdownMenu(
+            expanded = isExpanded && suggestions.isNotEmpty(),
+            onDismissRequest = {
+                isExpanded = false
+                               },
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(colorResource(id = R.color.off_white))
         ) {
             suggestions.take(5).forEach { suggestion ->
                 DropdownMenuItem(
                     onClick = {
                         query = suggestion.displayText
                         isExpanded = false
-                        when(suggestion) {
+                        when (suggestion) {
                             is Suggestion.MovieSuggestion -> viewModel.fetchMovieDetails(suggestion.id)
                             is Suggestion.TvShowSuggestion -> viewModel.fetchTvShowDetails(suggestion.id)
                             is Suggestion.BookSuggestion -> viewModel.selectBook(suggestion.id)
                         }
+                        focusRequester.requestFocus()
                     },
-                    text = {
-                        Text("${suggestion.displayText} (${suggestion.displayDate})",
-                            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxSize(),
-                            color = colorResource(id = R.color.black))
-                    },
-                    modifier = Modifier
-                        .background(colorResource(id = R.color.off_white)),
+                    text = { Text("${suggestion.displayText}${if (suggestion.displayDate != "") " (${suggestion.displayDate})" else ""}") }
                 )
             }
         }
     }
+
 
     filled[type]?.set(label, query).toString()
 }
@@ -646,8 +633,8 @@ fun BookForm(mediaViewModel: MediaViewModel) {
         bookDetails?.let {
             bookTitle = it.volumeInfo.title
             author = it.volumeInfo.authors?.joinToString(", ") ?: ""
-            yearPublished = it.volumeInfo.publishedDate.substringBefore("-") ?: ""
-            selectedGenre = it.volumeInfo.categories?.firstOrNull() ?: ""
+            yearPublished = if (it.volumeInfo.publishedDate.isNullOrEmpty()) "" else it.volumeInfo.publishedDate.substringBefore("-")
+            selectedGenre = if (it.volumeInfo.categories.isNullOrEmpty()) "Other" else it.volumeInfo.categories.first()
         }
     }
 

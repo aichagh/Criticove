@@ -42,8 +42,6 @@ class MediaViewModel: ViewModel() {
     val movieDetails = MutableLiveData<MovieDetail?>()
     val tvShowDetails = MutableLiveData<TvShowDetail?>()
 
-
-
     fun searchMovieTitles(query: String) {
         viewModelScope.launch {
             try {
