@@ -17,9 +17,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -29,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,11 +52,11 @@ import kotlinx.coroutines.flow.StateFlow
 fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
     userModel.getReviews()
     val totalReviews = getTotalReviews(userModel.reviewList)
-    val sorting = listOf("Newest", "Oldest", "A to Z", "Z to A")
+
     var sortBy by remember { mutableStateOf("Newest") }
 
     MainLayout(
-        title = "All reviews",
+        title = "All Reviews",
         navController = navController
     ) { padding ->
         Column(
@@ -81,71 +79,44 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                     textAlign = TextAlign.Center
                 )
             } else {
-                    var expanded by remember { mutableStateOf(false) }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .padding(top = 15.dp, end = 15.dp),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    SortingButton(
+                        text = "Newest",
+                        selected = sortBy == "Newest",
+                        onClick = { sortBy = "Newest" }
+                    )
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                            .padding(5.dp),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        TextButton(
-                            onClick = { expanded = true },
-                        ) {
-                            Text(
-                                text = "Sort by : $sortBy",
-                                fontSize = 18.sp,
-                                color = colorResource(id = R.color.black),
-                                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
-                                )
+                    Spacer(modifier = Modifier.width(8.dp))
 
-                            Spacer(modifier = Modifier.size(15.dp))
+                    SortingButton(
+                        text = "Oldest",
+                        selected = sortBy == "Oldest",
+                        onClick = { sortBy = "Oldest" }
+                    )
 
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = R.drawable.funnel),
-                                contentDescription = "filter",
-                                tint = colorResource(id = R.color.black),
-                                modifier = Modifier
-                                    .height(30.dp)
-                            )
-                        }
+                    Spacer(modifier = Modifier.width(8.dp))
 
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false },
-                            modifier = Modifier
-                                .background(colorResource(id = R.color.off_white))
-                                .fillMaxWidth()
-                        ) {
-                            sorting.forEachIndexed { index, el ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            text = el,
-                                            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.fillMaxSize()
-                                        )
-                                    },
-                                    onClick = {
-                                        if (el != sortBy) { // Ignore clicks on placeholder
-                                            sortBy = el
-                                        }
-                                        expanded = false
-                                    },
-                                    modifier = Modifier
-                                        .background(colorResource(id = R.color.off_white))
-                                        .fillMaxWidth(),
-                                )
-                                if(index != sorting.size - 1) { 
-                                    HorizontalDivider( color = colorResource(id = R.color.coolGrey) )
-                                }
-                            }
-                        }
-                    }
+                    SortingButton(
+                        text = "A to Z",
+                        selected = sortBy == "A to Z",
+                        onClick = { sortBy = "A to Z" }
+                    )
 
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    SortingButton(
+                        text = "Z to A",
+                        selected = sortBy == "Z to A",
+                        onClick = { sortBy = "Z to A" }
+                    )
+                }
             }
 
             Box(
@@ -326,8 +297,8 @@ fun displayReviews(navController: NavController, reviewList: StateFlow<MutableLi
     val sortedReviews = when (sortBy) {
         "Oldest" -> reviewsList
         "Newest" -> reviewsList.reversed()
-        "A to Z" -> reviewsList.sortedBy { it.title?.toLowerCase() }
-        "Z to A" -> reviewsList.sortedByDescending { it.title?.toLowerCase() }
+        "A to Z" -> reviewsList.sortedBy { it.title }
+        "Z to A" -> reviewsList.sortedByDescending { it.title }
         else -> reviewsList.reversed()
     }
 
