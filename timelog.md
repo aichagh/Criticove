@@ -98,7 +98,7 @@
 | 2024/03/27 |  2    |         |        |          |            |      | Minor UI fixes in review form + more research in email validation APIs + adding transitions when viewing review to compensate for loading time |
 | 2024/03/27 |       |         |        |          |            | 1    | Debugged reviews showing old data (with TA during office hours) |
 | 2024/03/27 |  2    |         |3       |3         |            |      | Working on D5 |
-| 2024/03/28 |  2    | 1       |3       |0.5       |            |      | Reviewing D5 |
+| 2024/03/28 |  0.5  | 1       |3       |0.5       |            |      | Reviewing D5 |
 | 2024/03/28 |  3    |         |        |          |            |      | Making filtering a dropdown menu + adjusting UI |
 | 2024/03/28 |       | 3       |        |5         |            |      | Debugging the bug in review form suggestions while typing |
 | 2024/03/29 |  2    |         |        |2         |            |      | Worked on the transition from sign up / log in to dashboard and vice versa |
