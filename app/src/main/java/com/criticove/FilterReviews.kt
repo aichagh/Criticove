@@ -91,21 +91,21 @@ fun FilterReviews(navController: NavController, userModel: userModel, type: Stri
                         TextButton(
                             onClick = { expanded = true },
                         ) {
-                            Text(
-                                text = "Sort by : $sortBy",
-                                fontSize = 18.sp,
-                                color = colorResource(id = R.color.black),
-                                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
-                            )
-
-                            Spacer(modifier = Modifier.size(15.dp))
-
                             Icon(
                                 imageVector = ImageVector.vectorResource(id = R.drawable.funnel),
                                 contentDescription = "filter",
                                 tint = colorResource(id = R.color.black),
                                 modifier = Modifier
                                     .height(30.dp)
+                            )
+
+                            Spacer(modifier = Modifier.size(15.dp))
+
+                            Text(
+                                text = "Sort by : $sortBy",
+                                fontSize = 18.sp,
+                                color = colorResource(id = R.color.black),
+                                fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
                             )
                         }
 
