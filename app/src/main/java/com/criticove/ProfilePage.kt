@@ -1,5 +1,12 @@
 package com.criticove
 
+
+import android.content.ContentValues.TAG
+import android.content.Context
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,9 +52,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
-
+import androidx.core.content.FileProvider
+import coil.compose.rememberAsyncImagePainter
 import com.criticove.backend.FirebaseManager
 import com.criticove.backend.userModel
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.auth.userProfileChangeRequest
 
 val profilePic = R.drawable.default_pic // later if profile pic is set, change it
 
@@ -279,6 +290,18 @@ fun EditHeader() {
 fun EditMain(navController: NavController) {
     val user = FirebaseManager.getUsername()
     var username by remember { mutableStateOf(user) }
+    var newPicture by remember {
+        mutableStateOf<Uri?>(null)
+    }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            uri?.let {
+                newPicture = it
+            }
+        }
+    )
 
     var statusMessage by remember { mutableStateOf("") }
 
@@ -292,16 +315,27 @@ fun EditMain(navController: NavController) {
 
         TextButton(
             modifier = Modifier.padding(top = 20.dp),
-            onClick = { }
+            onClick = { galleryLauncher.launch("image/*") },
         ) {
-            Image(
-                painter = painterResource(id = profilePic),
-                contentDescription = "profile picture",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(200.dp)
-                    .clip(CircleShape)
-            )
+            if (newPicture != null) {
+                Image(
+                    painter = rememberAsyncImagePainter(model = newPicture),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(200.dp)
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = profilePic),
+                    contentDescription = "profile picture",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(200.dp)
+                        .clip(CircleShape)
+                )
+            }
         }
         var textColor = if (statusMessage == "Username updated.") colorResource(id = R.color.darkgreen) else colorResource(id = R.color.red)
         Text(
@@ -350,4 +384,19 @@ fun EditMain(navController: NavController) {
         }
 
     }
+}
+
+fun changed(newUsername: String) {
+    val user = Firebase.auth.currentUser
+    val profileUpdates = userProfileChangeRequest {
+        displayName = newUsername
+//        photoUri = Uri.parse("https://example.com/jane-q-user/profile.jpg")
+    }
+
+    user!!.updateProfile(profileUpdates)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d(TAG, "User profile updated.")
+            }
+        }
 }
