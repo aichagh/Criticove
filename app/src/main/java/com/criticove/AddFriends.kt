@@ -16,6 +16,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -23,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -40,36 +41,21 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.criticove.backend.userModel
 
-
-//var ognewFriendsList = mutableStateListOf(
-//    Friend("Aras"),
-//    Friend("Meer"),
-//    Friend("Amu"),
-//    Friend("Ahtsimrahs"),
-//    Friend("Atimhsa"),
-//    Friend("Ahcia")
-//)
-
-
-
-//@SuppressLint("UnrememberedMutableState")
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun createNewFriendsList(usermodel: userModel): SnapshotStateList<Friend> {
     usermodel.getUsers()
-    var FriendsList = mutableStateListOf<Friend>()
-    val user_map by usermodel.userMap.collectAsState()
-    for ((key, value) in user_map) {
-        FriendsList.add(Friend(value))
+    var friendsList = mutableStateListOf<Friend>()
+    val userMap by usermodel.userMap.collectAsState()
+    for ((_, value) in userMap) {
+        friendsList.add(Friend(value))
     }
-    return FriendsList
+    return friendsList
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,9 +64,9 @@ fun AddFriends(navController: NavController, usermodel: userModel) {
     var searchText by remember { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
     var filteredFriends by remember { mutableStateOf(emptyList<Friend>()) }
-    var ognewFriendsList = createNewFriendsList(usermodel)
+    val ognewFriendsList = createNewFriendsList(usermodel)
 
-    fun perform_search() {
+    fun performSearch() {
         filteredFriends = if (isSearchActive) {
             ognewFriendsList.filter {
                 it.username.contains(searchText, ignoreCase = true)
@@ -90,7 +76,7 @@ fun AddFriends(navController: NavController, usermodel: userModel) {
         }
     }
 
-    perform_search()
+    performSearch()
     MainLayout(
         title = "Add Friends",
         navController = navController,
@@ -117,7 +103,7 @@ fun AddFriends(navController: NavController, usermodel: userModel) {
                     onValueChange = {
                         searchText = it
                         isSearchActive = it.isNotEmpty()
-                        perform_search()
+                        performSearch()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -130,6 +116,7 @@ fun AddFriends(navController: NavController, usermodel: userModel) {
                     label = {
                         Text(
                             text = "Search friends ...",
+                            color = colorResource(id = R.color.blue),
                             style = TextStyle(
                                 fontSize = 20.sp,
                                 fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
@@ -162,7 +149,11 @@ fun AddFriends(navController: NavController, usermodel: userModel) {
 }
 
 @Composable
-fun AddFriends(friend: Friend, ognewFriendsList: SnapshotStateList<Friend>, usermodel: userModel) {
+fun AddFriends(friend: Friend,
+               ognewFriendsList: SnapshotStateList<Friend>,
+               usermodel: userModel) {
+    var friendAdded by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -173,7 +164,8 @@ fun AddFriends(friend: Friend, ognewFriendsList: SnapshotStateList<Friend>, user
             modifier = Modifier
                 .fillMaxWidth()
                 .background(colorResource(id = R.color.green))
-                .padding(4.dp, 4.dp, 20.dp, 4.dp)
+                .padding(4.dp, 4.dp, 20.dp, 4.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             TextButton(
                 modifier = Modifier
@@ -195,33 +187,35 @@ fun AddFriends(friend: Friend, ognewFriendsList: SnapshotStateList<Friend>, user
                     .align(Alignment.CenterVertically),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(text = "${friend.username}",
+                Text(text = friend.username,
                     style = TextStyle(
                         fontSize = 20.sp,
                         fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
                     )
                 )
-
             }
 
-            TextButton(
-                modifier = Modifier
-                    .width(50.dp),
-                onClick = {
-//                    ogcurFriendsList.add(Friend(friend.username))
-                    usermodel.addFriend(friend.username)
-                    remove_new_friend(friend.username, ognewFriendsList)
-                    println("the new list of new friends is $ognewFriendsList")}
-            ) {
+            if (friendAdded) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.add_friend_svgrepo_com),
-                    contentDescription = "add", tint = colorResource(id = R.color.black)
+                    modifier = Modifier.padding(end = 15.dp),
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = "check", tint = colorResource(id = R.color.black)
                 )
+            } else {
+                TextButton(
+                    modifier = Modifier.width(50.dp),
+                    onClick = {
+                        usermodel.addFriend(friend.username)
+                        ognewFriendsList.remove(Friend(friend.username))
+                        friendAdded = true
+                    }
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.add_friend_svgrepo_com),
+                        contentDescription = "add", tint = colorResource(id = R.color.black)
+                    )
+                }
             }
         }
     }
-}
-
-fun remove_new_friend(username: String, ognewFriendsList: SnapshotStateList<Friend>) {
-    ognewFriendsList.remove(Friend(username))
 }

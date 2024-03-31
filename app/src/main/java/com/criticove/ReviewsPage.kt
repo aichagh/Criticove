@@ -87,7 +87,7 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp)
-                            .padding(5.dp),
+                            .padding(top = 10.dp, end = 5.dp),
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -140,7 +140,7 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
                                         .background(colorResource(id = R.color.off_white))
                                         .fillMaxWidth(),
                                 )
-                                if(index != sorting.size - 1) { 
+                                if (index != sorting.size - 1) {
                                     HorizontalDivider( color = colorResource(id = R.color.coolGrey) )
                                 }
                             }
@@ -236,6 +236,7 @@ fun Stars(rating: Int) {
         )
     }
 }
+
 @Composable
 fun Review(title: String = "Title",
            author: String,
@@ -244,8 +245,6 @@ fun Review(title: String = "Title",
            reviewID: String,
            navController: NavController,
            bookmarked: Boolean = false) {
-
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -269,12 +268,12 @@ fun Review(title: String = "Title",
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.alegreya_sans_medium))
                 )
-                var author_text = "$author, $year"
+                var authorText = "$author, $year"
                 if (author == "null") {
-                    author_text = "$year"
+                    authorText = year
                 }
                 Text(
-                    text = author_text,
+                    text = authorText,
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
                 )
@@ -287,9 +286,7 @@ fun Review(title: String = "Title",
                 TextButton(
                     modifier = Modifier.width(50.dp),
                     onClick = {
-//                        scope.launch {
-                            navController.navigate("ViewReview/$reviewID/false/none")
-//                        }
+                        navController.navigate("ViewReview/$reviewID/false/none")
                     }
                 ) {
                     Icon(
