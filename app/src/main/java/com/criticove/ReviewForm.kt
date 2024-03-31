@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -47,7 +46,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -55,7 +53,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -65,18 +62,16 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -88,7 +83,6 @@ import com.criticove.api.TvShow
 import com.criticove.backend.SubmittedReview
 import com.criticove.backend.userModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -231,9 +225,15 @@ fun AutocompleteTextField(
     var isExpanded by remember { mutableStateOf(false) }
 
     val suggestions = when (type) {
-        "Movie" -> viewModel.movieSuggestions.observeAsState().value?.map { it.suggestion } ?: emptyList()
-        "TV Show" -> viewModel.tvShowSuggestions.observeAsState().value?.map { it.suggestion } ?: emptyList()
-        "Book" -> viewModel.bookSuggestions.observeAsState().value?.map { it.suggestion } ?: emptyList()
+        "Movie" -> viewModel.movieSuggestions.observeAsState().value?.map { it.suggestion }
+            ?: emptyList()
+
+        "TV Show" -> viewModel.tvShowSuggestions.observeAsState().value?.map { it.suggestion }
+            ?: emptyList()
+
+        "Book" -> viewModel.bookSuggestions.observeAsState().value?.map { it.suggestion }
+            ?: emptyList()
+
         else -> emptyList()
     }
 
@@ -242,7 +242,7 @@ fun AutocompleteTextField(
         if (query.isNotEmpty()) {
             searchJob = coroutineScope.launch {
                 // Debounce delay to wait before making the search request
-                delay(debouncePeriod) // Adjust this value as needed
+//                delay(debouncePeriod) // Adjust this value as needed
                 when (type) {
                     "Movie" -> viewModel.searchMovieTitles(query)
                     "TV Show" -> viewModel.searchTvShowTitles(query)
@@ -263,13 +263,14 @@ fun AutocompleteTextField(
                 fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
                 color = colorResource(id = R.color.black),
                 fontSize = 18.sp
-                ),
+            ),
             label = {
                 Text(
                     text = label,
                     color = colorResource(id = R.color.coolGrey),
                     fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
-            ) },
+                )
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp)
@@ -279,36 +280,76 @@ fun AutocompleteTextField(
                 unfocusedBorderColor = colorResource(id = R.color.teal)
             ),
             shape = RoundedCornerShape(10.dp),
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { focusRequester.requestFocus() })
         )
-
         DropdownMenu(
             expanded = isExpanded && suggestions.isNotEmpty(),
-            onDismissRequest = {
-                isExpanded = false
-                               },
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(colorResource(id = R.color.off_white))
+            onDismissRequest = { isExpanded = false },
+            modifier = Modifier.fillMaxWidth().background(colorResource(id = R.color.off_white)),
+            properties = PopupProperties(focusable = false)
         ) {
-            suggestions.take(5).forEach { suggestion ->
+            suggestions.take(5).forEachIndexed { index, suggestion ->
                 DropdownMenuItem(
                     onClick = {
                         query = suggestion.displayText
                         isExpanded = false
                         when (suggestion) {
                             is Suggestion.MovieSuggestion -> viewModel.fetchMovieDetails(suggestion.id)
-                            is Suggestion.TvShowSuggestion -> viewModel.fetchTvShowDetails(suggestion.id)
+                            is Suggestion.TvShowSuggestion -> viewModel.fetchTvShowDetails(
+                                suggestion.id
+                            )
+
                             is Suggestion.BookSuggestion -> viewModel.selectBook(suggestion.id)
                         }
-                        focusRequester.requestFocus()
                     },
-                    text = { Text("${suggestion.displayText}${if (suggestion.displayDate != "") " (${suggestion.displayDate})" else ""}") }
+                    text = {
+                        Text(
+                            text = "${suggestion.displayText}${if (suggestion.displayDate != "") " (${suggestion.displayDate})" else ""}",
+                            color = colorResource(id = R.color.black),
+                            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 )
+                if(index != 4) { HorizontalDivider( color = colorResource(id = R.color.coolGrey)) }
+
             }
         }
     }
+
+//        DropdownMenu(
+//            expanded = isExpanded && suggestions.isNotEmpty(),
+//            onDismissRequest = {
+//                isExpanded = false
+//                               },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .background(colorResource(id = R.color.off_white))
+//        ) {
+//            suggestions.take(5).forEachIndexed { index, suggestion ->
+//                DropdownMenuItem(
+//                    onClick = {
+//                        query = suggestion.displayText
+//                        isExpanded = false
+//                        when (suggestion) {
+//                            is Suggestion.MovieSuggestion -> viewModel.fetchMovieDetails(suggestion.id)
+//                            is Suggestion.TvShowSuggestion -> viewModel.fetchTvShowDetails(suggestion.id)
+//                            is Suggestion.BookSuggestion -> viewModel.selectBook(suggestion.id)
+//                        }
+//                        focusRequester.requestFocus()
+//                    },
+//                    text = {
+//                        Text(
+//                            text = "${suggestion.displayText}${if (suggestion.displayDate != "") " (${suggestion.displayDate})" else ""}",
+//                            color = colorResource(id = R.color.coolGrey),
+//                            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+//                            fontSize = 18.sp
+//                        ) }
+//                )
+//                if(index != 4) { HorizontalDivider( color = colorResource(id = R.color.coolGrey)) }
+//            }
+//        }
 
 
     filled[type]?.set(label, query).toString()
@@ -833,9 +874,8 @@ fun Dropdown(type: String, field: String, list: List<String>,
                 .background(colorResource(id = R.color.off_white))
                 .padding(vertical = 5.dp),
         ) {
-            var textColor = colorResource(id = R.color.black);
             // Adjust the condition to change text color if necessary
-            textColor = if (entered == field) colorResource(id = R.color.coolGrey) else colorResource(id = R.color.black)
+            var textColor = if (entered == field) colorResource(id = R.color.coolGrey) else colorResource(id = R.color.black)
 
             Text(
                 text = entered,
@@ -883,7 +923,7 @@ fun Dropdown(type: String, field: String, list: List<String>,
                         .background(colorResource(id = R.color.off_white))
                         .fillMaxWidth(),
                 )
-                if(index != list.size - 1) { HorizontalDivider() }
+                if(index != list.size - 1) { HorizontalDivider( color = colorResource(id = R.color.coolGrey)) }
             }
         }
     }
