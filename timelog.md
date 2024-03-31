@@ -78,7 +78,7 @@
 | 2024/03/21 |       |         |        |          | 1.5        |      | Fixed reviews per media type on dashboard |
 | 2024/03/21 |       | 2.5     |        |          | 3          | 3.5  | Worked on D4 |
 | 2024/03/21 |       |         | 1      |          |            |      | Filter Bookmarked reviews |
-| 2024/03/21 |       |         |        |1         |            |      | Discussion on D4 |
+| 2024/03/21 |       |         |        |1         | 1          |      | Discussion on D4 |
 | 2024/03/22 |       |         |        |          | 7          |      | CTA button for review goal on dashboard, Progress Tracker backend, Edit Review Goal UI + Backend |
 | 2024/03/22 |       |         |        |          |            |  2   | Added review delete functionality |
 | 2024/03/22 |       |         |        |          |            |  5   | Added review edit functionality |
@@ -98,8 +98,9 @@
 | 2024/03/27 |  2    |         |        |          |            |      | Minor UI fixes in review form + more research in email validation APIs + adding transitions when viewing review to compensate for loading time |
 | 2024/03/27 |       |         |        |          |            | 1    | Debugged reviews showing old data (with TA during office hours) |
 | 2024/03/27 |  2    |         |3       |3         |            |      | Working on D5 |
-| 2024/03/28 |  0.5  | 1       |3       |0.5       |            |      | Reviewing D5 |
+| 2024/03/28 |  0.5  | 1       |3       |0.5       | 0.5        |      | Reviewing D5 |
 | 2024/03/28 |  3    |         |        |          |            |      | Making filtering a dropdown menu + adjusting UI |
 | 2024/03/28 |       | 3       |        |5         |            |      | Debugging the bug in review form suggestions while typing |
 | 2024/03/29 |  2    |         |        |2         |            |      | Worked on the transition from sign up / log in to dashboard and vice versa |
 | 2024/03/29 |       | 3       | 3      |          |            |      | Debugging the book api crash bug and review form bug |
+| 2024/03/31 |       |         |        |          | 1.25       |      | Final Presentation Discussion |
