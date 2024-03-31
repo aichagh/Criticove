@@ -16,8 +16,12 @@ import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.Groups
+import androidx.compose.material.icons.filled.LibraryBooks
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LiveTv
 import androidx.compose.material.icons.filled.Movie
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
@@ -50,9 +54,9 @@ val menuItems = listOf(
 )
 
 val menuItemsFriends = listOf(
-    MenuItem("Friends Reviews", Icons.Filled.Checklist, "FriendsReviews"),
-    MenuItem("Manage Friends", Icons.Filled.Group, "Friends"),
-    MenuItem("Add Friends", Icons.Filled.Group, "AddFriends")
+    MenuItem("Friends' Reviews", Icons.Filled.LibraryBooks, "FriendsReviews"),
+    MenuItem("Manage Friends", Icons.Filled.Groups, "Friends"),
+    MenuItem("Add Friends", Icons.Filled.PersonAdd, "AddFriends")
 )
 
 @Composable

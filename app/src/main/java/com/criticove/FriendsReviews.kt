@@ -20,8 +20,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -31,23 +29,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.criticove.Friend
 import com.criticove.MainLayout
 import com.criticove.Navbar
 import com.criticove.R
-import com.criticove.Review
 import com.criticove.Stars
 import com.criticove.backend.BookReview
 import com.criticove.backend.MovieReview
 import com.criticove.backend.Review
 import com.criticove.backend.TVShowReview
 import com.criticove.backend.userModel
-import com.criticove.displayReviews
-import kotlinx.coroutines.flow.StateFlow
 
 val profilePic = R.drawable.default_pic // later if profile pic is set, change it
 
@@ -55,16 +49,30 @@ val profilePic = R.drawable.default_pic // later if profile pic is set, change i
 @Composable
 fun createFriendsReviews(usermodel: userModel, navController: NavController) {
     val friendsReviewsList by usermodel.friendReviews.collectAsState()
-    for ((key, value) in friendsReviewsList) {
-        displayFriendsReviews(key, value, navController)
+    if (friendsReviewsList.isEmpty()) {
+        Text(
+            text = "No reviews to show here.",
+            color = colorResource(id = R.color.blue),
+            fontSize = 20.sp,
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_medium)),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 300.dp, start = 15.dp, end = 15.dp),
+            textAlign = TextAlign.Center
+        )
+    } else {
+        for ((key, value) in friendsReviewsList) {
+            DisplayFriendsReviews(key, value, navController)
+        }
     }
+
 }
 
 @Composable
 fun FriendsReviews(navController: NavController, usermodel: userModel) {
     usermodel.getfriendReviews()
     MainLayout(
-        title = "Friends Reviews",
+        title = "Friends' Reviews",
         navController = navController,
         friends = true
     ) { padding ->
@@ -77,10 +85,6 @@ fun FriendsReviews(navController: NavController, usermodel: userModel) {
 
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-//            val userModel = userModel()
-//            userModel.getReviews()
-//            println("in review page main content")
-
             Column(
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier
@@ -133,7 +137,7 @@ fun FriendReview(
                         )
                     }
                     Text(
-                        text = "$username",
+                        text = username,
                         fontSize = 18.sp,
                         fontFamily = FontFamily(Font(R.font.alegreya_sans_medium))
                     )
@@ -144,12 +148,12 @@ fun FriendReview(
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.alegreya_sans_medium))
                 )
-                var author_text = "$author, $year"
+                var authorText = "$author, $year"
                 if (author == "null") {
-                    author_text = year
+                    authorText = year
                 }
                 Text(
-                    text = author_text,
+                    text = authorText,
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
                 )
@@ -175,18 +179,13 @@ fun FriendReview(
 }
 
 @Composable
-fun displayFriendsReviews(key: Pair<String, String>, reviewsList: List<Review>,
+fun DisplayFriendsReviews(key: Pair<String, String>, reviewsList: List<Review>,
                           navController: NavController) {
-//    val reviewsList by reviewList.collectAsState()
-    println("the review list in reviewspage is $reviewsList")
-    println(reviewsList)
     for (review in reviewsList) {
-        var (username, friendID) = key
+        val (username, friendID) = key
         when (review) {
             is BookReview -> {
                 val bookReview: BookReview = review
-                println("here book review")
-                println("this is the review $review")
                 FriendReview(username, bookReview.title, bookReview.author, bookReview.date, bookReview.rating, bookReview.reviewID, friendID, navController)
             }
             is TVShowReview -> {

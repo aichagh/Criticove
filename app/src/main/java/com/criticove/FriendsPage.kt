@@ -66,8 +66,8 @@ data class Friend(val username: String)
 fun createFriendsList(usermodel: userModel): SnapshotStateList<Friend> {
     usermodel.getFriends()
     var curFriendsList = mutableStateListOf<Friend>()
-    val friend_map by usermodel.friendMap.collectAsState()
-    for ((key, value) in friend_map) {
+    val friendMap by usermodel.friendMap.collectAsState()
+    for ((_, value) in friendMap) {
         curFriendsList.add(Friend(value))
     }
     return curFriendsList
@@ -80,8 +80,8 @@ fun FriendsMainContent(navController: NavController, usermodel: userModel) {
     var isSearchActive by remember { mutableStateOf(false) }
     var filteredFriends by remember { mutableStateOf(emptyList<Friend>()) }
     var ogcurFriendsList = createFriendsList(usermodel)
-    println("the friend from the backend are $ogcurFriendsList")
-    fun perform_search() {
+
+    fun performSearch() {
         filteredFriends = if (isSearchActive) {
             ogcurFriendsList.filter {
                 it.username.contains(searchText, ignoreCase = true)
@@ -91,7 +91,7 @@ fun FriendsMainContent(navController: NavController, usermodel: userModel) {
         }
     }
 
-    perform_search()
+    performSearch()
 
     MainLayout(
         title = "Manage Friends",
@@ -119,7 +119,7 @@ fun FriendsMainContent(navController: NavController, usermodel: userModel) {
                     onValueChange = {
                         searchText = it
                         isSearchActive = it.isNotEmpty()
-                        perform_search()
+                        performSearch()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -132,6 +132,7 @@ fun FriendsMainContent(navController: NavController, usermodel: userModel) {
                     label = {
                         Text(
                             text = "Search friends ...",
+                            color = colorResource(id = R.color.blue),
                             style = TextStyle(
                                 fontSize = 20.sp,
                                 fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
@@ -195,7 +196,7 @@ fun Friends(friend: Friend, usermodel: userModel) {
                     .align(Alignment.CenterVertically),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(text = "${friend.username}",
+                Text(text = friend.username,
                     style = TextStyle(
                         fontSize = 20.sp,
                         fontFamily = FontFamily(Font(R.font.alegreya_sans_regular))
@@ -208,9 +209,7 @@ fun Friends(friend: Friend, usermodel: userModel) {
                 modifier = Modifier
                     .width(50.dp),
                 onClick = {
-//                    ognewFriendsList.add(Friend(friend.username))
-                    usermodel.delFriend(friend.username)
-                    remove_friend(friend.username)}
+                    usermodel.delFriend(friend.username)}
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.delete_user),
@@ -220,13 +219,3 @@ fun Friends(friend: Friend, usermodel: userModel) {
         }
     }
 }
-
-fun remove_friend(username: String) {
-//    ogFriendsList.remove(Friend(username))
-}
-
-//@Preview
-//@Composable
-//fun Preview_friends(){
-//    FriendsMainContent(rememberNavController())
-//}
