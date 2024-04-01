@@ -103,5 +103,6 @@
 | 2024/03/28 |       | 3       |        |5         |            |      | Debugging the bug in review form suggestions while typing |
 | 2024/03/29 |  2    |         |        |2         |            |      | Worked on the transition from sign up / log in to dashboard and vice versa |
 | 2024/03/29 |       | 3       | 3      |          |            |      | Debugging the book api crash bug and review form bug |
+| 2024/03/30 |  1    |         |        |          |            |      | Fixing the book api crash bug and review form bug |
 | 2024/03/31 |       |         |        |          | 1.25       |      | Final Presentation Discussion |
 | 2024/03/31 |       |         |        |          | 2.5        |      | Add no reviews text to friends’ reviews if empty, Change add friend icon to check once clicked, Update friends hamburger menu icons, Code clean up |
