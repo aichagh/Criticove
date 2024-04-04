@@ -64,6 +64,7 @@ class userModel: ViewModel {
                 }
                 val review = reviewSnapshot.value as Map<String, Any>
                 lateinit var reviewPost: Review
+                lateinit var factory: ReviewFactory
                 val rDB = review["rating"]
                 val r = when (rDB) {
                     is Int -> rDB
@@ -79,7 +80,8 @@ class userModel: ViewModel {
 
                 when (review["type"]) {
                     "Book" -> {
-                        reviewPost = BookReview(
+                        factory = BookReviewFactory()
+                        reviewPost = factory.makeReview(
                             "Book", review["title"].toString(), review["date"].toString(),
                             review["genre"].toString(), r , review["paragraph"].toString(),
                             review["reviewID"].toString(), review["author"].toString(),
@@ -89,7 +91,8 @@ class userModel: ViewModel {
                     }
 
                     "Movie" -> {
-                        reviewPost = MovieReview(
+                        factory = MovieReviewFactory()
+                        reviewPost = factory.makeReview(
                             "Movie",
                             review["title"].toString(),
                             review["date"].toString(),
@@ -104,7 +107,8 @@ class userModel: ViewModel {
                     }
 
                     "TV Show" -> {
-                        reviewPost = TVShowReview(
+                        factory = TVShowReviewFactory()
+                        reviewPost = factory.makeReview(
                             "TV Show", review["title"].toString(), review["date"].toString(),
                             review["genre"].toString(), r, review["paragraph"].toString(),
                             review["reviewID"].toString(), review["director"].toString(),
@@ -251,6 +255,7 @@ class userModel: ViewModel {
                         val reviewKey = reviewSnapshot.key
                         val review = reviewSnapshot.value as Map<String, Any>
                         lateinit var reviewPost: Review
+                        lateinit var factory: ReviewFactory
                         val rDB = review["rating"]
                         val r = when (rDB) {
                             is Int -> rDB
@@ -271,7 +276,8 @@ class userModel: ViewModel {
 
                         when (review["type"]) {
                             "Book" -> {
-                                reviewPost = BookReview(
+                                factory = BookReviewFactory()
+                                reviewPost = factory.makeReview(
                                     "Book", review["title"].toString(), review["date"].toString(),
                                     review["genre"].toString(), r , review["paragraph"].toString(),
                                     review["reviewID"].toString(), review["author"].toString(),
@@ -281,7 +287,8 @@ class userModel: ViewModel {
                             }
 
                             "Movie" -> {
-                                reviewPost = MovieReview(
+                                factory = MovieReviewFactory()
+                                reviewPost = factory.makeReview(
                                     "Movie",
                                     review["title"].toString(),
                                     review["date"].toString(),
@@ -296,7 +303,8 @@ class userModel: ViewModel {
                             }
 
                             "TV Show" -> {
-                                reviewPost = TVShowReview(
+                                factory = TVShowReviewFactory()
+                                reviewPost = factory.makeReview(
                                     "TV Show", review["title"].toString(), review["date"].toString(),
                                     review["genre"].toString(), r, review["paragraph"].toString(),
                                     review["reviewID"].toString(), review["director"].toString(),
@@ -345,6 +353,7 @@ class userModel: ViewModel {
                         val reviewKey = reviewSnapshot.key
                         val review = reviewSnapshot.value as Map<String, Any>
                         lateinit var reviewPost: Review
+                        lateinit var factory: ReviewFactory
                         val rDB = review["rating"]
                         val r = when (rDB) {
                             is Int -> rDB
@@ -359,7 +368,8 @@ class userModel: ViewModel {
 
                         when (review["type"]) {
                             "Book" -> {
-                                reviewPost = BookReview(
+                                factory = BookReviewFactory()
+                                reviewPost = factory.makeReview(
                                     "Book", review["title"].toString(), review["date"].toString(),
                                     review["genre"].toString(), r , review["paragraph"].toString(),
                                     review["reviewID"].toString(), review["author"].toString(),
@@ -368,7 +378,8 @@ class userModel: ViewModel {
                                 )
                             }
                             "Movie" -> {
-                                reviewPost = MovieReview(
+                                factory = MovieReviewFactory()
+                                reviewPost = factory.makeReview(
                                     "Movie",
                                     review["title"].toString(),
                                     review["date"].toString(),
@@ -382,7 +393,8 @@ class userModel: ViewModel {
                                 )
                             }
                             "TV Show" -> {
-                                reviewPost = TVShowReview(
+                                factory = TVShowReviewFactory()
+                                reviewPost = factory.makeReview(
                                     "TV Show", review["title"].toString(), review["date"].toString(),
                                     review["genre"].toString(), r, review["paragraph"].toString(),
                                     review["reviewID"].toString(), review["director"].toString(),
@@ -460,6 +472,39 @@ class MovieReview(type: String, title:String, date:String, genre: String, rating
                    val director: String, val streamingservice: String, val datewatched: String, shared: Boolean = false, bookmarked: Boolean = false): Review(type, title, date, genre, rating, paragraph, reviewID, shared, bookmarked) {
 }
 
+abstract class ReviewFactory {
+
+    abstract fun makeReview(type: String, title: String,date: String,genre: String,rating: Int,paragraph: String,reviewID: String,
+    author: String, booktype: String, datefinished: String, shared: Boolean = false, bookmarked: Boolean = false)
+    : Review
+}
+
+class BookReviewFactory: ReviewFactory() {
+    override fun makeReview(type: String, title: String,date: String,genre: String,rating: Int,paragraph: String,reviewID: String,
+                   author:String, booktype: String, datefinished: String, shared: Boolean, bookmarked: Boolean): BookReview {
+        return BookReview(type, title, date, genre, rating, paragraph, reviewID,
+            author, booktype, datefinished, shared, bookmarked)
+    }
+
+}
+
+class MovieReviewFactory: ReviewFactory(){
+    override fun makeReview(type: String, title: String,date: String,genre: String,rating: Int,paragraph: String,reviewID: String,
+                            director:String, streamingservice: String, datewatched: String, shared: Boolean, bookmarked: Boolean): MovieReview {
+        return MovieReview(type, title, date, genre, rating, paragraph, reviewID,
+            director, streamingservice, datewatched, shared, bookmarked)
+    }
+
+}
+class TVShowReviewFactory: ReviewFactory(){
+
+    override fun makeReview(type: String, title: String,date: String,genre: String,rating: Int,paragraph: String,reviewID: String,
+                            director:String, streamingservice: String, datefinished: String, shared: Boolean, bookmarked: Boolean): TVShowReview {
+        return TVShowReview(type, title, date, genre, rating, paragraph, reviewID,
+            director, streamingservice, datefinished, shared, bookmarked)
+    }
+
+}
 fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableMap<String, String>, bookmarked: Boolean = false) {
     val user = Firebase.auth.currentUser
     lateinit var userID : String
@@ -474,19 +519,24 @@ fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableM
     var newReview = reviewsRef.push()
     var newReviewID = newReview.key!!
     lateinit var reviewPost: Review
+    println("this is the rating for submittedreview $rating")
+    lateinit var factory: ReviewFactory
     when (type) {
         "Book" -> {
-            reviewPost = BookReview("Book", review["Book Title"].toString(), review["Year Published"].toString(),
+            factory = BookReviewFactory()
+            reviewPost = factory.makeReview("Book", review["Book Title"].toString(), review["Year Published"].toString(),
                 review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
                 review["Author"].toString(), review["Book Type"].toString(), review["Date finished"].toString(), shared, bookmarked)
         }
         "TV Show" -> {
-            reviewPost = TVShowReview("TV Show", review["TV Show Title"].toString(), review["Year Released"].toString(),
+            factory = TVShowReviewFactory()
+            reviewPost = factory.makeReview("TV Show", review["TV Show Title"].toString(), review["Year Released"].toString(),
             review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
             review["Director"].toString(), review["Streaming Service"].toString(), review["Date finished"].toString(), shared, bookmarked)
     }
         "Movie" -> {
-            reviewPost = MovieReview("Movie", review["Movie Title"].toString(), review["Year Released"].toString(),
+            factory = MovieReviewFactory()
+            reviewPost = factory.makeReview("Movie", review["Movie Title"].toString(), review["Year Released"].toString(),
                 review["Genre"].toString(), rating, review["Review"].toString(), newReviewID,
                 review["Director"].toString(), review["Streaming Service"].toString(), review["Date watched"].toString(), shared, bookmarked)
         }
