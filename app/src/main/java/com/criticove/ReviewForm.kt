@@ -21,11 +21,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
@@ -63,6 +66,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -99,7 +103,7 @@ var submittedReview: MutableMap<String, String>? = null
 var shared: Boolean = false
 
 val genreList = listOf<String>("Romance", "Thriller", "Drama", "Autobiography", "Sci-fi")
-val serviceList = listOf<String>("Netflix", "Apple TV", "Prime", "Hulu", "HBO", "Other")
+val serviceList = listOf<String>("Netflix", "Apple TV", "Prime", "Disney+", "Hulu", "HBO", "Other")
 
 class ReviewForm : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -317,40 +321,6 @@ fun AutocompleteTextField(
             }
         }
     }
-
-//        DropdownMenu(
-//            expanded = isExpanded && suggestions.isNotEmpty(),
-//            onDismissRequest = {
-//                isExpanded = false
-//                               },
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .background(colorResource(id = R.color.off_white))
-//        ) {
-//            suggestions.take(5).forEachIndexed { index, suggestion ->
-//                DropdownMenuItem(
-//                    onClick = {
-//                        query = suggestion.displayText
-//                        isExpanded = false
-//                        when (suggestion) {
-//                            is Suggestion.MovieSuggestion -> viewModel.fetchMovieDetails(suggestion.id)
-//                            is Suggestion.TvShowSuggestion -> viewModel.fetchTvShowDetails(suggestion.id)
-//                            is Suggestion.BookSuggestion -> viewModel.selectBook(suggestion.id)
-//                        }
-//                        focusRequester.requestFocus()
-//                    },
-//                    text = {
-//                        Text(
-//                            text = "${suggestion.displayText}${if (suggestion.displayDate != "") " (${suggestion.displayDate})" else ""}",
-//                            color = colorResource(id = R.color.coolGrey),
-//                            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-//                            fontSize = 18.sp
-//                        ) }
-//                )
-//                if(index != 4) { HorizontalDivider( color = colorResource(id = R.color.coolGrey)) }
-//            }
-//        }
-
 
     filled[type]?.set(label, query).toString()
 }
@@ -690,12 +660,17 @@ fun BookForm(mediaViewModel: MediaViewModel) {
 @Composable
 fun TVShowForm(mediaViewModel: MediaViewModel) {
     val tvShowDetails by mediaViewModel.tvShowDetails.observeAsState()
+    val isAdultContent by mediaViewModel.isAdultContent.observeAsState(false)
     var tvShowTitle by remember { mutableStateOf("") }
     var yearReleased by remember { mutableStateOf("") }
     var selectedGenre by remember { mutableStateOf("") }
     val genreList = listOf("Drama", "Comedy", "Action", "Fantasy", "Science Fiction")
     val updatedGenreList = remember { mutableStateListOf(*genreList.toTypedArray()) }
     var selectedService by remember { mutableStateOf("") }
+
+    if (isAdultContent) {
+        AdultContentWarning()
+    }
 
     AutocompleteTextField (
         label = "TV Show Title",
@@ -726,13 +701,13 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
     normalNumber(field = "Year Released", type = "TV Show", initialValue = yearReleased, onValueChange = { yearReleased = it })
     Dropdown(type = "TV Show", field = "Genre", list = updatedGenreList, selectedGenre) { selectedGenre = it }
     Dropdown(type = "TV Show", field = "Streaming Service", list = serviceList, selectedService) { selectedService = it }
-//    dateField(field = "Date finished", type = "TV Show")
     datePicker(type = "TV Show", field = "Date finished")
 }
 
 @Composable
 fun MovieForm(mediaViewModel: MediaViewModel) {
     val movieDetails by mediaViewModel.movieDetails.observeAsState()
+    val isAdultContent by mediaViewModel.isAdultContent.observeAsState(false)
     var movieTitle by remember { mutableStateOf("") }
     var yearReleased by remember { mutableStateOf("") }
     var selectedGenre by remember { mutableStateOf("") }
@@ -740,6 +715,10 @@ fun MovieForm(mediaViewModel: MediaViewModel) {
     val updatedGenreList = remember { mutableStateListOf(*genreList.toTypedArray()) }
     var selectedService by remember { mutableStateOf("") }
     var auto by remember { mutableStateOf("false") }
+
+    if (isAdultContent) {
+        AdultContentWarning()
+    }
 
     AutocompleteTextField(
         label = "Movie Title",
@@ -766,13 +745,9 @@ fun MovieForm(mediaViewModel: MediaViewModel) {
         }
     }
 
-
-    //"Movie Title", "Date Released", "Genre", "Publication Company"
-//    normalText(field = "Movie Title", type = "Movie", initialValue = movieTitle, onValueChange = { movieTitle = it })
     normalNumber(field = "Year Released", type = "Movie", initialValue = yearReleased, onValueChange = { yearReleased = it })
     Dropdown(type = "Movie", field = "Genre", list = updatedGenreList, selectedGenre) { selectedGenre = it }
     Dropdown(type = "Movie", field = "Streaming Service", list = serviceList, selectedService) { selectedService = it }
-//    dateField(field = "Date watched", type = "Movie")
     datePicker(type = "Movie", field = "Date watched")
 }
 
@@ -932,6 +907,31 @@ fun Dropdown(type: String, field: String, list: List<String>,
         filled[type]?.set(field, entered).toString()
     }
 }
+
+@Composable
+fun AdultContentWarning() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp, vertical = 5.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            Icons.Filled.Warning,
+            contentDescription = "Adult Content",
+            tint = colorResource(id = R.color.red),
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            "Adult Content",
+            color = colorResource(id = R.color.red),
+            fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
+            fontSize = 16.sp
+        )
+    }
+}
+
 
 @Composable
 fun normalNumber(field: String, type: String, initialValue: String = "", onValueChange: (String) -> Unit) {

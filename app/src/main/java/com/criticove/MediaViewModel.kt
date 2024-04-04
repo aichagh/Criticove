@@ -28,6 +28,8 @@ class MediaViewModel: ViewModel() {
         const val API_KEY = "ed52425c0609ecf79ba558dcfbafb535"
     }
 
+    val isAdultContent = MutableLiveData<Boolean>(false)
+
 
     private val tmdbApiService: TmdbApiService by lazy {
         Retrofit.Builder()
@@ -71,6 +73,7 @@ class MediaViewModel: ViewModel() {
             try {
                 val response = tmdbApiService.getMovieDetail(movieId, API_KEY)
                 movieDetails.postValue(response)
+                isAdultContent.postValue(response.adult)
             } catch (e: Exception) {
                 Log.e("MediaViewModel", "Error fetching movie details", e)
             }
@@ -83,6 +86,7 @@ class MediaViewModel: ViewModel() {
                 val response = tmdbApiService.getTVDetail(tvShowId, API_KEY)
                 // Post the detailed TV show object to LiveData
                 tvShowDetails.postValue(response)
+                isAdultContent.postValue(response.adult)
             } catch (e: Exception) {
                 Log.e("MediaViewModel", "Error fetching TV show details", e)
             }
