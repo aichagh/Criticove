@@ -34,8 +34,19 @@ data class Network(val name: String)
 
 data class MovieResponse(val results: List<Movie>)
 data class TvShowResponse(val results: List<TvShow>)
-data class MovieDetail(val id: Int, val title: String, val release_date: String, val genres: List<Genre>)
-data class TvShowDetail(val id: Int, val name: String, val first_air_date: String, val genres: List<Genre>, val networks: List<Network>)
+data class MovieDetail(
+    val id: Int,
+    val title: String,
+    val release_date: String,
+    val genres: List<Genre>,
+    val adult: Boolean)
+data class TvShowDetail(
+    val id: Int,
+    val name: String,
+    val first_air_date:
+    String, val genres: List<Genre>,
+    val networks: List<Network>,
+    val adult: Boolean)
 
 data class Movie(
     val id: Int,
