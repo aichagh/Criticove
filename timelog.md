@@ -108,4 +108,5 @@
 | 2024/03/31 |       |         |        |          | 2.5        |      | Add no reviews text to friends’ reviews if empty, Change add friend icon to check once clicked, Update friends hamburger menu icons, Code clean up |
 | 2024/04/03 | 1     | 1       |1        | 1        | 1          |      | D6 Discussion |
 | 2024/04/04 | 2.5   | 3.5     |5        | 5        | 5          |      | D6 Writeup |
-| 2024/04/04 |       | 2.5     |        |          |            |      | Adding adult content check and warning to the form for tv shows and movies |
+| 2024/04/04 |       | 2.5     |         |          |            |      | Adding adult content check and warning to the form for tv shows and movies |
+| 2024/04/05 |       |         |         |          | 1.25       |      | D6 Document Review and Submission |
