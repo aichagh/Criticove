@@ -139,7 +139,6 @@ fun ReviewFormMainContent(navController: NavController, userModel: userModel) {
         ) {
             Selection(userModel, navController)
         }
-        println("this is filled $filled")
     }
 }
 
@@ -414,7 +413,6 @@ fun CreateForm(type:String, userModel: userModel, navController: NavController, 
             }
         }
     }
-    println("this is filled $filled")
 
     Spacer(modifier = Modifier.size(15.dp))
     StarRating(type)
@@ -614,12 +612,6 @@ fun StarRating(type: String) {
     }
 }
 
-@Preview
-@Composable
-fun PreviewCreateReview() {
-//    ReviewFormMainContent(navController = rememberNavController())
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookForm(mediaViewModel: MediaViewModel) {
@@ -692,7 +684,6 @@ fun TVShowForm(mediaViewModel: MediaViewModel) {
                     selectedGenre = "Select a genre" // Reset to placeholder on new selection
                 }
                 selectedGenre = firstgenre
-                println("the dropdown $selectedGenre")
             }
         }
     }
@@ -740,7 +731,6 @@ fun MovieForm(mediaViewModel: MediaViewModel) {
                     selectedGenre = "Select a genre" // Reset to placeholder on new selection
                 }
                 selectedGenre = firstgenre
-                println("the dropdown $selectedGenre")
             }
         }
     }
@@ -762,7 +752,6 @@ fun normalText(field: String, type: String, initialValue: String = "", onValueCh
         value = entered,
         onValueChange = {
             entered = it
-//                        onValueChange(it)
         },
         singleLine = true,
         label = {

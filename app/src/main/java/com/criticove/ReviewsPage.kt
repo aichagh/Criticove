@@ -173,26 +173,6 @@ fun ReviewPageMainContent(navController: NavController, userModel: userModel) {
 }
 
 @Composable
-fun SortingButton(text: String, selected: Boolean, onClick: () -> Unit) {
-    TextButton(
-        modifier = Modifier
-            .background(
-                color = if (selected) colorResource(id = R.color.teal) else colorResource(id = R.color.green),
-                shape = RoundedCornerShape(20.dp)
-            )
-            .height(40.dp),
-        onClick = onClick
-    ) {
-        Text(
-            text = text,
-            color = if (selected) colorResource(id = R.color.off_white) else colorResource(id = R.color.black),
-            fontSize = 16.sp,
-            fontFamily = FontFamily(Font(R.font.alegreya_sans_medium))
-        )
-    }
-}
-
-@Composable
 fun FloatingAddButton(navController: NavController) {
     Row(
         modifier = Modifier
@@ -223,7 +203,6 @@ fun FloatingAddButton(navController: NavController) {
 @Composable
 fun Stars(rating: Int) {
     var id = R.drawable.star_full
-    println("got id in stars() $id")
     for (i in 1..5) {
         if (i > rating) {
             id = R.drawable.star_empty
@@ -333,7 +312,6 @@ fun displayReviews(navController: NavController, reviewList: StateFlow<MutableLi
         when (review) {
             is BookReview -> {
                 val bookReview: BookReview = review
-                println("this is the reviews  bookmarked ${bookReview.bookmarked}")
                 Review(bookReview.title, bookReview.author, bookReview.date, bookReview.rating, bookReview.reviewID, navController, bookReview.bookmarked)
             }
             is TVShowReview -> {

@@ -75,49 +75,33 @@ class Signup : ComponentActivity() {
                 enterTransition = { EnterTransition.None },
                 exitTransition = { ExitTransition.None }
             ) {
-//                if ((prev == "Login") || (prev == "SignUp")) {
-//                    println("prev inside $prev")
-//                    dur = 1000
-//                    del = 150
-//                } else {
-//                    println("prev outside $prev")
-//                    dur = 0
-//                    del = 0
-//                }
                 composable("Signup") {
                     prev = navController.previousBackStackEntry?.destination?.route.toString()
-                    println("prev $prev")
                     SignupMainContent(navController, userModel)
                     dur = 1000
                     del = 150
                 }
                 composable("Login") {
                     prev = navController.previousBackStackEntry?.destination?.route.toString()
-                    println("prev $prev")
                     LoginMainContent(navController, userModel)
                     dur = 1000
                     del = 150
                 }
                 composable("ReviewForm") {
                     prev = navController.previousBackStackEntry?.destination?.route.toString()
-                    println("prev $prev")
                     ReviewFormMainContent(navController, userModel)
 
                 }
                 composable(
                     route = "Reviews",
-//                    enterTransition = { slideInHorizontally() },
-//                    exitTransition = { slideOutHorizontally() }
                 ) {
                     prev = navController.previousBackStackEntry?.destination?.route.toString()
-                    println("prev $prev")
                     ReviewPageMainContent(navController, userModel)
                 }
                 composable(
                     route = "Dashboard",
 
                     enterTransition = { fadeIn(animationSpec = tween(dur, del)) },
-//                    exitTransition = { slideOutHorizontally() }
                 ) {
 
                     DashboardMainContent(navController, userModel)
@@ -140,8 +124,6 @@ class Signup : ComponentActivity() {
                     if (isFriendStr == "true") {
                         isFriend = true
                     }
-
-                    println("In composable: " + reviewID)
 
                     ReviewDetailsMainContent(navController, reviewID, isFriend, friendID, userModel)
                 }

@@ -84,7 +84,6 @@ fun FilterReviews(navController: NavController, userModel: userModel, type: Stri
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp),
-//                            .padding(vertical = 10.dp),
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.Bottom,
                     ) {

@@ -48,33 +48,10 @@ import com.criticove.backend.userModel
 
 // get this data from database, or passed from review select page, currently sample data
 var reviewID = "Insert ID"   // replace with other id
-// var reviewData = getSelectedReview(reviewID)
 var reviewType = ""   // reviewData["type"]!!
 
 var updatedReview: MutableMap<String, String>? = null
 var didOnce = false
-
-/*
-class ReviewDetails: ComponentActivity() {
-    public override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val userModel: userModel by viewModels()
-        lifecycleScope.launch {
-            //userModel.getReviews()
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                userModel.selReview.collect {
-                    println("here sel review is ${userModel.selReview}")
-                    setContent {
-                        ReviewDetailsMainContent(rememberNavController(), reviewID)
-
-                    }
-                }
-            }
-        }
-    }
-}
-
- */
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
@@ -83,8 +60,6 @@ fun ReviewDetailsMainContent(navController: NavController,
                              isFriend: Boolean,
                              friendID: String,
                              userModel: userModel) {
-    // userModel.getSelReview(reviewID, friendID)
-    // val selOReview by userModel.selReview.collectAsState()
     userModel.getSelReview(reviewID, friendID)
     val selReview by userModel.selReview.collectAsState()
     println(reviewID)
@@ -93,7 +68,6 @@ fun ReviewDetailsMainContent(navController: NavController,
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-//                .verticalScroll(rememberScrollState())
                 .background(colorResource(id = R.color.off_white))
         ) {
             if(isFriend) {
@@ -103,15 +77,12 @@ fun ReviewDetailsMainContent(navController: NavController,
             }
                 ReviewDetailsTable(reviewType, selReview, reviewID, isFriend, navController)
         }
-//    }
 }
 
 @Composable
 fun ReviewDetailsTable(type: String, selReview: Review,
                        reviewID: String, isFriend: Boolean,
                        navController: NavController) {
-    //val selReview by selReview.collectAsState()
-
     var elements =  mutableListOf<String>()
     var reviewData: MutableMap<String, String> = mutableMapOf()
 
@@ -198,16 +169,13 @@ fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
     ) {
 
         Column() {
-            println("in the review details page but not yet added info")
             elements.forEach { label ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
                     Column() {
-                        // var curData = reviewData[label].toString()
                         var edit by remember { mutableStateOf(false) }
-                        // var curData by remember {mutableStateOf(reviewData[label].toString())}
 
                         if (label != "Review") {
                             var curData = reviewData[label].toString()
@@ -227,17 +195,6 @@ fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
                                         .padding(5.dp)
                                         .width(120.dp)
                                 )
-                                /*
-                                Text(
-                                    text = "$curData",
-                                    fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
-                                    modifier = Modifier
-                                        .padding(5.dp)
-                                )
-                                */
-
-
-
 
                                 if (label == "Rating" && curData != "null") {
                                     println("at rating point $label : $curData")
@@ -261,7 +218,6 @@ fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
                                 curData = realRev
                                 didOnce = true
                             }
-                            println("this is the curData for review: $curData ${reviewData[label].toString()}")
 
                             OutlinedTextField(
                                 value = curData,
@@ -287,7 +243,6 @@ fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
                                 textStyle = TextStyle(
                                     fontFamily = FontFamily(Font(R.font.alegreya_sans_regular)),
                                     fontSize = 18.sp,
-//                                    color = colorResource(id = R.color.black))
                                 )
                             )
 
@@ -302,10 +257,8 @@ fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
                                     if (!edit) {
                                         CustomButton("Edit") { edit = true }
                                         CustomButton("Delete") {
-                                            //navController.navigate("Reviews")
                                             navController.popBackStack()
                                             delSelectedReview(reviewID)
-                                            //navController.navigate("Reviews")
                                         }
                                     } else {
                                         CustomButton("Save") {
@@ -318,44 +271,12 @@ fun displayReviewDetails(type: String, reviewData: MutableMap<String, String>,
                                     }
                                 }
                             }
-//                            println("new reviewData is $reviewData")
                         }
-
-
-
                     }
                 }
             }
-            /*
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-            ) {
-                Column() {
-                    var revData by remember {mutableStateOf(selReview.paragraph)}
-
-                    OutlinedTextField(
-                        value = revData,
-                        onValueChange = { revData = it },
-                        minLines = 3,
-                        maxLines = 7,
-                        label = {Text( text = "Review", color = colorResource(id = R.color.blue)) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState())
-                    )
-                    reviewData.set("Review", revData).toString()
-
-                }
-            }
-
-             */
         }
     }
-//    if (!isFriend) {
-//        SubmitUpdatedReview(type, reviewData, reviewID)
-//    }
 }
 
 @Composable
@@ -375,12 +296,7 @@ fun SubmitUpdatedReview(type: String, reviewData: MutableMap<String, String>,
             horizontalArrangement = Arrangement.End
         ) {
             Button(
-                onClick = {
-                    TODO()
-                    //updatedReview = reviewData
-                    //delSelectedReview(reviewID)
-                    //updatedReview?.let { SubmittedReview(type, reviewData["Rating"]!!.toInt(), it) }
-                },
+                onClick = {},
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.teal),
                     contentColor = colorResource(id = R.color.off_white)
@@ -411,11 +327,7 @@ fun PreviewReviewDetails() {
             horizontalArrangement = Arrangement.End
         ) {
             Button(
-                onClick = {
-                    //updatedReview = reviewData
-                    //delSelectedReview(reviewID)
-                    //updatedReview?.let { SubmittedReview(type, reviewData["Rating"]!!.toInt(), it) }
-                },
+                onClick = {},
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.teal),
                     contentColor = colorResource(id = R.color.off_white)

@@ -113,7 +113,7 @@ fun CommonHeader(navController: NavController, title: String, route: String) {
 //@Preview
 fun ProfileMain(navController: NavController) {
     val username = FirebaseManager.getUsername()
-    val profilePic = R.drawable.default_pic // later if profile pic is set, change it
+    val profilePic = R.drawable.default_pic
     var showDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
@@ -248,32 +248,6 @@ fun EditProfile(navController: NavController, userModel: userModel) {
     }
 }
 
-@Composable
-fun EditHeader() {
-    Column(
-        modifier = Modifier
-            .height(50.dp)
-            .background(colorResource(id = R.color.blue))
-            .fillMaxWidth()
-            .fillMaxHeight(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            Alignment.Center
-        ) {
-            Text(
-                text = "Edit Profile",
-                color = colorResource(id = R.color.off_white),
-                fontSize = 30.sp,
-                fontFamily = FontFamily(Font(R.font.alegreya_sans_bold))
-            )
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditMain(navController: NavController) {
@@ -346,8 +320,6 @@ fun EditMain(navController: NavController) {
                     statusMessage = "Username cannot be empty"
                 }
             }
-//            CustomButton("Back") { navController.navigate("ProfilePage") }
         }
-
     }
 }

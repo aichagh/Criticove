@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.update
 import kotlin.coroutines.suspendCoroutine
 
 class userModel: ViewModel {
-    //private val _userID: MutableStateFlow<String> = MutableStateFlow("ZFZrCVjIR0P76TqT5lxX0W3dUI93")
     var userID: String = "ZFZrCVjIR0P76TqT5lxX0W3dUI93"
 
     private val _reviewList: MutableStateFlow<MutableList<Review>> = MutableStateFlow(mutableListOf())
@@ -31,12 +30,11 @@ class userModel: ViewModel {
 
     private val _selFriendReview: MutableStateFlow<Review> = MutableStateFlow(Review("Book",
         "test", "test", "test", 4, "test", "test"))
-    val selFriendReview: StateFlow<Review> = _selFriendReview
 
-    private val _friendMap: MutableStateFlow<MutableMap<String, String>> = MutableStateFlow(mutableMapOf<String, String>())
+    private val _friendMap: MutableStateFlow<MutableMap<String, String>> = MutableStateFlow(mutableMapOf())
     val friendMap: StateFlow<MutableMap<String, String>> = _friendMap
 
-    private val _userMap: MutableStateFlow<MutableMap<String, String>> = MutableStateFlow(mutableMapOf<String, String>())
+    private val _userMap: MutableStateFlow<MutableMap<String, String>> = MutableStateFlow(mutableMapOf())
     val userMap: StateFlow<MutableMap<String, String>> = _userMap
 
     private val _friendReviews: MutableStateFlow<MutableMap<Pair<String, String>, List<Review>>> = MutableStateFlow(mutableMapOf())
@@ -44,17 +42,11 @@ class userModel: ViewModel {
 
 
     fun getSelReview(reviewID: String, friendID: String = "none") {
-        println("this is the user id : ${userID}")
         var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Reviews/${reviewID}")
 
         if (friendID != "none") {
-            println("Getting a friend's review")
             reviewsRef = FirebaseDatabase.getInstance().getReference("Users/${friendID}/Reviews/${reviewID}")
         }
-
-        // var selReviewQuery = reviewsRef.orderByChild("title").equalTo(reviewTitle)
-
-        println("the users ${this.userID} reviews keys and their corresponding values: ,")
 
         reviewsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(reviewSnapshot: DataSnapshot) {
@@ -76,7 +68,6 @@ class userModel: ViewModel {
                     is Boolean -> sDB
                     else -> false
                 }
-                println("this is rint $r")
 
                 when (review["type"]) {
                     "Book" -> {
@@ -118,12 +109,6 @@ class userModel: ViewModel {
                         }
                 }
                 _selReview.update{reviewPost}
-                println("selReview in the event handler $selReview")
-                println("this is the review back to a structure $reviewPost")
-                println("this is the reviews title ${reviewPost.title}")
-                println("this is the reviews date ${reviewPost.date}")
-                println("this is the reviews par ${reviewPost.paragraph}")
-                println("this is the reviews ID ${reviewPost.reviewID}")
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -176,8 +161,7 @@ class userModel: ViewModel {
                     if (friendID is String) {
                         val frienduserName =
                             childSnapshot.getValue(String::class.java)
-                        println("in addfriend friends id $friendID")
-                        println("in addfriend friends name $frienduserName")
+
                         if (friendID is String && frienduserName is String) {
                             newfriendMap[friendID] = frienduserName
                         }
@@ -194,18 +178,16 @@ class userModel: ViewModel {
 
     fun getUsers() {
         getfriendReviews()
-        //addFriend("bear")
         val usersRef = FirebaseDatabase.getInstance().getReference("Users")
         var curuserID = this.userID
 
         usersRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val newUserMap: MutableMap<String, String> = mutableMapOf<String, String>()
+                val newUserMap: MutableMap<String, String> = mutableMapOf()
                 for (childSnapshot in dataSnapshot.children) {
                     val userID = childSnapshot.key
                     val userName = childSnapshot.child("username").getValue(String::class.java)
-                    println("get users $userID")
-                    println("get users $userName")
+
                     if (userID is String && userName is String) {
                         if (userID != curuserID) {
                             newUserMap[userID] = userName
@@ -222,32 +204,9 @@ class userModel: ViewModel {
         })
     }
 
-    fun delReviewList() {
-        var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Reviews")
-        println("the users ${this.userID} reviews keys and their corresponding values: ,")
-        var countChild = 0
-        reviewsRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                countChild = dataSnapshot.childrenCount.toInt()
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Log.w(TAG, "review:onCancelled", databaseError.toException())
-            }
-        })
-        println("num of reviews in list is $countChild")
-
-        if (countChild > 0) {
-            return
-        }
-
-        var empReviewList: MutableList<Review> = mutableListOf()
-        _reviewList.update{empReviewList}
-    }
-
     fun getReviews() {
             var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Reviews")
-            println("the users ${this.userID} reviews keys and their corresponding values: ,")
+
             reviewsRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     var newReviewList: MutableList<Review> = mutableListOf()
@@ -272,7 +231,6 @@ class userModel: ViewModel {
                             is Boolean -> bmDB
                             else -> false
                         }
-                        println("this is bookmarked $bm")
 
                         when (review["type"]) {
                             "Book" -> {
@@ -314,12 +272,6 @@ class userModel: ViewModel {
                             }
                         }
                         newReviewList.add(reviewPost)
-                        //_reviewList.update{newReviewList}
-                        println("reviewList in the event handelr $_reviewList")
-                        println("this is the review back to a structure $reviewPost")
-                        println("this is the reviews title ${reviewPost.title}")
-                        println("this is the reviews date ${reviewPost.date}")
-                        println("this is the reviews bookmarked ${reviewPost.bookmarked}")
                     }
                     _reviewList.update{newReviewList}
                 }
@@ -333,7 +285,6 @@ class userModel: ViewModel {
     fun getfriendReviews() {
 
         this.getFriends()
-        println("here is the test var getFriends ${_friendMap} ${friendMap.value}")
 
         var friendsRef = FirebaseDatabase.getInstance().getReference("Users/${userID}/Friends")
 
@@ -406,18 +357,11 @@ class userModel: ViewModel {
                         if (s) {
                             newReviewList.add(reviewPost)
                             newfriendMap[Pair(frienduserName, friendID)] = newReviewList
-                            println("here is updated 1 $newfriendMap")
                         }
                     }
                     var tempMap = friendReviews.value
                     tempMap += newfriendMap
-                    println("here is updated 2 $tempMap")
                     _friendReviews.update { tempMap }
-                    _friendReviews.value.forEach { (frienduserName, reviews) ->
-                        reviews.forEach { review ->
-                            println("in getfriendreviews Friend ID: $friendID, $frienduserName and Title: ${review.title} ")
-                        }
-                    }
                 }
                 override fun onCancelled(error: DatabaseError) {
                     // Log.w(TAG, "review:onCancelled", databaseError.toException())
@@ -442,12 +386,10 @@ class userModel: ViewModel {
         }
     }
 
-    //var friends: List<String>
     fun getCurUser() {
         val user = Firebase.auth.currentUser
         if (user != null) {
             this.userID = user.uid
-            println("in the constructor user id is $userID")
         }
     }
 
@@ -510,16 +452,12 @@ fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableM
     lateinit var userID : String
     if (user != null) {
         userID = user.uid
-        println("the user id is $userID")
     }
-    //userID = "ZFZrCVjIR0P76TqT5lxX0W3dUI93"
-    println("Here is review para in submitRev: ${review["Review"]}")
 
     var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/$userID/Reviews")
     var newReview = reviewsRef.push()
     var newReviewID = newReview.key!!
     lateinit var reviewPost: Review
-    println("this is the rating for submittedreview $rating")
     lateinit var factory: ReviewFactory
     when (type) {
         "Book" -> {
@@ -542,7 +480,6 @@ fun SubmittedReview(type: String, rating: Int, shared: Boolean, review: MutableM
         }
     }
 
-    println("this is the review i just shared${reviewPost.title}")
     newReview.setValue(reviewPost)
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -558,12 +495,10 @@ fun updateSelReview(reviewID: String, review: String) {
     lateinit var userID : String
     if (user != null) {
         userID = user.uid
-        println("the user id is $userID, and reviewId is $reviewID")
     }
 
     var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/$userID/Reviews/$reviewID")
     reviewsRef.child("paragraph").setValue(review)
-    println("successfully updated review to $review")
 
 }
 
@@ -572,12 +507,10 @@ fun delSelectedReview(reviewID: String) {
     lateinit var userID : String
     if (user != null) {
         userID = user.uid
-        println("the user id is $userID, and reviewId is $reviewID")
     }
 
     var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/$userID/Reviews")
     reviewsRef.child(reviewID).removeValue()
-    println("successfully deleted")
 
 }
 
@@ -586,7 +519,6 @@ fun getSelectedReview(reviewID: String): MutableMap<String, String> {
     lateinit var userID : String
     if (user != null) {
         userID = user.uid
-        println("the user id is $userID, and reviewId is $reviewID")
     }
     // sample data
     var reviewData = mutableMapOf("Title" to "The Night Circus", "Author" to "Erin Morgenstern",
@@ -598,14 +530,10 @@ fun getSelectedReview(reviewID: String): MutableMap<String, String> {
 
     reviewsRef.child(reviewID).get().addOnSuccessListener {
         if (it.exists()) {
-            println("Data Exists")
-
             var type = it.child("type").value.toString()
             var title = it.child("title").value.toString()
             var date = it.child("date").value.toString()
             var genre = it.child("genre").value.toString()
-            //var started = it.child("started").value.toString()
-            //var finished = it.child("finished").value.toString()
             var rating = it.child("rating").value.toString()
             var review = it.child("paragraph").value.toString()
 
@@ -642,7 +570,6 @@ fun getSelectedReview(reviewID: String): MutableMap<String, String> {
         } else {
             println("Data doesn't exist")
         }
-        println("Successful")
 
     }.addOnFailureListener {
         println("Unsuccessful")
@@ -656,14 +583,13 @@ fun changeBookmark(reviewID: String, bm: Boolean) {
     lateinit var userID: String
     if (user != null) {
         userID = user.uid
-        println("the user id is $userID, and reviewId is $reviewID")
     }
     var reviewsRef = FirebaseDatabase.getInstance().getReference("Users/$userID/Reviews")
     val reviewRef = reviewsRef.child(reviewID)
     val bookmarkVal = mapOf<String, Any>("bookmarked" to bm)
     reviewRef.updateChildren(bookmarkVal)
         .addOnSuccessListener {
-        println("Bookmark value is $bm")
+            println("Bookmark value is $bm")
         }
         .addOnFailureListener { error ->
             println("bookmark didnt work with error $error")
