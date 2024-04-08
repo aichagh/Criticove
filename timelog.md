@@ -102,12 +102,15 @@
 | 2024/03/28 |  3    |         |        |          |            |      | Making filtering a dropdown menu + adjusting UI |
 | 2024/03/28 |       | 3       |        |5         |            |      | Debugging the bug in review form suggestions while typing |
 | 2024/03/29 |  2    |         |        |2         |            |      | Worked on the transition from sign up / log in to dashboard and vice versa |
+| 2024/03/29 |       |         |        |          |            | 1.5  | Debugged Friends List not deleting all friends |
 | 2024/03/29 |       | 3       | 3      | 2        |            |      | Debugging the book api crash bug and review form bug |
+| 2024/03/30 |       |         |        |          |            | 4    | Debugged Friends Reviews List not showing as empty after deleting all friends |
 | 2024/03/30 |  1    |         |        |          |            |      | Fixing the book api crash bug and review form bug |
 | 2024/03/31 |       | 1.25    |1.25     | 1.25     | 1.25       |      | Final Presentation Discussion |
 | 2024/03/31 |       |         |        |          | 2.5        |      | Add no reviews text to friends’ reviews if empty, Change add friend icon to check once clicked, Update friends hamburger menu icons, Code clean up |
-| 2024/04/03 | 1     | 1       |1        | 1        | 1          |      | D6 Discussion |
-| 2024/04/04 | 2.5   | 3.5     |5        | 5        | 5          |      | D6 Writeup |
+| 2024/04/03 | 1     | 1       |1        | 1        | 1          | 1     | D6 Discussion |
+| 2024/04/04 | 2.5   | 3.5     |5        | 5        | 5          | 3.5  | D6 Writeup |
 | 2024/04/04 |       | 2.5     |         |          |            |      | Adding adult content check and warning to the form for tv shows and movies |
 | 2024/04/05 |       |         |         |1.25      | 1.25       |      | D6 Document Review and Submission |
-| 2024/04/05 |       |         |         |1         |            |      | D7 Discussion |
+| 2024/04/05 |       |         |         |1         |            | 1    | D7 Discussion |
+| 2024/04/05 |       |         |         |          |            | 1    | D7 Writeup |
