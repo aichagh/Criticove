@@ -111,7 +111,7 @@
 | 2024/04/03 | 1     | 1       |1        | 1        | 1          | 1     | D6 Discussion |
 | 2024/04/04 | 2.5   | 3.5     |5        | 5        | 5          | 3.5  | D6 Writeup |
 | 2024/04/04 |       | 2.5     |         |          |            |      | Adding adult content check and warning to the form for tv shows and movies |
-| 2024/04/05 |       |         |         |1.25      | 1.25       |      | D6 Document Review and Submission |
-| 2024/04/05 |       |         |         |1         | 1          | 1    | D7 Discussion |
-| 2024/04/05 |       |         |         |1.5       |            | 1    | D7 Writeup |
+| 2024/04/05 |       |         |1.25     |1.25      | 1.25       |      | D6 Document Review and Submission |
+| 2024/04/05 |       |         |1        |1         | 1          | 1    | D7 Discussion |
+| 2024/04/05 |       |         |1.5      |1.5       |            | 1    | D7 Writeup |
 | 2024/04/08 |       |         |         |          | 1.5        |      | D7 Writeup, Code cleanup |
