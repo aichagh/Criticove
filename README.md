@@ -10,7 +10,7 @@ Whether you are a bookworm or an entertainment lover, CritiCove makes it easy to
 
 <img width="379" alt="Screenshot 2024-04-29 at 1 46 01 AM" src="https://github.com/aichagh/CS-446-project/assets/83453304/9409a218-9cd3-40ca-81b7-da4ba338d6c9">
 
-### [YoutTube Demo](https://www.youtube.com/watch?v=T0MyZ_3M-zM)
+### [YouTube Demo](https://www.youtube.com/watch?v=T0MyZ_3M-zM)
 
 ### Collaborators 
 
