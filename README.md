@@ -1,6 +1,4 @@
-# CS-446-project
-
-## Group 10 Project: _CritiCove_
+# Criticove
 ### Your Cove of Media Critiques and Reflections
 Where sharing your thoughts on books, movies, and TV shows has never been easier.
 
